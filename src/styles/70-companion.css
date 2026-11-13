@@ -1,0 +1,186 @@
+/*
+ * Hacker News Companion (github.com/hncompanion/browser-extension) ships light-only colours.
+ * These rules carry the active theme onto the elements it adds, so the two can run together.
+ */
+html.phn {
+  & .main-content-wrapper {
+    min-height: 100vh;
+  }
+
+  & .summary-panel {
+    top: 0;
+    height: 100vh;
+    border-left: 1px solid var(--phn-line);
+    background: var(--phn-surface);
+    box-shadow: none;
+    color: var(--phn-text);
+  }
+
+  & .panel-resizer {
+    background: var(--phn-bg);
+  }
+
+  & .panel-resizer::after {
+    background: var(--phn-rail);
+  }
+
+  & .panel-resizer:hover,
+  & .panel-resizer:active {
+    background: var(--phn-raised);
+  }
+
+  & .summary-panel-header,
+  & .summary-panel-footer {
+    border-color: var(--phn-line);
+    background: var(--phn-surface);
+    color: var(--phn-text);
+  }
+
+  & .summary-panel-logo,
+  & .summary-panel-icon-btn,
+  & .summary-panel-tab {
+    color: var(--phn-muted);
+  }
+
+  & .summary-panel-logo svg text {
+    fill: var(--phn-text);
+  }
+
+  & .summary-panel-logo .cls-2 {
+    stroke: var(--phn-text);
+  }
+
+  & .summary-panel-icon-btn:hover,
+  & .summary-panel-tab:hover {
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  & .summary-panel-tab.active {
+    color: var(--phn-text);
+    border-color: var(--phn-accent);
+  }
+
+  & .summary-panel-content {
+    color: var(--phn-text);
+    scrollbar-color: var(--phn-rail) transparent;
+  }
+
+  & .summary-panel-content.is-scrolled {
+    box-shadow: inset 0 1px 0 var(--phn-line);
+  }
+
+  & .summary-metadata-row {
+    border-color: var(--phn-line);
+  }
+
+  & :is(.summary-metadata-primary, .summary-text, .summary-error-title) {
+    color: var(--phn-text);
+  }
+
+  & :is(
+      .summary-metadata-secondary,
+      .summary-metadata-separator,
+      .summary-metadata-provider-link,
+      .summary-footer-link,
+      .summary-footer-separator,
+      .summary-error-description,
+      .summary-error-hint
+    ) {
+    color: var(--phn-muted);
+  }
+
+  & [class*="summary-metadata-chip"] {
+    background: var(--phn-raised);
+    color: var(--phn-muted);
+  }
+
+  & .summary-text a,
+  & .summary-comment-link,
+  & .summary-generate-link {
+    color: var(--phn-accent);
+  }
+
+  & .summary-text :is(pre, code) {
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  & .loading-spinner {
+    border-color: var(--phn-rail);
+    border-top-color: var(--phn-accent);
+  }
+
+  & .author-popup,
+  & .keyboard-help-content {
+    border-color: var(--phn-line);
+    background: var(--phn-surface);
+    box-shadow: var(--phn-shadow);
+    color: var(--phn-text);
+    font-family: var(--phn-ui);
+  }
+
+  & .author-popup a {
+    color: var(--phn-accent);
+  }
+
+  & .keyboard-help-modal {
+    background: rgb(0 0 0 / 0.55);
+  }
+
+  & .keyboard-help-content :is(h2, h3),
+  & .help-close-btn {
+    color: var(--phn-text);
+  }
+
+  & .keyboard-help-content tr {
+    border-color: var(--phn-line);
+  }
+
+  & .keyboard-help-content .key {
+    border-color: var(--phn-rail);
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  & .keyboard-help-footer {
+    border-color: var(--phn-line);
+    color: var(--phn-muted);
+  }
+
+  & .help-icon {
+    background: var(--phn-raised);
+    box-shadow: none;
+    color: var(--phn-text);
+  }
+
+  & .comment-count,
+  & .author-separator,
+  & .author-nav {
+    color: var(--phn-faint);
+  }
+
+  & .author-nav:hover {
+    color: var(--phn-accent);
+  }
+
+  & .highlight-author {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--phn-accent-soft);
+  }
+
+  & tr.highlight-post {
+    background: transparent;
+  }
+
+  & .hnc-sort-mode-button {
+    color: var(--phn-text);
+    cursor: pointer;
+  }
+
+  & [data-tooltip]::before {
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+}

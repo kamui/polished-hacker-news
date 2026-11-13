@@ -1,0 +1,210 @@
+html.phn {
+  background: var(--phn-bg);
+  scroll-padding-top: calc(var(--phn-header) + 12px);
+
+  &[data-phn-smooth="true"] {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  & body {
+    margin: 0;
+    background: var(--phn-bg);
+    color: var(--phn-text);
+    font-family: var(--phn-ui);
+    font-size: var(--phn-size);
+    line-height: var(--phn-leading);
+    font-optical-sizing: auto;
+  }
+
+  /* The page has no doctype, and in quirks mode tables do not inherit type or colour. */
+  & table {
+    color: inherit;
+    font: inherit;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  & td,
+  & .default,
+  & .title,
+  & .admin {
+    color: inherit;
+    font: inherit;
+  }
+
+  & a:link,
+  & a:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  & :focus-visible {
+    outline: 2px solid var(--phn-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Set on the root only and inherited: a universal ::selection rule is resolved for every element. */
+  &::selection {
+    background: var(--phn-accent-soft);
+  }
+
+  /* Fixed layout keeps a wide row (the nav on a phone) from stretching the page sideways. */
+  & #hnmain {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 0;
+    background: transparent;
+  }
+
+  & #hnmain td[bgcolor] {
+    background: transparent;
+  }
+
+  & #bigbox > td {
+    display: block;
+    box-sizing: content-box;
+    max-width: var(--phn-width);
+    margin: 0 auto;
+    padding: 12px var(--phn-gutter) 0;
+  }
+
+  & #bigbox > td > table {
+    width: 100%;
+  }
+
+  & #bigbox a:hover {
+    color: var(--phn-accent);
+  }
+
+  & .comhead,
+  & td.subtext {
+    color: var(--phn-muted);
+  }
+
+  & u {
+    text-decoration: none;
+  }
+
+  & font {
+    color: inherit;
+    font-size: inherit;
+  }
+
+  & input:is([type="text"], [type="search"], [type="password"], [type="url"], [type="email"], :not([type])),
+  & textarea,
+  & select {
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--phn-line);
+    border-radius: 8px;
+    background: var(--phn-surface);
+    color: var(--phn-text);
+    font-family: var(--phn-ui);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  & input[readonly] {
+    border: 0;
+    background: transparent;
+    color: var(--phn-muted);
+  }
+
+  & textarea {
+    display: block;
+    width: 100%;
+    height: 5.4em;
+    resize: vertical;
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+
+  & input[type="submit"] {
+    padding: 7px 14px;
+    border: 1px solid var(--phn-line);
+    border-radius: 8px;
+    background: var(--phn-raised);
+    color: var(--phn-text);
+    font-family: var(--phn-ui);
+    font-size: 14px;
+    font-weight: 550;
+    cursor: pointer;
+  }
+
+  & input[type="submit"]:hover {
+    border-color: var(--phn-accent);
+  }
+
+  & pre {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--phn-surface);
+    font-family: var(--phn-mono);
+    font-size: 0.86em;
+    line-height: 1.5;
+  }
+
+  & code {
+    font-family: var(--phn-mono);
+    font-size: 0.9em;
+  }
+
+  & pre code {
+    font-size: inherit;
+  }
+
+  /* Footer: the orange rule, site links and search box. */
+  & #hnmain > tbody > tr:last-child:not(#bigbox) > td {
+    padding: 40px var(--phn-gutter) 48px;
+    color: var(--phn-faint);
+    font-size: 13px;
+  }
+
+  & #hnmain > tbody > tr:last-child:not(#bigbox) td[bgcolor] {
+    height: 1px;
+    padding: 0;
+    background: var(--phn-line);
+  }
+
+  & .yclinks {
+    font-size: 0;
+    font-family: var(--phn-ui);
+  }
+
+  & .yclinks a {
+    display: inline-block;
+    margin: 0 9px 6px;
+    color: var(--phn-faint);
+    font-size: 13px;
+  }
+
+  & .yclinks a:hover {
+    color: var(--phn-text);
+  }
+
+  /* Page heading added above story lists. */
+  & .phn-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 20px 0 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--phn-line);
+  }
+
+  & .phn-heading h1 {
+    margin: 0;
+    font-family: var(--phn-font);
+    font-size: calc(var(--phn-size) * 1.9);
+    font-weight: 680;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  & .phn-heading time {
+    color: var(--phn-muted);
+    font-size: var(--phn-size);
+  }
+}

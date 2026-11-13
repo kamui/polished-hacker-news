@@ -1,0 +1,507 @@
+html.phn {
+  & table.comment-tree {
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  & tr.comtr > td {
+    padding: 0;
+  }
+
+  & tr.comtr > td > table {
+    width: 100%;
+  }
+
+  & tr.comtr {
+    scroll-margin-top: calc(var(--phn-header) + 8px);
+  }
+
+  & tr.comtr td.ind[indent="0"] ~ td {
+    border-top: 1px solid var(--phn-line);
+  }
+
+  /*
+   * Thread rails. HN indents with a spacer image and records the depth in an "indent"
+   * attribute. Reading that attribute in CSS sizes the cell and draws one vertical line per
+   * ancestor, so every reply visibly hangs off its parent, with no script and no reflow
+   * after load. A line sits in the middle of each step, under that ancestor's vote arrow.
+   */
+  & tr.comtr td.ind {
+    position: relative;
+    --phn-depth: attr(indent type(<number>), 0);
+    --phn-half: calc(var(--phn-step) / 2);
+    width: calc(var(--phn-depth) * var(--phn-step));
+    min-width: calc(var(--phn-depth) * var(--phn-step));
+    padding: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent 0 calc(var(--phn-half) - 1px),
+      var(--phn-rail) calc(var(--phn-half) - 1px) calc(var(--phn-half) + 1px),
+      transparent calc(var(--phn-half) + 1px) var(--phn-step)
+    );
+    cursor: pointer;
+  }
+
+  & tr.comtr td.ind > img {
+    display: none;
+  }
+
+  /* A curved connector carries the parent's rail into each reply, ending at its collapse button. */
+  & tr.comtr td.ind:not([indent="0"])::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(100% - var(--phn-half) - 1px);
+    box-sizing: border-box;
+    width: calc(var(--phn-step) - 10px);
+    height: 23px;
+    border-bottom: 2px solid var(--phn-rail);
+    border-left: 2px solid var(--phn-rail);
+    border-bottom-left-radius: 10px;
+    pointer-events: none;
+  }
+
+  & tr.comtr td.ind.phn-hot-child::after {
+    border-color: var(--phn-accent);
+  }
+
+  & tr.comtr td.ind.phn-hot {
+    background-image:
+      linear-gradient(var(--phn-accent), var(--phn-accent)),
+      repeating-linear-gradient(
+        to right,
+        transparent 0 calc(var(--phn-half) - 1px),
+        var(--phn-rail) calc(var(--phn-half) - 1px) calc(var(--phn-half) + 1px),
+        transparent calc(var(--phn-half) + 1px) var(--phn-step)
+      );
+    background-repeat: no-repeat, repeat;
+    background-size: 2px 100%, auto;
+    background-position: calc(var(--phn-hot) * var(--phn-step) + var(--phn-half) - 1px) 0, 0 0;
+  }
+
+  /*
+   * The gutter beside a comment holds its collapse button and rail. HN puts the vote arrows
+   * in this cell too; they are shifted across to sit at the start of the action row under
+   * the comment text, beside Reply, without moving any markup.
+   */
+  & tr.comtr td.votelinks {
+    width: var(--phn-step);
+    min-width: var(--phn-step);
+    padding: 0 0 12px;
+    vertical-align: bottom;
+    visibility: visible;
+  }
+
+  & tr.comtr td.votelinks > center {
+    position: relative;
+    left: calc(var(--phn-step) + 3px);
+    z-index: 2;
+    display: flex;
+    gap: 2px;
+    width: max-content;
+  }
+
+  & tr.comtr td.votelinks a {
+    display: block;
+    margin: 0;
+    padding: 3px;
+    border-radius: 50%;
+  }
+
+  & tr.comtr td.votelinks a:hover {
+    background: var(--phn-raised);
+  }
+
+  & tr.comtr td.votelinks .votearrow {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+
+  /* max-width: 0 stops long unbroken text from stretching the table past the column. */
+  & tr.comtr td.default {
+    position: relative;
+    width: 100%;
+    max-width: 0;
+    padding: 11px 0 12px 6px;
+  }
+
+  & td.default > div:first-child {
+    margin: 0 !important;
+  }
+
+  & td.default > br {
+    display: none;
+  }
+
+  & .comhead {
+    color: var(--phn-muted);
+    font-family: var(--phn-ui);
+  }
+
+  & td.default .comhead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 24px;
+    font-size: 0;
+  }
+
+  & td.default .navs {
+    display: contents;
+    font-size: 0;
+  }
+
+  & td.default .comhead > :not(.navs),
+  & td.default .navs > * {
+    margin-right: 12px;
+    font-size: var(--phn-small);
+    line-height: 1.3;
+  }
+
+  /* The filled arrow in the action row shows a vote and undoes it, so the text link is redundant. */
+  & td.default .comhead > [id^="unv_"] {
+    display: none;
+  }
+
+  & td.default .comhead > a[href^="user?id="]:not(:hover) {
+    color: var(--phn-text);
+  }
+
+  & td.default .comhead > a[href^="user?id="] {
+    margin-right: 10px;
+    font-weight: 620;
+  }
+
+  & td.default .comhead > a.phn-op::after {
+    content: "OP";
+    margin-left: 7px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--phn-accent-soft);
+    color: var(--phn-accent);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  /* HN Companion marks the story author with its own icon, placed just before the name. */
+  & td.default .comhead > .post-author-icon + a.phn-op::after {
+    content: none;
+  }
+
+  &[data-phn-new="true"] tr.comtr[data-phn-new] .age::after {
+    content: "new";
+    margin-left: 9px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--phn-new-soft);
+    color: var(--phn-new);
+    font-weight: 620;
+  }
+
+  /* Thread navigation stays out of the way until the comment is pointed at or focused. */
+  & td.default .navs > a.clicky:not(.togg) {
+    opacity: 0;
+  }
+
+  & td.default .navs > a.clicky:not(.togg, :hover) {
+    color: var(--phn-faint);
+  }
+
+  & tr.comtr:hover .navs > a.clicky:not(.togg),
+  & .fatitem .navs > a.clicky:not(.togg),
+  & td.default .navs > a.clicky:not(.togg):focus-visible {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    & td.default .navs > a.clicky:not(.togg) {
+      display: none;
+    }
+  }
+
+  & td.default .navs > .onstory:empty {
+    display: none;
+  }
+
+  /*
+   * HN's collapse link becomes the whole gutter of its comment: a round minus button level
+   * with the author, and under it the rail to the last reply, drawn only when there are
+   * replies (HN's count includes the comment itself). Any click in the gutter collapses.
+   */
+  & tr.comtr td.default a.togg {
+    --phn-knob: var(--phn-faint);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--phn-step) * -1);
+    width: var(--phn-step);
+    margin: 0;
+    font-size: 0;
+  }
+
+  & tr.comtr td.default a.togg::before {
+    content: "";
+    position: absolute;
+    top: 13px;
+    left: calc(50% - 9px);
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--phn-knob);
+    border-radius: 50%;
+    background:
+      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 8px 1.5px no-repeat,
+      var(--phn-bg);
+  }
+
+  & tr.comtr td.default a.togg:not([n="1"])::after {
+    content: "";
+    position: absolute;
+    top: 31px;
+    bottom: 0;
+    left: calc(50% - 1px);
+    width: 2px;
+    background: var(--phn-rail);
+  }
+
+  & tr.comtr td.default a.togg:hover {
+    --phn-knob: var(--phn-text);
+  }
+
+  & tr.comtr td.default a.togg:hover::after,
+  & tr.comtr.phn-hot-root a.togg::after {
+    background: var(--phn-accent);
+  }
+
+  & tr.comtr.coll td.default a.togg::before {
+    top: 9px;
+    background:
+      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 8px 1.5px no-repeat,
+      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 1.5px 8px no-repeat,
+      var(--phn-bg);
+  }
+
+  & .comment {
+    margin-top: 5px;
+    font-family: var(--phn-font);
+    font-size: var(--phn-size);
+    line-height: var(--phn-leading);
+    overflow-wrap: anywhere;
+  }
+
+  & .commtext,
+  & .commtext a:link,
+  & .commtext a:visited {
+    color: var(--phn-text);
+  }
+
+  /* HN fades downvoted comments by swapping in greyer text colours; keep the signal on any background. */
+  & .commtext.c5a { opacity: 0.82; }
+  & .commtext.c73 { opacity: 0.72; }
+  & .commtext.c82 { opacity: 0.64; }
+  & .commtext.c88 { opacity: 0.58; }
+  & .commtext.c9c { opacity: 0.52; }
+  & .commtext.cae { opacity: 0.46; }
+  & .commtext.cbe { opacity: 0.4; }
+  & .commtext.cce { opacity: 0.34; }
+  & .commtext.cdd { opacity: 0.28; }
+
+  /* On narrow screens HN truncates comment links to 200px; let them wrap instead. */
+  & table.comment-tree .commtext a {
+    display: inline;
+    max-width: none;
+    white-space: normal;
+  }
+
+  & .commtext p {
+    margin: 0.7em 0 0;
+  }
+
+  & .commtext pre {
+    margin: 0.7em 0 0;
+  }
+
+  /* The action row: room is left at its start for the vote arrows described above. */
+  & .reply {
+    display: flex;
+    align-items: center;
+    min-height: 26px;
+    margin-top: 8px;
+    padding-left: 32px;
+    font-family: var(--phn-ui);
+    font-size: var(--phn-small);
+    line-height: 1.3;
+  }
+
+  /* Readers with downvote rights get a second arrow on most comments. */
+  &[data-phn-down] tr.comtr .reply {
+    padding-left: 60px;
+  }
+
+  & .reply p {
+    margin: 0;
+  }
+
+  & .reply a:link,
+  & .reply a:visited {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+    color: var(--phn-muted);
+    font-weight: 550;
+    text-decoration: none;
+    text-transform: capitalize;
+  }
+
+  & .reply a::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background: currentColor;
+    mask: var(--phn-i-reply) center / contain no-repeat;
+  }
+
+  & .reply a:hover {
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  /* Collapsed: one quiet line with who, when, how much is folded away, and how it began. */
+  & tr.comtr.coll {
+    cursor: pointer;
+  }
+
+  & tr.comtr.coll td.default {
+    padding-block: 7px;
+  }
+
+  & tr.comtr.coll td.votelinks > center,
+  & tr.comtr.coll td.default a.togg::after {
+    display: none;
+  }
+
+  & tr.comtr.coll .comhead > a[href^="user?id="]:not(:hover) {
+    color: var(--phn-muted);
+  }
+
+  & tr.comtr.coll .comhead > a[href^="user?id="] {
+    font-weight: 500;
+  }
+
+  & tr.comtr.coll .navs > a.clicky:not(.togg) {
+    display: none;
+  }
+
+  & tr.comtr.coll .navs[data-phn-label]::after {
+    content: attr(data-phn-label);
+    color: var(--phn-faint);
+    font-size: var(--phn-small);
+  }
+
+  & tr.comtr.coll .comment.noshow {
+    display: block;
+    margin-top: 1px;
+  }
+
+  & tr.comtr.coll .commtext {
+    overflow: hidden;
+    color: var(--phn-faint);
+    font-size: var(--phn-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  & tr.comtr.coll .commtext > *,
+  & tr.comtr.coll .reply {
+    display: none;
+  }
+
+  & tr.comtr.phn-flash td.default {
+    animation: phn-flash 1.4s ease-out;
+  }
+
+  /* A comment shown on its own page, above its replies. */
+  & .fatitem td.default {
+    width: 100%;
+    padding: 0 0 4px 6px;
+  }
+
+  & .fatitem td.ind {
+    display: none;
+  }
+
+  & .fatitem td.votelinks {
+    width: var(--phn-step);
+    padding-top: 2px;
+    vertical-align: top;
+  }
+
+  /* Jump-to-new control. */
+  & .phn-pill {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    z-index: 950;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px 9px 14px;
+    translate: -50% 0;
+    border: 1px solid var(--phn-line);
+    border-radius: 999px;
+    background: var(--phn-surface);
+    box-shadow: var(--phn-shadow);
+    color: var(--phn-text);
+    font-family: var(--phn-ui);
+    font-size: 14px;
+    font-weight: 550;
+    cursor: pointer;
+  }
+
+  & .phn-pill::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--phn-new);
+  }
+
+  & .phn-pill:hover {
+    border-color: var(--phn-new);
+  }
+
+  & button.phn-pill svg {
+    width: 16px;
+    height: 16px;
+    color: var(--phn-muted);
+  }
+
+  &[data-phn-new="false"] .phn-pill {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    --phn-step: 18px;
+    --phn-gutter: 12px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & tr.comtr.phn-flash td.default {
+      animation: none;
+      box-shadow: inset 2px 0 0 var(--phn-new);
+    }
+  }
+}
+
+@keyframes phn-flash {
+  from {
+    background: var(--phn-new-soft);
+  }
+  to {
+    background: transparent;
+  }
+}

@@ -1,0 +1,212 @@
+html.phn {
+  & #hnmain > tbody > tr:first-child > td {
+    padding: 0 var(--phn-gutter);
+    border-bottom: 1px solid var(--phn-line);
+    background: var(--phn-bg);
+  }
+
+  &[data-phn-sticky="true"] #hnmain > tbody > tr:first-child > td {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+  }
+
+  & #hnmain > tbody > tr:first-child > td > table {
+    display: block;
+    box-sizing: border-box;
+    max-width: var(--phn-width);
+    margin: 0 auto;
+    padding: 0 !important;
+  }
+
+  & #hnmain > tbody > tr:first-child > td > table > tbody {
+    display: block;
+  }
+
+  & #hnmain > tbody > tr:first-child > td > table > tbody > tr {
+    display: flex;
+    align-items: center;
+    min-height: var(--phn-header);
+    gap: 10px;
+  }
+
+  & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td {
+    display: flex;
+    align-items: center;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+  }
+
+  & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  & #hnmain > tbody > tr:first-child img {
+    width: 22px;
+    height: 22px;
+    border: 0 !important;
+    border-radius: 5px;
+  }
+
+  /* HN separates nav links with bare " | " text; zero-size type hides it without touching the markup. */
+  & .pagetop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-family: var(--phn-ui);
+    font-size: 0;
+    line-height: 1;
+  }
+
+  & .pagetop .hnc-sort-container {
+    display: inline-flex;
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  & .pagetop .hnc-sort-container > span {
+    padding: 8px 3px;
+    font-size: 13px;
+  }
+
+  & .pagetop a {
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: capitalize;
+  }
+
+  & .pagetop a#me {
+    text-transform: none;
+  }
+
+  & .pagetop a:not(:hover),
+  & .pagetop .hnc-sort-container > span {
+    color: var(--phn-muted);
+  }
+
+  & .pagetop a:hover {
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  & .pagetop .hnname {
+    margin: 0 10px 0 0;
+  }
+
+  & .pagetop .hnname a {
+    padding-left: 2px;
+    color: var(--phn-text);
+    font-weight: 680;
+    letter-spacing: -0.01em;
+  }
+
+  & .pagetop .hnname a:hover {
+    background: transparent;
+  }
+
+  &[op="newest"] .pagetop a[href="newest"],
+  &[op="front"] .pagetop a[href="front"],
+  &[op="newcomments"] .pagetop a[href="newcomments"],
+  &[op="ask"] .pagetop a[href="ask"],
+  &[op="show"] .pagetop a[href="show"],
+  &[op="jobs"] .pagetop a[href="jobs"],
+  &[op="submit"] .pagetop a[href="submit"],
+  & .pagetop .topsel a {
+    color: var(--phn-text);
+    box-shadow: inset 0 -2px 0 var(--phn-accent);
+    border-radius: 0;
+  }
+
+  & .pagetop a#me {
+    color: var(--phn-text);
+  }
+
+  & .pagetop a#me[data-phn-karma]::after {
+    content: attr(data-phn-karma);
+    margin-left: 7px;
+    color: var(--phn-faint);
+    font-weight: 450;
+    font-variant-numeric: tabular-nums;
+  }
+
+  & .phn-icon-btn {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-left: 2px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--phn-muted);
+    cursor: pointer;
+  }
+
+  & .phn-icon-btn:hover,
+  & .phn-icon-btn[aria-expanded="true"] {
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  /* HN's click handler reads className as a string and throws on SVG elements. */
+  & .phn-icon-btn svg,
+  & .phn-pill svg {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
+
+  & .phn-settings-btn span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  @media (max-width: 640px) {
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    & .pagetop {
+      flex-wrap: nowrap;
+    }
+
+    & .pagetop a {
+      padding-inline: 7px;
+    }
+  }
+
+  & .phn-icon-btn.phn-floating {
+    position: fixed;
+    top: 12px;
+    right: 14px;
+    z-index: 900;
+    background: var(--phn-surface);
+  }
+}
+
+/* With the restyle switched off, the button is the way back, shown as a plain link in HN's own header. */
+html:not(.phn) .phn-settings-btn {
+  padding: 0 0 0 8px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+html:not(.phn) .phn-settings-btn svg {
+  display: none;
+}
