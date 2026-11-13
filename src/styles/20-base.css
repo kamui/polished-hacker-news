@@ -14,6 +14,7 @@ html.phn {
     font-size: var(--phn-size);
     line-height: var(--phn-leading);
     font-optical-sizing: auto;
+    font-synthesis: none;
   }
 
   /* The page has no doctype, and in quirks mode tables do not inherit type or colour. */
@@ -91,6 +92,15 @@ html.phn {
     font-size: inherit;
   }
 
+  /*
+   * HN colours some usernames to mark the account (green for a new one, for instance). Keep
+   * the hue it chose and take lightness and strength from the theme, so the signal reads on
+   * any background and any colour HN adds later is handled the same way.
+   */
+  & a[href^="user?id="] font[color] {
+    color: oklch(from attr(color type(<color>)) var(--phn-signal-l) var(--phn-signal-c) h);
+  }
+
   & input:is([type="text"], [type="search"], [type="password"], [type="url"], [type="email"], :not([type])),
   & textarea,
   & select {
@@ -121,20 +131,26 @@ html.phn {
     font-size: 15px;
   }
 
+  & :is(input:not([type="submit"], [type="hidden"], [type="checkbox"], [type="radio"]), textarea, select):focus {
+    border-color: var(--phn-accent);
+    outline: 0;
+  }
+
   & input[type="submit"] {
-    padding: 7px 14px;
-    border: 1px solid var(--phn-line);
-    border-radius: 8px;
-    background: var(--phn-raised);
-    color: var(--phn-text);
+    padding: 8px 18px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--phn-accent);
+    color: var(--phn-accent-ink);
     font-family: var(--phn-ui);
     font-size: 14px;
-    font-weight: 550;
+    font-weight: 650;
+    text-transform: capitalize;
     cursor: pointer;
   }
 
   & input[type="submit"]:hover {
-    border-color: var(--phn-accent);
+    filter: brightness(1.08);
   }
 
   & pre {

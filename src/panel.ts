@@ -1,4 +1,4 @@
-import typeIcon from "lucide-static/icons/a-large-small.svg" with { type: "text" };
+import settingsIcon from "lucide-static/icons/settings-2.svg" with { type: "text" };
 import { attachPopover, headerEndCell } from "./popover";
 import {
   RANGES,
@@ -36,10 +36,13 @@ const RANGE_LABELS: Record<RangeKey, { label: string; format: (value: number) =>
   width: { label: "Page width", format: (v) => `${v}px` },
 };
 
+/** Chrome only honours -webkit-font-smoothing on macOS; elsewhere the OS decides and the toggle would do nothing. */
+const canSmoothFonts = navigator.userAgent.includes("Macintosh");
+
 const TOGGLES: ReadonlyArray<readonly [ToggleKey, string]> = [
   ["stickyHeader", "Keep the header in view"],
   ["newTab", "Open links in a new tab"],
-  ["smoothing", "Smooth fonts"],
+  ...(canSmoothFonts ? ([["smoothing", "Smooth fonts"]] as const) : []),
   ["dimRead", "Dim stories I've opened"],
   ["markNew", "Mark new comments"],
 ];
@@ -144,7 +147,7 @@ export function mountPanel(
   panel.setAttribute("aria-label", "Reading settings");
 
   const toggleButton = el("button", { type: "button", className: "phn-icon-btn phn-settings-btn" });
-  toggleButton.innerHTML = typeIcon;
+  toggleButton.innerHTML = settingsIcon;
   toggleButton.append(el("span", { textContent: chrome.runtime.getManifest().short_name ?? "" }));
   toggleButton.title = "Reading settings";
   attachPopover(toggleButton, panel);

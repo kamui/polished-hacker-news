@@ -16,7 +16,7 @@ const dist = join(root, "dist");
 const cacheDir = join(root, ".preview-cache");
 const ORIGIN = "https://news.ycombinator.com";
 const PORT = Number(process.env.PORT ?? 4319);
-const PAGE_TTL_MS = 10 * 60_000;
+const PAGE_TTL_MS = 60_000;
 const ASSET_TTL_MS = 24 * 3600_000;
 const FONT_URL = "chrome-extension://__MSG_@@extension_id__/fonts/";
 

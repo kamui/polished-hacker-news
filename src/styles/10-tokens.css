@@ -15,6 +15,9 @@ html.phn {
   --phn-gutter: 20px;
 
   color-scheme: dark;
+  --phn-signal-l: 0.8;
+  --phn-signal-c: 0.16;
+  --phn-accent-ink: #1c0d00;
   --phn-bg: #000000;
   --phn-surface: #12110f;
   --phn-raised: #211f1c;
@@ -67,6 +70,9 @@ html.phn {
 
   &[data-phn-theme="light"] {
     color-scheme: light;
+    --phn-signal-l: 0.5;
+    --phn-accent-ink: #ffffff;
+    --phn-signal-c: 0.15;
     --phn-bg: #ffffff;
     --phn-surface: #f6f6f4;
     --phn-raised: #ececea;
@@ -84,6 +90,9 @@ html.phn {
 
   &[data-phn-theme="classic"] {
     color-scheme: light;
+    --phn-signal-l: 0.5;
+    --phn-accent-ink: #ffffff;
+    --phn-signal-c: 0.15;
     --phn-bg: #f6f6ef;
     --phn-surface: #eeeee4;
     --phn-raised: #e3e3d8;

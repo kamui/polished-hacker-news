@@ -96,6 +96,13 @@ html.phn {
     color: var(--phn-text);
   }
 
+  /* Pages such as reply and submit show a plain title here instead of the nav. */
+  & .pagetop b {
+    color: var(--phn-text);
+    font-size: 15px;
+    font-weight: 680;
+  }
+
   & .pagetop .hnname {
     margin: 0 10px 0 0;
   }
@@ -149,6 +156,11 @@ html.phn {
     background: transparent;
     color: var(--phn-muted);
     cursor: pointer;
+  }
+
+  /* On pages whose header has a title but no login cell, this pushes the buttons to the right end. */
+  & .pagetop + .phn-icon-btn {
+    margin-left: auto;
   }
 
   & .phn-icon-btn:hover,

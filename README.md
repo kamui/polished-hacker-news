@@ -40,7 +40,7 @@ Open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, an
 
 | Command | What it does |
 | --- | --- |
-| `bun run preview` | Serves live Hacker News pages at `http://localhost:4319` with the extension applied, rebuilding and refreshing as `src/` changes. Pages are fetched logged-out, read-only, and cached in `.preview-cache/`; add `?fresh` to a URL to refetch it. |
+| `bun run preview` | Serves live Hacker News pages at `http://localhost:4319` with the extension applied, rebuilding and refreshing as `src/` changes. Pages are fetched logged-out and read-only, and cached in `.preview-cache/` for a minute; add `?fresh` to a URL to refetch it at once. |
 | `bun run dev` | Rebuilds `dist/` on change, for use with a loaded unpacked extension. |
 | `bun test` | Unit tests. |
 | `bun run typecheck` | Type-checks the project. |

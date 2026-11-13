@@ -1,0 +1,175 @@
+html.phn {
+  /*
+   * Login, sign-up and "you have to be logged in" pages. HN serves these as a bare body with
+   * no page frame and no page-type attribute, which is what the selector keys on; the
+   * :has() is only ever evaluated on those few pages.
+   */
+  &:not([op]) body:has(> form) {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: min(380px, 100%);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 12vh 20px 48px;
+    color: var(--phn-muted);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  &:not([op]) body:has(> form)::before {
+    content: "Y";
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 28px;
+    border-radius: 9px;
+    background: var(--phn-accent);
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &:not([op]) body > br {
+    display: none;
+  }
+
+  &:not([op]) body > b {
+    margin: 14px 0 16px;
+    color: var(--phn-text);
+    font-family: var(--phn-font);
+    font-size: 26px;
+    font-weight: 680;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  &:not([op]) body > form {
+    margin: 0;
+  }
+
+  &:not([op]) body > form ~ b {
+    margin-top: 34px;
+    padding-top: 30px;
+    border-top: 1px solid var(--phn-line);
+    font-size: 19px;
+  }
+
+  &:not([op]) body > form table,
+  &:not([op]) body > form tbody,
+  &:not([op]) body > form tr,
+  &:not([op]) body > form td {
+    display: block;
+    width: 100%;
+  }
+
+  &:not([op]) body > form td:first-child {
+    margin: 0 0 6px;
+    color: var(--phn-muted);
+    font-size: 13.5px;
+    font-weight: 550;
+    text-transform: capitalize;
+  }
+
+  &:not([op]) body > form tr + tr {
+    margin-top: 14px;
+  }
+
+  &:not([op]) body > form input:not([type="submit"], [type="hidden"]) {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  &:not([op]) body > form input[type="submit"] {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px 18px;
+    font-size: 15px;
+  }
+
+  &:not([op]) body > form ~ form input[type="submit"] {
+    border: 1px solid var(--phn-line);
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
+  &:not([op]) body > a {
+    align-self: flex-start;
+    margin-top: 14px;
+    color: var(--phn-muted);
+    font-size: 14px;
+    text-decoration: underline;
+    text-decoration-color: var(--phn-faint);
+    text-underline-offset: 0.2em;
+  }
+
+  &:not([op]) body > a:hover {
+    color: var(--phn-accent);
+  }
+
+  /* Submit a story: a labelled field per row. */
+  & #bigbox > td > form {
+    max-width: 640px;
+    margin: 28px 0 0;
+  }
+
+  & #bigbox > td > form > table {
+    width: 100%;
+  }
+
+  & #bigbox > td > form > table td {
+    padding: 0 0 14px;
+    vertical-align: top;
+  }
+
+  & #bigbox > td > form > table td:first-child {
+    width: 1%;
+    padding: 10px 18px 0 0;
+    color: var(--phn-muted);
+    font-size: 14px;
+    font-weight: 550;
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+
+  & #bigbox > td > form > table td:last-child {
+    color: var(--phn-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  & #bigbox > td > form :is(input[type="text"], input[type="url"], textarea) {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+
+  & #bigbox > td > form textarea {
+    height: 9em;
+  }
+
+  /* Replying: the comment being answered reads as a quoted block above a roomy editor. */
+  & .fatitem tr.athing:not(.submission) > td.default {
+    padding: 14px 16px;
+    border: 1px solid var(--phn-line);
+    border-radius: 12px;
+    background: var(--phn-surface);
+  }
+
+  & .fatitem form[action="comment"] textarea {
+    height: 9em;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: var(--phn-size);
+    line-height: var(--phn-leading);
+  }
+
+  & .fatitem form[action="comment"] input[type="submit"] {
+    margin-top: 2px;
+  }
+}

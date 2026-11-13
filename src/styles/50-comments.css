@@ -430,7 +430,13 @@ html.phn {
     padding: 0 0 4px 6px;
   }
 
+  /* Kept as an empty column, not removed: the reply form below is laid out against these columns. */
   & .fatitem td.ind {
+    width: 0;
+    padding: 0;
+  }
+
+  & .fatitem td.ind > img {
     display: none;
   }
 

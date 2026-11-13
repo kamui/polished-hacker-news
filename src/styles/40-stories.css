@@ -24,8 +24,9 @@ html.phn {
   }
 
   & tr.athing.submission > td.votelinks {
-    width: 34px;
-    min-width: 34px;
+    --phn-arrow: 15px;
+    width: 38px;
+    min-width: 38px;
   }
 
   & .votearrow {
@@ -41,8 +42,11 @@ html.phn {
     transform: rotate(180deg);
   }
 
+  /* Sits nearer the rank than the title, so the title keeps clear space on its left. */
   & tr.athing.submission .votearrow {
-    margin-top: calc((var(--phn-title) * 1.32 - 20px) / 2);
+    width: var(--phn-arrow);
+    height: var(--phn-arrow);
+    margin: calc((var(--phn-title) * 1.32 - var(--phn-arrow)) / 2) 14px 0 9px;
   }
 
   & a:hover > .votearrow {
@@ -73,6 +77,7 @@ html.phn {
     font-weight: 500;
     line-height: 1.32;
     letter-spacing: -0.006em;
+    text-wrap: balance;
   }
 
   & .titleline > a {
@@ -219,8 +224,12 @@ html.phn {
     letter-spacing: -0.02em;
   }
 
+  & .fatitem tr.athing.submission > td.votelinks {
+    --phn-arrow: 18px;
+  }
+
   & .fatitem tr.athing.submission .votearrow {
-    margin-top: calc((var(--phn-size) * 1.7 * 1.18 - 20px) / 2);
+    margin-top: calc((var(--phn-size) * 1.7 * 1.18 - var(--phn-arrow)) / 2);
   }
 
   & .fatitem tr.athing.submission > td {

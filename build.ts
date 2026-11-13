@@ -6,13 +6,14 @@ const out = join(root, "dist");
 const FONT_URL = "chrome-extension://__MSG_@@extension_id__/fonts/";
 
 const fontPackages = ["@fontsource-variable/inter", "@fontsource-variable/source-serif-4"];
-const fontSheets = ["wght.css", "wght-italic.css"];
-const fontSubsets = /-(latin|latin-ext)-wght-/;
+/** The "opsz" files carry both the weight and optical-size axes, which font-optical-sizing needs. */
+const fontSheets = ["opsz.css", "opsz-italic.css"];
+const fontSubsets = /-(latin|latin-ext)-opsz-/;
 
 /** Icons used from CSS, as mask images. Lucide, ISC licence. */
 const cssIcons: Record<string, { file: string; filled?: boolean }> = {
-  up: { file: "arrow-big-up" },
-  "up-fill": { file: "arrow-big-up", filled: true },
+  up: { file: "triangle" },
+  "up-fill": { file: "triangle", filled: true },
   reply: { file: "message-circle" },
 };
 
