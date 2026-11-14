@@ -96,6 +96,18 @@ export function addListHeading(): void {
   list.parentElement?.prepend(heading);
 }
 
+/**
+ * HN lists a story's actions (hide, past, favorite) before its comment count. They go after
+ * it, with hide last, so the count sits beside the age and Tab follows the line as drawn.
+ */
+export function orderSublines(): void {
+  for (const line of document.querySelectorAll(".subline")) {
+    const hide = line.querySelector(':scope > a[href^="hide?"]');
+    line.append(...line.querySelectorAll(':scope > :is(a.hnpast, a[href^="fave?"], a[href^="flag?"], a[href^="vouch?"])'));
+    if (hide) line.append(hide);
+  }
+}
+
 /** Gives the thread's comment box a placeholder, which the stylesheet uses to keep it one line tall until it is used. */
 export function labelCommentBox(): void {
   document.querySelector('.fatitem form[action="comment"] textarea')?.setAttribute("placeholder", "Add a comment…");

@@ -228,7 +228,8 @@ html.phn {
   }
 
   /* On a thread the box waits as one line, so the first comments start on the first screen. */
-  &[op="item"] .fatitem form[action="comment"] textarea:placeholder-shown:not(:focus) {
+  /* Keyed to the whole form, so Tab from the box can still reach the submit button it reveals. */
+  &[op="item"] .fatitem form[action="comment"]:not(:focus-within) textarea:placeholder-shown {
     height: calc(var(--phn-size) * var(--phn-leading) + 26px);
     resize: none;
 

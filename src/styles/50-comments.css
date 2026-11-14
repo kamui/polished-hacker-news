@@ -91,8 +91,9 @@ html.phn {
 
   /*
    * The gutter beside a comment holds its collapse button and rail. HN puts the vote arrows
-   * in this cell too; they are shifted across to sit at the start of the action row under
-   * the comment text, beside Reply, without moving any markup.
+   * in this cell too; until the script moves them into the action row for keyboard order,
+   * they are shifted across to where they will land, at the start of the row beside Reply.
+   * Zero width keeps them from widening the cell past one rail step.
    */
   & tr.comtr td.votelinks {
     width: var(--phn-step);
@@ -108,21 +109,30 @@ html.phn {
     z-index: 2;
     display: flex;
     gap: 2px;
-    width: max-content;
+    width: 0;
   }
 
-  & tr.comtr td.votelinks a {
+  /* Moved in front of Reply, drawn where the gutter version was: 3px left of the text, Reply at the row's padding edge. */
+  & .reply > center {
+    display: flex;
+    flex: none;
+    gap: 2px;
+    width: calc(var(--phn-vote-room) - 6px);
+    margin: 0 9px 0 calc(-3px - var(--phn-vote-room));
+  }
+
+  & tr.comtr :is(td.votelinks, .reply) > center > a {
     display: block;
     margin: 0;
     padding: 3px;
     border-radius: 50%;
   }
 
-  & tr.comtr td.votelinks a:hover {
+  & tr.comtr :is(td.votelinks, .reply) > center > a:hover {
     background: var(--phn-raised);
   }
 
-  & tr.comtr td.votelinks .votearrow {
+  & tr.comtr :is(td.votelinks, .reply) .votearrow {
     width: 18px;
     height: 18px;
     margin: 1px;
@@ -398,11 +408,12 @@ html.phn {
 
   /* The action row: room is left at its start for the vote arrows described above. */
   & .reply {
+    --phn-vote-room: 32px;
     display: flex;
     align-items: center;
     min-height: 26px;
     margin-top: 5px;
-    padding-left: 32px;
+    padding-left: var(--phn-vote-room);
     font-family: var(--phn-ui);
     font-size: var(--phn-small);
     line-height: 1.3;
@@ -410,15 +421,15 @@ html.phn {
 
   /* Readers with downvote rights get a second arrow on most comments. */
   &[data-phn-down] tr.comtr .reply {
-    padding-left: 60px;
+    --phn-vote-room: 60px;
   }
 
   & .reply p {
     margin: 0;
   }
 
-  & .reply a:link,
-  & .reply a:visited {
+  & .reply p a:link,
+  & .reply p a:visited {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -430,7 +441,7 @@ html.phn {
     text-transform: capitalize;
   }
 
-  & .reply a::before {
+  & .reply p a::before {
     content: "";
     width: 16px;
     height: 16px;
@@ -438,7 +449,7 @@ html.phn {
     mask: var(--phn-i-reply) center / contain no-repeat;
   }
 
-  & .reply a:hover {
+  & .reply p a:hover {
     background: var(--phn-raised);
     color: var(--phn-text);
   }

@@ -38,6 +38,20 @@ export function markStoryAuthor(): void {
   }
 }
 
+/**
+ * Puts each comment's controls in the DOM in the order they appear on screen, so Tab goes
+ * collapse, author, links, then the vote arrows and Reply under the text. The stylesheet
+ * draws the toggle and arrows in the same place before and after the move.
+ */
+export function orderCommentControls(): void {
+  for (const row of commentRows()) {
+    const toggle = row.querySelector("a.togg");
+    if (toggle) row.querySelector(".comhead")?.prepend(toggle);
+    const votes = row.querySelector("td.votelinks > center");
+    if (votes) row.querySelector(".reply")?.prepend(votes);
+  }
+}
+
 /** HN's toggle counts the comment itself in `n`; say how many replies a collapsed comment hides. */
 function labelCollapsed(row: Element): void {
   const replies = Number(row.querySelector("a.togg")?.getAttribute("n")) - 1;

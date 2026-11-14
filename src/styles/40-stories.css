@@ -42,11 +42,21 @@ html.phn {
     transform: rotate(180deg);
   }
 
-  /* Sits nearer the rank than the title, so the title keeps clear space on its left. */
+  /*
+   * Sits nearer the rank than the title, so the title keeps clear space on its left. The link
+   * is sized to the arrow so its focus ring has a box to draw around; the arrow itself is a mask.
+   */
+  & tr.athing.submission > td.votelinks a {
+    display: block;
+    width: fit-content;
+    margin: calc((var(--phn-title) * var(--phn-title-leading) - var(--phn-arrow)) / 2) 14px 0 9px;
+    border-radius: 4px;
+  }
+
   & tr.athing.submission .votearrow {
     width: var(--phn-arrow);
     height: var(--phn-arrow);
-    margin: calc((var(--phn-title) * var(--phn-title-leading) - var(--phn-arrow)) / 2) 14px 0 9px;
+    margin: 0;
   }
 
   & a:hover > .votearrow {
@@ -112,6 +122,11 @@ html.phn {
     font-family: var(--phn-ui);
     font-size: 0;
     white-space: nowrap;
+  }
+
+  /* Sized like its text, so its focus ring isn't a zero-height line through the domain. */
+  & .sitebit a {
+    font-size: var(--phn-small);
   }
 
   & .sitebit .sitestr {
@@ -268,7 +283,7 @@ html.phn {
     min-width: var(--phn-fat-indent);
   }
 
-  & .fatitem tr.athing.submission .votearrow {
+  & .fatitem tr.athing.submission > td.votelinks a {
     margin-top: calc((var(--phn-fat-title) * 1.18 - var(--phn-arrow)) / 2);
   }
 

@@ -1,7 +1,23 @@
-import { initNewCommentNav, initThreadControls, markNewComments, markQuotes, markStoryAuthor } from "./comments";
+import {
+  initNewCommentNav,
+  initThreadControls,
+  markNewComments,
+  markQuotes,
+  markStoryAuthor,
+  orderCommentControls,
+} from "./comments";
 import { isItemPage, parseCount, storyIdFromUrl } from "./hn";
 import { initNewTabLinks } from "./links";
-import { addHomeLink, addListHeading, fitHeader, keepKarma, labelCommentBox, rememberDownvoteSlot, setTinIcon } from "./page";
+import {
+  addHomeLink,
+  addListHeading,
+  fitHeader,
+  keepKarma,
+  labelCommentBox,
+  orderSublines,
+  rememberDownvoteSlot,
+  setTinIcon,
+} from "./page";
 import { mountPanel, mountRestoreLink } from "./panel";
 import { mountSearch } from "./search";
 import {
@@ -25,6 +41,7 @@ async function trackComments(): Promise<void> {
   const { maxId } = markNewComments(previous?.m);
   markStoryAuthor();
   markQuotes();
+  orderCommentControls();
   initThreadControls();
   initNewCommentNav();
 
@@ -75,6 +92,7 @@ async function main(): Promise<void> {
   });
 
   initVotes();
+  orderSublines();
   initNewTabLinks(() => settings.newTab);
   if (isItemPage()) {
     labelCommentBox();
