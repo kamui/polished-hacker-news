@@ -199,7 +199,26 @@ html.phn {
     clip-path: inset(50%);
   }
 
+  /* Too narrow for one row: the logo and buttons stay on top and the nav gets its own scrolling row. */
   @media (max-width: 640px) {
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr {
+      flex-wrap: wrap;
+      row-gap: 0;
+      padding-top: 6px;
+    }
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
+      order: 1;
+      flex-basis: 100%;
+      margin-inline: -7px;
+      padding-bottom: 4px !important;
+      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    }
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) {
+      margin-left: auto;
+    }
+
     & .pagetop a {
       padding-inline: 7px;
     }
