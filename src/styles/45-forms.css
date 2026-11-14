@@ -222,6 +222,11 @@ html.phn {
     margin-top: 2px;
   }
 
+  /* Inset from the right as far as the vote column insets it from the left. */
+  &[op="item"] .fatitem form[action="comment"] {
+    margin-right: var(--phn-fat-indent);
+  }
+
   /* On a thread the box waits as one line, so the first comments start on the first screen. */
   &[op="item"] .fatitem form[action="comment"] textarea:placeholder-shown:not(:focus) {
     height: calc(var(--phn-size) * var(--phn-leading) + 26px);

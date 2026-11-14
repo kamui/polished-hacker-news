@@ -230,7 +230,14 @@ html.phn {
   /* The story at the top of its comment page. */
   & table.fatitem {
     --phn-fat-title: calc(var(--phn-size) * 1.7);
+    --phn-fat-indent: 44px;
     margin: 22px 0 6px;
+  }
+
+  /* The story has no rank here; left at its 1% width, the empty cell would shift the title as the window resizes. */
+  & .fatitem tr.athing.submission > td.title:first-child {
+    width: 0;
+    padding: 0;
   }
 
   @media (max-width: 640px) {
@@ -248,6 +255,9 @@ html.phn {
 
   & .fatitem tr.athing.submission > td.votelinks {
     --phn-arrow: 18px;
+    box-sizing: border-box;
+    width: var(--phn-fat-indent);
+    min-width: var(--phn-fat-indent);
   }
 
   & .fatitem tr.athing.submission .votearrow {
