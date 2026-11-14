@@ -297,7 +297,8 @@ html.phn {
     }
 
     /* Small enough for all seven of HN's links to fit a 390px screen without scrolling. */
-    & td:nth-child(2) > .pagetop > a {
+    & td:nth-child(2) > .pagetop > a,
+    & td:nth-child(2) > .pagetop > .topsel > a {
       padding-inline: 6px;
       font-size: 14px;
     }

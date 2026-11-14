@@ -177,7 +177,16 @@ html.phn {
   @media (max-width: 640px) {
     & .subline > *,
     & .subline [id^="unv_"] > a {
-      margin-right: 10px;
+      margin-right: 8px;
+    }
+
+    & tr.athing.submission > td.votelinks {
+      width: 30px;
+      min-width: 30px;
+    }
+
+    & tr.athing.submission > td.votelinks a {
+      margin-inline: 5px 9px;
     }
   }
 
@@ -222,9 +231,9 @@ html.phn {
     }
   }
 
-  /* Phones drop it from lists, so the line under a title fits one row; a thread's own story keeps it. */
+  /* Phones drop hide and past from lists, so the line under a title fits one row; a thread's own story keeps them. */
   @media (max-width: 640px) {
-    & table:not(.fatitem) .subtext a[href^="hide?"] {
+    & table:not(.fatitem) .subtext :is(a[href^="hide?"], a.hnpast) {
       display: none;
     }
   }
