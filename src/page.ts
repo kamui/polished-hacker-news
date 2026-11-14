@@ -17,6 +17,8 @@ export function keepKarma(): void {
   const me = document.querySelector<HTMLAnchorElement>("a#me");
   document.querySelector("a#logout")?.setAttribute("title", "Log out");
   document.querySelector(HEADER_LOGO)?.setAttribute("alt", "Hacker News");
+  // The logo beside it links to the same page; one Tab stop for both.
+  document.querySelector(".pagetop .hnname a")?.setAttribute("tabindex", "-1");
   const karma = document.getElementById("karma")?.textContent?.trim();
   if (me && karma) me.dataset.phnKarma = karma;
 }
