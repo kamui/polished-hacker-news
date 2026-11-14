@@ -1,6 +1,6 @@
 {
   "name": "polished-hacker-news",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "description": "A calm, readable restyle of Hacker News with threaded comment rails and read tracking.",
   "license": "MIT",
