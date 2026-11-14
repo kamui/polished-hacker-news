@@ -25,10 +25,6 @@ html.phn {
     padding: 0 var(--phn-gutter);
   }
 
-  & tr.comtr {
-    scroll-margin-top: calc(var(--phn-header) + 8px);
-  }
-
   & tr.comtr td.ind[indent="0"] ~ td {
     border-top: 1px solid var(--phn-line);
   }
@@ -556,8 +552,10 @@ html.phn {
 @keyframes phn-flash {
   from {
     background: var(--phn-new-soft);
+    box-shadow: inset 3px 0 0 var(--phn-new);
   }
   to {
     background: transparent;
+    box-shadow: inset 3px 0 0 transparent;
   }
 }

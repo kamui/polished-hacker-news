@@ -139,25 +139,38 @@ export function initNewCommentNav(newCount: number): void {
       (row) => row.offsetParent !== null,
     );
 
+  let last: HTMLTableRowElement | undefined;
+  let lastAt = 0;
+
   const jump = (direction: 1 | -1) => {
     const rows = fresh();
     if (rows.length === 0) return;
-    const edge = (document.querySelector("#hnmain td")?.getBoundingClientRect().bottom ?? 0) + 12;
-    const target =
-      direction === 1
-        ? (rows.find((row) => row.getBoundingClientRect().top > edge + 4) ?? rows[0])
-        : (rows.findLast((row) => row.getBoundingClientRect().top < edge - 4) ?? rows.at(-1));
+    // Where scrollIntoView leaves a row's top: the page's scroll padding, which clears the sticky header.
+    const line = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const index = last ? rows.indexOf(last) : -1;
+    // A smooth scroll is still moving the last target, so its position can't tell us where we are yet.
+    const scrolling = index !== -1 && performance.now() - lastAt < 800;
+    const at = scrolling
+      ? index + direction
+      : direction === 1
+        ? rows.findIndex((row) => row.getBoundingClientRect().top > line + 4)
+        : rows.findLastIndex((row) => row.getBoundingClientRect().top < line - 4);
+    const wrapped = at < 0 || at >= rows.length ? (direction === 1 ? 0 : rows.length - 1) : at;
+    const target = rows[wrapped];
     if (!target) return;
+    last = target;
+    lastAt = performance.now();
     target.scrollIntoView({ block: "start", behavior: "smooth" });
     target.classList.remove("phn-flash");
     void target.offsetWidth;
     target.classList.add("phn-flash");
+    label.textContent = `${wrapped + 1} of ${rows.length} new`;
   };
 
   const pill = document.createElement("button");
   pill.type = "button";
   pill.className = "phn-pill";
-  pill.title = "Jump to the next new comment (n)";
+  pill.title = "Jump to the next new comment (n), or the previous one (Shift+N)";
   const label = document.createElement("span");
   label.textContent = newCount === 1 ? "1 new comment" : `${newCount} new comments`;
   pill.append(label);
