@@ -121,18 +121,29 @@ html.phn {
     margin: 0 9px 0 calc(-3px - var(--phn-vote-room));
   }
 
-  & tr.comtr :is(td.votelinks, .reply) > center > a {
+  /* On a comment HN gives no Reply link, the arrows move up into the header, after the age. */
+  & td.default .comhead > center {
+    display: flex;
+    gap: 2px;
+    margin-block: -3px;
+  }
+
+  & .reply.phn-gone {
+    display: none;
+  }
+
+  & tr.comtr :is(td.votelinks, .reply, .comhead) > center > a {
     display: block;
     margin: 0;
     padding: 3px;
     border-radius: 50%;
   }
 
-  & tr.comtr :is(td.votelinks, .reply) > center > a:hover {
+  & tr.comtr :is(td.votelinks, .reply, .comhead) > center > a:hover {
     background: var(--phn-raised);
   }
 
-  & tr.comtr :is(td.votelinks, .reply) .votearrow {
+  & tr.comtr :is(td.votelinks, .reply, .comhead) .votearrow {
     width: 18px;
     height: 18px;
     margin: 1px;
@@ -486,6 +497,7 @@ html.phn {
   }
 
   & tr.comtr.coll td.votelinks > center,
+  & tr.comtr.coll .comhead > center,
   & tr.comtr.coll td.default a.togg::after {
     display: none;
   }

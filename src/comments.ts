@@ -50,8 +50,15 @@ export function prepareCommentControls(): void {
     const toggle = row.querySelector("a.togg");
     if (toggle) row.querySelector(".comhead")?.prepend(toggle);
     const votes = row.querySelector("td.votelinks > center");
-    if (votes) row.querySelector(".reply")?.prepend(votes);
-    for (const link of row.querySelectorAll(".navs > a.clicky:not(.togg)")) {
+    const reply = row.querySelector(".reply");
+    if (votes && reply?.querySelector("p a")) reply.prepend(votes);
+    else if (votes && reply) {
+      // HN holds back Reply on some fresh deep comments; a row with only the arrow left isn't worth its height.
+      row.querySelector(".comhead > .age")?.after(votes);
+      reply.classList.add("phn-gone");
+    }
+    const links = [...row.querySelectorAll(".navs > a.clicky:not(.togg)")];
+    for (const link of links) {
       if (link.textContent?.trim() !== "parent") continue;
       link.classList.add("phn-parent");
       // First among the links, so the hidden ones (root, prev, next) don't hold a gap open before it.
