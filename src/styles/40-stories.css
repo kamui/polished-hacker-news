@@ -164,6 +164,15 @@ html.phn {
     font-size: var(--phn-small);
   }
 
+  /* Moved here from beside the title by orderSublines; the brackets HN puts round it stay hidden. */
+  & :is(.subline, td.subtext) > .sitebit {
+    font-size: 0;
+  }
+
+  & td.subtext > .sitebit {
+    margin-right: 14px;
+  }
+
   /* Narrow, a little less space between items usually keeps the line from wrapping. */
   @media (max-width: 640px) {
     & .subline > *,

@@ -1,4 +1,4 @@
-import { HEADER_LOGO, pageOp } from "./hn";
+import { HEADER_LOGO, pageOp, storyRows, subtextRow } from "./hn";
 
 const HEADINGS: Record<string, string> = {
   news: "Top stories",
@@ -105,6 +105,24 @@ export function addListHeading(): void {
  * it, with hide last, so the count sits beside the age and Tab follows the line as drawn.
  */
 export function orderSublines(): void {
+  const domains: [site: Element, title: Element, meta: Element][] = [];
+  for (const story of storyRows()) {
+    const site = story.querySelector(".titleline > .sitebit");
+    const row = subtextRow(story);
+    const meta = row?.querySelector(".subline") ?? row?.querySelector("td.subtext");
+    if (site?.parentElement && meta) domains.push([site, site.parentElement, meta]);
+  }
+  // Matches the stylesheet's phone layout.
+  const phone = matchMedia("(max-width: 640px)");
+  const placeDomains = () => {
+    for (const [site, title, meta] of domains) {
+      if (phone.matches) title.append(site);
+      else meta.prepend(site);
+    }
+  };
+  placeDomains();
+  phone.addEventListener("change", placeDomains);
+
   for (const line of document.querySelectorAll(".subline")) {
     const hide = line.querySelector(':scope > a[href^="hide?"]');
     line.append(...line.querySelectorAll(':scope > :is(a.hnpast, a[href^="fave?"], a[href^="flag?"], a[href^="vouch?"])'));
