@@ -1,4 +1,4 @@
-import { HEADER_LOGO, pageOp, storyRows, subtextRow } from "./hn";
+import { HEADER_LOGO, moreLinksButton, pageOp, storyRows, subtextRow } from "./hn";
 
 const HEADINGS: Record<string, string> = {
   news: "Top stories",
@@ -116,23 +116,11 @@ export function orderSublines(): void {
     const site = story.querySelector(".titleline > .sitebit");
     const row = subtextRow(story);
     const meta = row?.querySelector(".subline") ?? row?.querySelector("td.subtext");
-    if (site?.parentElement && meta) domains.push([site, site.parentElement, meta]);
-  }
-  // Matches the stylesheet's phone layout.
-  const phone = matchMedia("(max-width: 640px)");
-  const placeDomains = () => {
-    for (const [site, title, meta] of domains) {
-      if (phone.matches) title.append(site);
-      else meta.prepend(site);
+    if (!meta) continue;
+    if (site) meta.prepend(site);
+    if (!story.closest(".fatitem") && meta.querySelector(':scope > :is(a[href^="hide?"], a.hnpast)')) {
+      meta.append(moreLinksButton(meta));
     }
-  };
-  placeDomains();
-  phone.addEventListener("change", placeDomains);
-
-  for (const line of document.querySelectorAll(".subline")) {
-    const hide = line.querySelector(':scope > a[href^="hide?"]');
-    line.append(...line.querySelectorAll(':scope > :is(a.hnpast, a[href^="fave?"], a[href^="flag?"], a[href^="vouch?"])'));
-    if (hide) line.append(hide);
   }
 }
 

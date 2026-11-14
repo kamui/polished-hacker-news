@@ -6,6 +6,7 @@ import {
   commentRows,
   depthOf,
   loggedInUser,
+  moreLinksButton,
   nextComment,
 } from "./hn";
 
@@ -43,7 +44,8 @@ export function markStoryAuthor(): void {
  * Puts each comment's controls in the DOM in the order they appear on screen, so Tab goes
  * collapse, author, links, then the vote arrows and Reply under the text. The stylesheet
  * draws the toggle and arrows in the same place before and after the move. Also marks the
- * "parent" link, which stays on show while the other nav links wait for hover.
+ * "parent" link, which stays on show while the other nav links wait for hover, and adds the
+ * phone's button for those other links.
  */
 export function prepareCommentControls(): void {
   for (const row of commentRows()) {
@@ -64,6 +66,8 @@ export function prepareCommentControls(): void {
       // First among the links, so the hidden ones (root, prev, next) don't hold a gap open before it.
       link.parentElement?.prepend(link);
     }
+    const last = row.querySelector(".navs > a.clicky:not(.togg):last-of-type");
+    if (links.some((link) => !link.classList.contains("phn-parent"))) last?.after(moreLinksButton(row));
     nameToggle(row);
   }
 }

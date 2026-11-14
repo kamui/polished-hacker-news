@@ -157,7 +157,22 @@ html.phn {
   }
 
   & .subline > *,
-  & .subline [id^="unv_"] > a,
+  & .subline [id^="unv_"] > a {
+    margin-right: var(--phn-meta-gap);
+    font-size: var(--phn-small);
+  }
+
+  & .subline > :not([id^="unv_"], .post-author-nav, .phn-fresh, .phn-more)::before,
+  & .subline [id^="unv_"] > a::before {
+    content: "·";
+    display: inline-block;
+    width: var(--phn-meta-gap);
+    margin-left: calc(-1 * var(--phn-meta-gap));
+    color: var(--phn-faint);
+    font-weight: 400;
+    text-align: center;
+  }
+
   & td.subtext > a,
   & td.subtext > .age {
     margin-right: 14px;
@@ -247,11 +262,46 @@ html.phn {
     }
   }
 
-  /* Phones drop hide and past from lists, so the line under a title fits one row; a thread's own story keeps them. */
+  /* Phones drop hide and past from lists, behind a "⋯" button, so the line under a title fits one row; a thread's own story keeps them. */
+  & .phn-more {
+    display: none;
+  }
+
   @media (max-width: 640px) {
     & table:not(.fatitem) .subtext :is(a[href^="hide?"], a.hnpast) {
       display: none;
     }
+
+    & table .subtext.phn-more-open :is(a[href^="hide?"], a.hnpast),
+    & table .subline.phn-more-open > :is(a[href^="hide?"], a.hnpast) {
+      display: inline;
+      opacity: 1;
+    }
+
+    & .subtext .phn-more {
+      display: inline-flex;
+      order: 4;
+      align-self: center;
+      margin: -3px 0;
+      padding: 3px 4px;
+      border: 0;
+      border-radius: 4px;
+      background: none;
+      color: var(--phn-faint);
+      vertical-align: middle;
+    }
+
+    & .subtext .phn-more[aria-expanded="true"] {
+      color: var(--phn-text);
+    }
+  }
+
+  & .phn-more::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: currentColor;
+    mask: var(--phn-i-more) center / contain no-repeat;
   }
 
   & .subline > .phn-fresh {

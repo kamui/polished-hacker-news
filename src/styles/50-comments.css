@@ -258,10 +258,33 @@ html.phn {
     opacity: 1;
   }
 
-  /* A phone's header line has room for that one alone. */
+  /* A phone's header line has room for that one alone; the "⋯" button after it shows the rest. */
+  & td.default .navs > .phn-more {
+    display: none;
+  }
+
   @media (max-width: 640px) {
     & td.default .navs > a.clicky:not(.togg, .phn-parent) {
       display: none;
+    }
+
+    & tr.comtr.phn-more-open:not(.coll) td.default .navs > a.clicky:not(.togg) {
+      display: inline;
+      opacity: 1;
+    }
+
+    & tr.comtr:not(.coll) td.default .navs > .phn-more {
+      display: inline-flex;
+      margin: -3px 0 -3px -4px;
+      padding: 3px 4px;
+      border: 0;
+      border-radius: 4px;
+      background: none;
+      color: var(--phn-faint);
+    }
+
+    & td.default .navs > .phn-more[aria-expanded="true"] {
+      color: var(--phn-text);
     }
   }
 
@@ -664,6 +687,12 @@ html.phn {
   @media (max-width: 640px) {
     --phn-step: 18px;
     --phn-gutter: 12px;
+
+    & td.default .comhead > :not(.navs),
+    & td.default .navs > *,
+    & td.default .comhead > a[href^="user?id="] {
+      margin-right: 8px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
