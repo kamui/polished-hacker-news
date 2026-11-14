@@ -6,6 +6,12 @@
  *
  * Pages are fetched logged-out and read-only, and cached on disk so browsing the preview
  * doesn't lean on news.ycombinator.com. Add ?fresh to any URL to refetch it.
+ *
+ * To preview logged-in pages, start it with HN_COOKIE set to the value of your `user` cookie
+ * from news.ycombinator.com. The cookie is only ever sent to news.ycombinator.com. In that
+ * mode nothing is written to disk (pages carry tokens that can act on your account), and only
+ * the read-only pages listed in READ_ONLY are fetched, so a stray click cannot vote, hide,
+ * flag or log you out.
  */
 import { watch } from "node:fs";
 import { mkdir } from "node:fs/promises";
@@ -19,6 +25,14 @@ const PORT = Number(process.env.PORT ?? 4319);
 const PAGE_TTL_MS = 60_000;
 const ASSET_TTL_MS = 24 * 3600_000;
 const FONT_URL = "chrome-extension://__MSG_@@extension_id__/fonts/";
+
+const cookieValue = process.env.HN_COOKIE?.trim().replace(/^user=/, "");
+const COOKIE = cookieValue ? `user=${cookieValue}` : undefined;
+/** HN performs votes, hides, flags and logout as plain GET links, so logged in we fetch only what is known to be harmless. */
+const READ_ONLY =
+  /^\/(news|newest|front|ask|show|jobs|shownew|asknew|best|active|bestcomments|newcomments|noobstories|noobcomments|pool|classic|highlights|launches|leaders|lists|item|user|submitted|threads|favorites|upvoted|hidden|flagged|from|context|over|reply|submit|edit|delete-confirm|changepw|topcolors|formatdoc|login|forgot|[\w-]+\.(html|css|js|svg|gif|png|ico))$/;
+
+const USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36";
 
 const HEAD_INJECT = [
   '<script src="/__preview/shim.js"></script>',
@@ -79,6 +93,27 @@ interface Cached {
   body: Uint8Array;
 }
 
+const memory = new Map<string, Cached & { at: number }>();
+
+async function fromOriginLoggedIn(pathAndQuery: string, fresh: boolean): Promise<Cached | undefined> {
+  const hit = memory.get(pathAndQuery);
+  if (hit && !fresh && Date.now() - hit.at < PAGE_TTL_MS) return hit;
+  try {
+    const response = await fetch(ORIGIN + pathAndQuery, {
+      headers: { "user-agent": USER_AGENT, cookie: COOKIE ?? "" },
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const page = { type: response.headers.get("content-type") ?? "application/octet-stream", body: new Uint8Array(await response.arrayBuffer()), at: Date.now() };
+    memory.set(pathAndQuery, page);
+    return page;
+  } catch (error) {
+    console.warn(`Could not fetch ${pathAndQuery} (${error}).`);
+    return hit;
+  }
+}
+
 async function fromOrigin(pathAndQuery: string, fresh: boolean): Promise<Cached | undefined> {
   const base = join(cacheDir, encodeURIComponent(pathAndQuery));
   const body = Bun.file(`${base}.body`);
@@ -93,7 +128,7 @@ async function fromOrigin(pathAndQuery: string, fresh: boolean): Promise<Cached 
   }
   try {
     const response = await fetch(ORIGIN + pathAndQuery, {
-      headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36" },
+      headers: { "user-agent": USER_AGENT },
       signal: AbortSignal.timeout(10_000),
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -122,16 +157,21 @@ const server = Bun.serve({
     const fresh = url.searchParams.has("fresh");
     url.searchParams.delete("fresh");
     const pathAndQuery = (url.pathname === "/" ? "/news" : url.pathname) + url.search;
-    const page = await fromOrigin(pathAndQuery, fresh);
+    if (COOKIE && !READ_ONLY.test(url.pathname === "/" ? "/news" : url.pathname)) {
+      return new Response(`Blocked: ${url.pathname} is not on the logged-in preview's read-only list.`, { status: 403 });
+    }
+    const page = COOKIE ? await fromOriginLoggedIn(pathAndQuery, fresh) : await fromOrigin(pathAndQuery, fresh);
     if (!page) return new Response(`Could not load ${pathAndQuery} from Hacker News, and no cached copy exists yet.`, { status: 502 });
     if (!page.type.startsWith("text/html")) return new Response(page.body, { headers: { "content-type": page.type } });
 
-    const html = new TextDecoder()
-      .decode(page.body)
-      .replace("<head>", `<head>${HEAD_INJECT}`)
-      .replaceAll(`href="${ORIGIN}"`, 'href="/"');
+    const source = new TextDecoder().decode(page.body);
+    // HN's bare pages (one-line messages, the password-reset form) have no <head> to inject into.
+    const html = (source.includes("<head>") ? source.replace("<head>", `<head>${HEAD_INJECT}`) : HEAD_INJECT + source).replaceAll(
+      `href="${ORIGIN}"`,
+      'href="/"',
+    );
     return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
   },
 });
 
-console.log(`Preview running at http://localhost:${server.port}`);
+console.log(`Preview running at http://localhost:${server.port}${COOKIE ? " (logged in, read-only)" : ""}`);
