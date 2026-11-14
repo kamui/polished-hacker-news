@@ -172,7 +172,16 @@ html.phn {
 
   /* Footer: the orange rule, site links and search box. */
   & #hnmain > tbody > tr:last-child:not(#bigbox) > td {
+    display: block;
+    box-sizing: content-box;
+    max-width: var(--phn-width);
+    margin: 0 auto;
     padding: 40px var(--phn-gutter) 48px;
+  }
+
+  /* Room for the new-comments pill, which floats over the bottom of the page. */
+  &[data-phn-pill][data-phn-new="true"] #hnmain > tbody > tr:last-child:not(#bigbox) > td {
+    padding-bottom: 96px;
     color: var(--phn-faint);
     font-size: 13px;
   }
