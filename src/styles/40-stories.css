@@ -222,6 +222,13 @@ html.phn {
     }
   }
 
+  /* Phones drop it from lists, so the line under a title fits one row; a thread's own story keeps it. */
+  @media (max-width: 640px) {
+    & table:not(.fatitem) .subtext a[href^="hide?"] {
+      display: none;
+    }
+  }
+
   & .subline > .phn-fresh {
     order: 1;
     margin-left: -6px;
