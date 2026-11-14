@@ -128,6 +128,20 @@ export function orderSublines(): void {
   }
 }
 
+/**
+ * Some titles put a no-break space after a dash ("stop –\u00a0lifted"). The line can still break
+ * after the dash, and the next line then starts with that space, so it becomes an ordinary one.
+ */
+export function tidyTitleBreaks(): void {
+  for (const link of document.querySelectorAll(".titleline > a")) {
+    for (const node of link.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes("\u00a0")) {
+        node.textContent = node.textContent.replace(/([–—])\u00a0/g, "$1 ");
+      }
+    }
+  }
+}
+
 /** A first Tab stop that jumps past the header to the stories or the thread. */
 export function addSkipLink(): void {
   if (!document.getElementById("bigbox")) return;

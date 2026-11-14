@@ -17,6 +17,7 @@ import {
   keepKarma,
   labelCommentBox,
   orderSublines,
+  tidyTitleBreaks,
   rememberDownvoteSlot,
   setTinIcon,
 } from "./page";
@@ -97,6 +98,7 @@ async function main(): Promise<void> {
 
   initVotes();
   orderSublines();
+  tidyTitleBreaks();
   initNewTabLinks(() => settings.newTab);
   if (isItemPage()) {
     labelCommentBox();
