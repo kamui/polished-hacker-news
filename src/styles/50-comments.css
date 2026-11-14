@@ -558,6 +558,10 @@ html.phn {
     font-size: var(--phn-small);
   }
 
+  &[data-phn-new="true"] tr.comtr.coll .navs[data-phn-label-new]::after {
+    content: attr(data-phn-label) " · " attr(data-phn-label-new);
+  }
+
   & tr.comtr.coll .comment.noshow {
     display: block;
     margin-top: 1px;

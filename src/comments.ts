@@ -75,11 +75,19 @@ function nameToggle(row: Element): void {
   toggle.setAttribute("aria-label", `${row.classList.contains("coll") ? "Expand" : "Collapse"} ${what}`);
 }
 
-/** Says how many replies a collapsed comment hides. */
+/** Says how many replies a collapsed comment hides, and how many of those are new. */
 function labelCollapsed(row: Element): void {
   const replies = Number(row.querySelector("a.togg")?.getAttribute("n")) - 1;
-  if (!(replies > 0)) return;
-  row.querySelector(".navs")?.setAttribute("data-phn-label", replies === 1 ? "1 reply hidden" : `${replies} replies hidden`);
+  const navs = row.querySelector(".navs");
+  if (!(replies > 0) || !navs) return;
+  navs.setAttribute("data-phn-label", replies === 1 ? "1 reply hidden" : `${replies} replies hidden`);
+  let fresh = 0;
+  const depth = depthOf(row);
+  for (let next = nextComment(row); next && depthOf(next) > depth; next = nextComment(next)) {
+    if (next.hasAttribute("data-phn-new")) fresh++;
+  }
+  navs.toggleAttribute("data-phn-label-new", fresh > 0);
+  if (fresh > 0) navs.setAttribute("data-phn-label-new", `${fresh} new`);
 }
 
 function toggle(row: HTMLTableRowElement): void {
