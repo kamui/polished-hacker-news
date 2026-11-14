@@ -173,6 +173,22 @@ html.phn {
     margin-right: 14px;
   }
 
+  /* A dot after the domain keeps it from running into the points and username. */
+  & .subline > .sitebit {
+    margin-right: 7px;
+  }
+
+  & .subline > .sitebit::after {
+    content: "·";
+    margin-left: 7px;
+    color: var(--phn-faint);
+    font-size: var(--phn-small);
+  }
+
+  & .subline > :is(.score, a[href^="item?id="]) {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Narrow, a little less space between items usually keeps the line from wrapping. */
   @media (max-width: 640px) {
     & .subline > *,
