@@ -319,10 +319,12 @@ html.phn:not([op]) {
     border-image: linear-gradient(var(--phn-line), var(--phn-line)) 0 0 1 0 / 0 0 1px 0 / 0 100vw;
   }
 
+  /* Sized like the main header's wordmark. */
   & .phn-bare-header .phn-home {
     align-self: center;
     min-height: var(--phn-header);
     margin: 0 14px 0 0;
+    font-size: 15px;
   }
 
   & .phn-bare-nav {
@@ -365,6 +367,10 @@ html.phn:not([op]) {
     & .phn-bare-nav a {
       padding-inline: 6px;
       font-size: 14px;
+    }
+
+    & .phn-bare-header .phn-home {
+      font-size: 17px;
     }
 
     & .phn-bare-header .phn-icon-btn:first-of-type {
@@ -487,4 +493,20 @@ html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td > a {
 
 html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td > a:hover {
   text-decoration: underline;
+}
+
+/* A phone has no room for a label column; each label sits over its value. */
+@media (max-width: 640px) {
+  html.phn[op="user"] #bigbox > td > table > tbody > tr > td {
+    display: block;
+  }
+
+  html.phn[op="user"] #bigbox > td > table > tbody > tr > td:first-child {
+    width: auto;
+    padding: 10px 0 0;
+  }
+
+  html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty {
+    display: none;
+  }
 }
