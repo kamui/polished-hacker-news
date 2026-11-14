@@ -487,12 +487,15 @@ html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td {
 }
 
 html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td > a {
-  color: var(--phn-accent);
-  font-weight: 550;
+  color: var(--phn-text);
+  text-decoration: underline;
+  text-decoration-color: var(--phn-line);
+  text-underline-offset: 3px;
 }
 
 html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td > a:hover {
-  text-decoration: underline;
+  color: var(--phn-accent);
+  text-decoration-color: currentColor;
 }
 
 /* A phone has no room for a label column; each label sits over its value. */
