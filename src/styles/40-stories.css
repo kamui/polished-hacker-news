@@ -21,7 +21,6 @@ html.phn {
     color: var(--phn-faint);
     font-size: var(--phn-small);
     font-variant-numeric: tabular-nums;
-    line-height: calc(var(--phn-title) * var(--phn-title-leading));
     text-align: right;
   }
 
@@ -199,7 +198,14 @@ html.phn {
   }
 
   & td.subtext > .sitebit {
-    margin-right: 14px;
+    margin-right: 7px;
+  }
+
+  & td.subtext > .sitebit::after {
+    content: "·";
+    margin-left: 7px;
+    color: var(--phn-faint);
+    font-size: var(--phn-small);
   }
 
   & .subline > :is(.score, a[href^="item?id="]) {
