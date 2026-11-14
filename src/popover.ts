@@ -27,13 +27,16 @@ export function attachPopover(button: HTMLElement, panel: HTMLElement, onOpen?: 
     const viewport = document.documentElement.clientWidth;
     panel.style.top = `${header.getBoundingClientRect().bottom + 8}px`;
     const free = viewport - panel.offsetWidth;
-    // On a phone the panel nearly fills the width, so it is centred rather than hung from the button.
-    panel.style.right = `${free < 120 ? free / 2 : Math.min(Math.max(12, viewport - anchor.right), free - 12)}px`;
+    // Hangs to the right of the button, over the header's end rather than the page's text; on a phone
+    // the panel nearly fills the width, so it is centred instead.
+    panel.style.left = `${free < 120 ? free / 2 : Math.max(12, Math.min(anchor.left, free - 12))}px`;
+  };
+  const follow = () => {
+    if (!panel.hidden) place();
   };
   // The page-width slider moves the header, and the button with it, while the panel is open.
-  new ResizeObserver(() => {
-    if (!panel.hidden) place();
-  }).observe(header);
+  new ResizeObserver(follow).observe(header);
+  window.addEventListener("resize", follow);
 
   const setOpen = (open: boolean) => {
     panel.hidden = !open;

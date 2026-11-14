@@ -10,6 +10,7 @@ Versions match the `version` in `src/manifest.json` and the `v*` tags.
 ### Changed
 
 - Comment and post text now fills the page width you set, instead of stopping at about 75 characters a line.
+- The settings and search menus open to the right of their buttons, over the header's end, so they cover less of the page.
 
 ## 0.0.4 (2026-11-14)
 
