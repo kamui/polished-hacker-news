@@ -1,5 +1,5 @@
 import settingsIcon from "lucide-static/icons/settings-2.svg" with { type: "text" };
-import { attachPopover, headerEndCell } from "./popover";
+import { attachPopover, headerEndCell, placeInHeader } from "./popover";
 import {
   RANGES,
   type RangeKey,
@@ -153,9 +153,7 @@ export function mountPanel(
   toggleButton.title = "Reading settings";
   attachPopover(toggleButton, panel);
 
-  const headerEnd = headerEndCell();
-  if (headerEnd) headerEnd.append(toggleButton);
-  else {
+  if (!placeInHeader(toggleButton)) {
     toggleButton.classList.add("phn-floating");
     document.body.append(toggleButton);
   }

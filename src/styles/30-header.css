@@ -14,10 +14,14 @@ html.phn {
   & #hnmain > tbody > tr:first-child > td > table {
     display: block;
     box-sizing: border-box;
-    /* Wider than a narrow reading column: logged in, the nav gains links and the account sits beside it. */
-    max-width: max(var(--phn-width), 1080px);
+    max-width: var(--phn-width);
     margin: 0 auto;
     padding: 0 !important;
+  }
+
+  /* Set by fitHeader when the nav doesn't fit; the logo beside it still leads to the front page. */
+  &[data-phn-tight] .pagetop .hnname {
+    display: none;
   }
 
   & #hnmain > tbody > tr:first-child > td > table > tbody {
@@ -79,7 +83,7 @@ html.phn {
   /* Inline-block so the padding takes up room: the nav's scrolling cell clips whatever sticks out. */
   & .pagetop a {
     display: inline-block;
-    padding: 8px 10px;
+    padding: 8px 8px;
     border-radius: 7px;
     font-size: 15px;
     font-weight: 500;
@@ -147,10 +151,33 @@ html.phn {
 
   & .pagetop a#me[data-phn-karma]::after {
     content: attr(data-phn-karma);
-    margin-left: 7px;
+    margin-left: 5px;
     color: var(--phn-faint);
-    font-weight: 450;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Drawn as an icon button like search and settings; the word stays in the link for screen readers. */
+  & .pagetop a#logout {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+  }
+
+  & .pagetop a#logout::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 19px;
+    height: 19px;
+    margin: auto;
+    background: currentColor;
+    mask: var(--phn-i-logout) center / contain no-repeat;
   }
 
   & .phn-icon-btn {
@@ -168,9 +195,7 @@ html.phn {
     cursor: pointer;
   }
 
-  /* In the account cell the buttons sit before the username or login link; the markup order is unchanged. */
   & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) > .phn-icon-btn {
-    order: -1;
     margin-left: 0;
   }
 

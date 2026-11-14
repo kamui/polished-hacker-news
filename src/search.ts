@@ -1,5 +1,5 @@
 import searchIcon from "lucide-static/icons/search.svg" with { type: "text" };
-import { attachPopover, headerEndCell } from "./popover";
+import { attachPopover, headerEndCell, placeInHeader } from "./popover";
 
 const ALGOLIA = "https://hn.algolia.com/";
 
@@ -8,8 +8,7 @@ const ALGOLIA = "https://hn.algolia.com/";
  * footer, read from that form so a change on HN's side carries over.
  */
 export function mountSearch(): void {
-  const header = headerEndCell();
-  if (!header) return;
+  if (!headerEndCell()) return;
   const footerForm = document.querySelector<HTMLFormElement>('form[action*="algolia"]');
 
   const button = document.createElement("button");
@@ -36,6 +35,6 @@ export function mountSearch(): void {
   form.append(input);
 
   attachPopover(button, form, () => input.select());
-  header.append(button);
+  placeInHeader(button);
   document.body.append(form);
 }

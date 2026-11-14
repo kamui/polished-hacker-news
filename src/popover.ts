@@ -2,6 +2,16 @@
 export const headerEndCell = () =>
   document.querySelector("#hnmain > tbody > tr:first-child > td > table td:last-child");
 
+/** Adds a button to the header's right end: before the account links when there are some, so focus moves left to right. */
+export function placeInHeader(button: HTMLElement): boolean {
+  const cell = headerEndCell();
+  if (!(cell instanceof HTMLTableCellElement)) return false;
+  const account = cell.cellIndex > 1 ? cell.querySelector(":scope > .pagetop") : null;
+  if (account) account.before(button);
+  else cell.append(button);
+  return true;
+}
+
 /** Wires a header button to a panel shown beneath it: toggle, click-away, and Escape to close. */
 export function attachPopover(button: HTMLElement, panel: HTMLElement, onOpen?: () => void): void {
   button.setAttribute("aria-expanded", "false");
