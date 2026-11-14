@@ -70,8 +70,9 @@ html.phn {
     pointer-events: none;
   }
 
+  /* A direct reply's connector starts on the lit line; only its turn into the reply stays unlit. */
   & tr.comtr td.ind.phn-hot-child::after {
-    border-color: var(--phn-accent);
+    border-left-color: var(--phn-accent);
   }
 
   & tr.comtr td.ind.phn-hot {
@@ -317,9 +318,14 @@ html.phn {
     --phn-knob: var(--phn-text);
   }
 
+  /* The comment a rail collapses: its button and its own stretch of the line light up with the replies'. */
   & tr.comtr td.default a.togg:hover::after,
-  & tr.comtr.phn-hot-root a.togg::after {
+  & tr.comtr.phn-hot-root td.default a.togg:not([n="1"])::after {
     background: var(--phn-accent);
+  }
+
+  & tr.comtr.phn-hot-root td.default a.togg {
+    --phn-knob: var(--phn-accent);
   }
 
   & tr.comtr.coll td.default a.togg::before {
