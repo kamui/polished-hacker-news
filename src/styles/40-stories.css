@@ -111,6 +111,7 @@ html.phn {
   }
 
   & .sitebit a:hover .sitestr {
+    color: var(--phn-accent);
     text-decoration: underline;
   }
 
@@ -129,8 +130,9 @@ html.phn {
     font-size: var(--phn-small);
   }
 
+  /* Grey like HN's own, so the title leads the row; orange is kept for hover. */
   & .sitebit .sitestr {
-    color: var(--phn-accent);
+    color: var(--phn-muted);
     font-size: var(--phn-small);
     font-weight: 400;
     letter-spacing: 0;
