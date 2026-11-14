@@ -25,6 +25,10 @@ Polished Hacker News is an independent project. It is not affiliated with Y Comb
   "OP" tag on the submitter's comments, a polish-tin tab icon and header logo
   you can switch off, and one click back to the original design.
 
+## Install
+
+Get it from the [Chrome Web Store](https://chromewebstore.google.com/detail/polished-hacker-news/cnpddmnegjilglmonidfbjflhfhahepg). Edge can install it from there too, once you allow extensions from other stores when Edge asks.
+
 ## Install from source
 
 Requires [Bun](https://bun.sh) and Chrome or Edge 133 or later.
