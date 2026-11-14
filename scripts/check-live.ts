@@ -30,7 +30,7 @@ function check(name: string, ok: boolean, detail = ""): void {
 /** HN rate-limits rapid page loads with a 503, so a load is paced and retried after a growing pause. */
 async function open(page: Page, path: string): Promise<void> {
   let problem = "";
-  for (const pause of [0, 8_000, 25_000]) {
+  for (const pause of [0, 30_000, 90_000]) {
     await page.waitForTimeout(pause + 1_500);
     const response = await page.goto(SITE + path, { waitUntil: "load", timeout: 45_000 }).catch(() => null);
     const text = (await page.locator("body").innerText().catch(() => "")).slice(0, 200);
