@@ -27,7 +27,7 @@ html.phn {
   --phn-muted: #aba499;
   --phn-faint: #857f76;
   --phn-line: #2a2724;
-  --phn-rail: #3a3632;
+  --phn-rail: #48433e;
   --phn-accent: #ff751a;
   --phn-accent-soft: rgb(255 117 26 / 0.16);
   --phn-new: #93a8ff;
@@ -46,7 +46,7 @@ html.phn {
     --phn-muted: #a3a5ab;
     --phn-faint: #8a8d94;
     --phn-line: #2c2e34;
-    --phn-rail: #3a3d45;
+    --phn-rail: #4a4d56;
     --phn-accent: #ff7a33;
     --phn-accent-soft: rgb(255 122 51 / 0.16);
     --phn-new: #a1b3ff;
@@ -62,7 +62,7 @@ html.phn {
     --phn-muted: #9eabbc;
     --phn-faint: #8a96a9;
     --phn-line: #2e3848;
-    --phn-rail: #3c4759;
+    --phn-rail: #4b576b;
     --phn-accent: #ff8a4c;
     --phn-accent-soft: rgb(255 138 76 / 0.16);
     --phn-new: #9fc6ff;
@@ -82,7 +82,7 @@ html.phn {
     --phn-muted: #525359;
     --phn-faint: #6c6d74;
     --phn-line: #e8e8e5;
-    --phn-rail: #dbdbd7;
+    --phn-rail: #b4b4ad;
     --phn-accent: #c24800;
     --phn-accent-soft: rgb(194 72 0 / 0.11);
     --phn-new: #3a52d4;
@@ -102,7 +102,7 @@ html.phn {
     --phn-muted: #55554e;
     --phn-faint: #696960;
     --phn-line: #e1e1d5;
-    --phn-rail: #d3d3c5;
+    --phn-rail: #adad9e;
     --phn-accent: #b84400;
     --phn-accent-soft: rgb(255 102 0 / 0.13);
     --phn-new: #3a52d4;
