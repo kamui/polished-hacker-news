@@ -15,6 +15,19 @@ export function keepKarma(): void {
   if (me && karma) me.dataset.phnKarma = karma;
 }
 
+/** Swaps HN's tab icon for the extension's, at the two sizes browsers draw tabs with. */
+export function useOwnFavicon(): void {
+  for (const link of document.querySelectorAll('link[rel~="icon"]')) link.remove();
+  for (const size of [16, 32]) {
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/png";
+    link.setAttribute("sizes", `${size}x${size}`);
+    link.href = chrome.runtime.getURL(`icons/icon-${size}.png`);
+    document.head.append(link);
+  }
+}
+
 const DOWN_KEY = "phn:down";
 
 /**

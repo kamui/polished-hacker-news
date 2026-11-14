@@ -44,7 +44,7 @@
       local: area("local"),
       onChanged: { addListener: (listener) => listeners.add(listener) },
     },
-    runtime: { getManifest: () => MANIFEST },
+    runtime: { getManifest: () => MANIFEST, getURL: (path) => `/__preview/${path}` },
   };
 
   const events = new EventSource("/__preview/events");

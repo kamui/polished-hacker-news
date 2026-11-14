@@ -63,6 +63,12 @@ async function frontPage(page: Page): Promise<string | undefined> {
   check("footer search form", (await page.locator('form[action*="algolia"]:not(.phn-search)').count()) === 1);
   check("search and settings buttons mounted", (await visible(page, ".phn-icon-btn")) === 2);
   check("page heading added", (await visible(page, ".phn-heading h1")) === 1);
+  const favicons = await page.evaluate(async () => {
+    const links = [...document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]')];
+    const loaded = await Promise.all(links.map((link) => fetch(link.href).then((r) => r.ok, () => false)));
+    return { own: links.filter((link) => link.href.startsWith("chrome-extension://")).length, total: links.length, loaded: loaded.every(Boolean) };
+  });
+  check("tab icon replaced", favicons.own === 2 && favicons.total === 2 && favicons.loaded, JSON.stringify(favicons));
   check("no sideways overflow on lists", await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
 
   return page.evaluate(() => {
