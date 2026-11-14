@@ -458,6 +458,11 @@ html.phn {
   & .commtext.cce { opacity: 0.34; }
   & .commtext.cdd { opacity: 0.28; }
 
+  /* HN caps comments at a fixed width per screen size; the column here already follows the page width. */
+  & .comment {
+    max-width: none;
+  }
+
   /* On narrow screens HN truncates comment links to 200px; let them wrap instead. */
   & table.comment-tree .commtext a {
     display: inline;
@@ -467,11 +472,6 @@ html.phn {
 
   & .commtext p {
     margin: 0.7em 0 0;
-  }
-
-  /* About 75 characters a line, however wide the page is set; in em so it follows the text size. */
-  & :is(.commtext, .toptext) {
-    max-width: var(--phn-measure);
   }
 
   & .commtext pre {
