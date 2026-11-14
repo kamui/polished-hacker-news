@@ -1,0 +1,31 @@
+name: Daily check
+
+# Once a day, to notice when Hacker News changes the markup this extension depends on. Runs
+# the full live-site check, signed in. A failed scheduled run emails whoever last edited this
+# file.
+on:
+  schedule:
+    - cron: "17 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - name: Install Chromium
+        run: bun x playwright-core install --with-deps chromium
+      # The account only views pages and upvotes then un-votes one story; the check blocks any
+      # other write. Without the cookie the logged-in checks are skipped.
+      - name: Check against the live site, signed in
+        run: bun run scripts/check-live.ts
+        env:
+          HN_USERNAME: ${{ vars.HN_USERNAME }}
+          HN_COOKIE: ${{ secrets.HN_COOKIE }}

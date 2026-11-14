@@ -44,16 +44,20 @@ Open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, an
 | `bun run dev` | Rebuilds `dist/` on change, for use with a loaded unpacked extension. |
 | `bun test` | Unit tests. |
 | `bun run typecheck` | Type-checks the project. |
-| `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. A GitHub Action runs this daily. |
+| `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. GitHub Actions run this on relevant commits and daily. |
 | `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store. |
 | `bun run icons` | Re-renders the icon PNGs from `src/assets/icon.svg` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
 
 ## Daily check against the live site
 
-Hacker News changes its markup without notice, so `.github/workflows/check.yml` runs
-`scripts/check-live.ts` once a day, as well as on every push. It loads the built extension in
-Chromium against the real site and fails if something the extension depends on has moved:
-story and comment authors, vote arrows, comment depth, the collapse toggle, the login form.
+Hacker News changes its markup without notice, so two workflows run `scripts/check-live.ts`,
+which loads the built extension in Chromium against the real site and fails if something the
+extension depends on has moved: story and comment authors, vote arrows, comment depth, the
+collapse toggle, the login form.
+
+- `check.yml` runs the logged-out checks, with the type check and unit tests, on every commit
+  that touches the extension's code.
+- `check-daily.yml` runs the full check, signed in, once a day.
 
 To include the logged-in pages, use an account kept for this purpose. Sign in to it in a
 browser, copy the value of the `user` cookie for news.ycombinator.com, and add it under the
