@@ -320,10 +320,12 @@ html.phn:not([op]) {
   }
 
   /* Sized like the main header's wordmark. */
+  /* Spaced to land the wordmark and nav exactly where the main header draws them. */
   & .phn-bare-header .phn-home {
     align-self: center;
+    gap: 12px;
     min-height: var(--phn-header);
-    margin: 0 14px 0 0;
+    margin: 0 18px 0 0;
     font-size: 15px;
   }
 
@@ -370,6 +372,7 @@ html.phn:not([op]) {
     }
 
     & .phn-bare-header .phn-home {
+      gap: 10px;
       font-size: 17px;
     }
 
