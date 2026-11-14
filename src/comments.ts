@@ -87,6 +87,9 @@ function toggle(row: HTMLTableRowElement): void {
   if (row.getBoundingClientRect().top < 0) row.scrollIntoView({ block: "start" });
 }
 
+/** The first indent level drawn with --phn-deep-step; the stylesheet's rails use the same 4. */
+const DEEP_FROM = 4;
+
 /** The comment a thread rail under the pointer belongs to: an ancestor's line, or the row's own gutter. */
 function railOwner(target: Element, clientX: number): HTMLTableRowElement | null {
   const row = target.closest<HTMLTableRowElement>("tr.comtr");
@@ -98,8 +101,13 @@ function railOwner(target: Element, clientX: number): HTMLTableRowElement | null
   if (!indent || depth === 0) return null;
   const box = indent.getBoundingClientRect();
   if (box.width === 0) return null;
-  const level = Math.min(depth - 1, Math.max(0, Math.floor(((clientX - box.left) / box.width) * depth)));
-  return ancestorAt(row, level);
+  const style = getComputedStyle(indent);
+  const step = Number.parseFloat(style.getPropertyValue("--phn-step"));
+  const deepStep = Number.parseFloat(style.getPropertyValue("--phn-deep-step"));
+  const x = clientX - box.left;
+  const level =
+    x < DEEP_FROM * step ? Math.floor(x / step) : DEEP_FROM + Math.floor((x - DEEP_FROM * step) / deepStep);
+  return ancestorAt(row, Math.min(depth - 1, Math.max(0, level)));
 }
 
 let hotRails: HTMLElement[] = [];
