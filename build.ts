@@ -17,6 +17,7 @@ const cssIcons: Record<string, { file: string; filled?: boolean }> = {
   "up-fill": { file: "triangle", filled: true },
   reply: { file: "message-circle" },
   logout: { file: "log-out" },
+  clear: { file: "x" },
 };
 
 async function fontFaces(): Promise<string> {

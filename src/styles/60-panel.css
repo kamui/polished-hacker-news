@@ -36,6 +36,19 @@ html.phn {
     font-size: 15px;
   }
 
+  & .phn-search input::-webkit-search-cancel-button {
+    width: 16px;
+    height: 16px;
+    background: var(--phn-muted);
+    mask: var(--phn-i-clear) center / contain no-repeat;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  & .phn-search input::-webkit-search-cancel-button:hover {
+    background: var(--phn-text);
+  }
+
   & .phn-panel button {
     font: inherit;
     color: inherit;
@@ -118,6 +131,16 @@ html.phn {
     appearance: none;
   }
 
+  & .phn-range input:focus-visible {
+    outline: 0;
+  }
+
+  & .phn-range input:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 3px var(--phn-surface),
+      0 0 0 5px var(--phn-accent);
+  }
+
   & .phn-group {
     margin-top: 16px;
     padding-top: 14px;
@@ -144,7 +167,7 @@ html.phn {
     width: 40px;
     height: 40px;
     padding: 0;
-    border: 1.5px solid var(--phn-rail);
+    border: 1.5px solid var(--phn-faint);
     border-radius: 50%;
     background: var(--phn-swatch);
     box-shadow: inset 0 0 0 3px var(--phn-surface);

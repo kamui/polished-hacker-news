@@ -113,6 +113,13 @@ export function mountPanel(
     button.setAttribute("aria-label", `${THEME_NAMES[theme]} theme`);
     button.style.setProperty("--phn-swatch", THEME_SWATCHES[theme]);
     button.addEventListener("click", () => change(withPickedTheme(settings, theme)));
+    // The label beside "Theme" names the swatch under the pointer or focus, then the chosen one again.
+    for (const type of ["pointerenter", "focus"]) {
+      button.addEventListener(type, () => (themeName.textContent = THEME_NAMES[theme]));
+    }
+    for (const type of ["pointerleave", "blur"]) {
+      button.addEventListener(type, () => (themeName.textContent = THEME_NAMES[currentTheme(settings)]));
+    }
     renderers.push((s) => button.setAttribute("aria-pressed", String(currentTheme(s) === theme)));
     swatches.append(button);
   }

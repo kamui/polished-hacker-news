@@ -27,7 +27,9 @@ export function attachPopover(button: HTMLElement, panel: HTMLElement, onOpen?: 
     const anchor = button.getBoundingClientRect();
     const viewport = document.documentElement.clientWidth;
     panel.style.top = `${anchor.bottom + 10}px`;
-    panel.style.right = `${Math.min(Math.max(12, viewport - anchor.right), viewport - panel.offsetWidth - 12)}px`;
+    const free = viewport - panel.offsetWidth;
+    // On a phone the panel nearly fills the width, so it is centred rather than hung from the button.
+    panel.style.right = `${free < 120 ? free / 2 : Math.min(Math.max(12, viewport - anchor.right), free - 12)}px`;
     onOpen?.();
   };
 
