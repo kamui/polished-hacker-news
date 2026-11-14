@@ -24,7 +24,7 @@ html.phn {
   }
 
   & tr.athing.submission > td.votelinks {
-    --phn-arrow: 15px;
+    --phn-arrow: 16px;
     width: 38px;
     min-width: 38px;
   }
@@ -229,11 +229,18 @@ html.phn {
 
   /* The story at the top of its comment page. */
   & table.fatitem {
+    --phn-fat-title: calc(var(--phn-size) * 1.7);
     margin: 22px 0 6px;
   }
 
+  @media (max-width: 640px) {
+    & table.fatitem {
+      --phn-fat-title: calc(var(--phn-size) * 1.4);
+    }
+  }
+
   & .fatitem .titleline {
-    font-size: calc(var(--phn-size) * 1.7);
+    font-size: var(--phn-fat-title);
     font-weight: 680;
     line-height: 1.18;
     letter-spacing: -0.02em;
@@ -244,7 +251,7 @@ html.phn {
   }
 
   & .fatitem tr.athing.submission .votearrow {
-    margin-top: calc((var(--phn-size) * 1.7 * 1.18 - var(--phn-arrow)) / 2);
+    margin-top: calc((var(--phn-fat-title) * 1.18 - var(--phn-arrow)) / 2);
   }
 
   & .fatitem tr.athing.submission > td {

@@ -97,7 +97,7 @@ html.phn {
   & tr.comtr td.votelinks {
     width: var(--phn-step);
     min-width: var(--phn-step);
-    padding: 0 0 12px;
+    padding: 0 0 10px;
     vertical-align: bottom;
     visibility: visible;
   }
@@ -123,9 +123,9 @@ html.phn {
   }
 
   & tr.comtr td.votelinks .votearrow {
-    width: 20px;
-    height: 20px;
-    margin: 0;
+    width: 18px;
+    height: 18px;
+    margin: 1px;
   }
 
   /* max-width: 0 stops long unbroken text from stretching the table past the column. */
@@ -133,7 +133,7 @@ html.phn {
     position: relative;
     width: 100%;
     max-width: 0;
-    padding: 11px 0 12px 6px;
+    padding: 11px 0 10px 6px;
   }
 
   & td.default > div:first-child {
@@ -318,6 +318,16 @@ html.phn {
     --phn-knob: var(--phn-text);
   }
 
+  /* The link is the whole gutter; the ring goes on the round button a reader recognises. */
+  & tr.comtr td.default a.togg:focus-visible {
+    outline: 0;
+  }
+
+  & tr.comtr td.default a.togg:focus-visible::before {
+    outline: 2px solid var(--phn-accent);
+    outline-offset: 2px;
+  }
+
   /* The comment a rail collapses: its button and its own stretch of the line light up with the replies'. */
   & tr.comtr td.default a.togg:hover::after,
   & tr.comtr.phn-hot-root td.default a.togg:not([n="1"])::after {
@@ -391,7 +401,7 @@ html.phn {
     display: flex;
     align-items: center;
     min-height: 26px;
-    margin-top: 8px;
+    margin-top: 5px;
     padding-left: 32px;
     font-family: var(--phn-ui);
     font-size: var(--phn-small);
