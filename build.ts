@@ -3,7 +3,8 @@ import { join } from "node:path";
 
 const root = import.meta.dir;
 const out = join(root, "dist");
-const FONT_URL = "chrome-extension://__MSG_@@extension_id__/fonts/";
+const EXT_URL = "chrome-extension://__MSG_@@extension_id__/";
+const FONT_URL = `${EXT_URL}fonts/`;
 
 const fontPackages = ["@fontsource-variable/inter", "@fontsource-variable/source-serif-4"];
 /** The "opsz" files carry both the weight and optical-size axes, which font-optical-sizing needs. */
@@ -35,13 +36,16 @@ async function fontFaces(): Promise<string> {
   return faces.join("\n");
 }
 
+/** HN's Content-Security-Policy allows no data: images, so the mask icons are files in the package. */
 async function iconVariables(): Promise<string> {
+  await mkdir(join(out, "ui"), { recursive: true });
   const lines = await Promise.all(
     Object.entries(cssIcons).map(async ([name, { file, filled }]) => {
       const path = join(root, "node_modules/lucide-static/icons", `${file}.svg`);
       let svg = (await Bun.file(path).text()).replace(/<!--[\s\S]*?-->/g, "").replace(/\s+/g, " ").trim();
       if (filled) svg = svg.replace('fill="none"', 'fill="black"');
-      return `  --phn-i-${name}: url("data:image/svg+xml,${encodeURIComponent(svg)}");`;
+      await Bun.write(join(out, "ui", `${name}.svg`), svg);
+      return `  --phn-i-${name}: url("${EXT_URL}ui/${name}.svg");`;
     }),
   );
   return `html.phn {\n${lines.join("\n")}\n}`;

@@ -24,7 +24,7 @@ const ORIGIN = "https://news.ycombinator.com";
 const PORT = Number(process.env.PORT ?? 4319);
 const PAGE_TTL_MS = 60_000;
 const ASSET_TTL_MS = 24 * 3600_000;
-const FONT_URL = "chrome-extension://__MSG_@@extension_id__/fonts/";
+const EXT_URL = "chrome-extension://__MSG_@@extension_id__/";
 
 const cookieValue = process.env.HN_COOKIE?.trim().replace(/^user=/, "");
 const COOKIE = cookieValue ? `user=${cookieValue}` : undefined;
@@ -81,10 +81,10 @@ async function extensionFile(name: string): Promise<Response> {
     return new Response(`const MANIFEST = ${manifest};\n${shim}`, { headers: { ...noStore, "content-type": "text/javascript" } });
   }
   if (name === "content.css") {
-    const css = (await Bun.file(join(dist, name)).text()).replaceAll(FONT_URL, "/__preview/fonts/");
+    const css = (await Bun.file(join(dist, name)).text()).replaceAll(EXT_URL, "/__preview/");
     return new Response(css, { headers: { ...noStore, "content-type": "text/css" } });
   }
-  if (!/^(early\.js|content\.js|fonts\/[\w.-]+\.woff2)$/.test(name)) return new Response("Not found", { status: 404 });
+  if (!/^(early\.js|content\.js|fonts\/[\w.-]+\.woff2|icons\/icon-\d+\.png|ui\/[\w-]+\.svg)$/.test(name)) return new Response("Not found", { status: 404 });
   return new Response(Bun.file(join(dist, name)), { headers: noStore });
 }
 

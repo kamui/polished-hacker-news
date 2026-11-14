@@ -235,6 +235,10 @@ await context.route(`${SITE}**`, (route) => (route.request().method() === "GET" 
 const page = context.pages()[0] ?? (await context.newPage());
 const pageErrors: string[] = [];
 page.on("pageerror", (error) => pageErrors.push(String(error)));
+const blocked: string[] = [];
+page.on("console", (message) => {
+  if (/Content Security Policy/i.test(message.text())) blocked.push(message.text());
+});
 
 let unreachable: string | undefined;
 let account: SignIn = "no account configured";
@@ -247,6 +251,7 @@ try {
   account = await signIn(page);
   if (account === "signed in") await loggedInPages(page, story);
   check("no script errors on the page", pageErrors.length === 0, pageErrors.join("; ").slice(0, 200));
+  check("nothing blocked by the site's Content-Security-Policy", blocked.length === 0, blocked.join("; ").slice(0, 300));
 } catch (error) {
   if (!(error instanceof Unreachable)) throw error;
   unreachable = error.message;
