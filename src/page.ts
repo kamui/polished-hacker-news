@@ -103,15 +103,19 @@ export function addListHeading(): void {
 }
 
 /**
- * On wide screens each story's domain moves from after its title to the start of the line
- * under it, so a long title never pushes the domain onto a line of its own and every row has
- * the same shape. Phone titles wrap anyway and the domain follows them, which leaves the line
- * under the title room to fit on one row, so there it stays put.
+ * Each story's domain moves from after its title to the start of the line under it, so a long
+ * title never pushes the domain onto a line of its own and every row has the same shape.
  * HN lists the story's actions (hide, past, favorite) before its comment count; they go after
  * it, with hide last, so the count sits beside the age and Tab follows the line as drawn.
+ * Phones leave hide and past out of lists, behind a button at the end of the line.
  */
 export function orderSublines(): void {
-  const domains: [site: Element, title: Element, meta: Element][] = [];
+  for (const line of document.querySelectorAll(".subline")) {
+    const hide = line.querySelector(':scope > a[href^="hide?"]');
+    line.append(...line.querySelectorAll(':scope > :is(a.hnpast, a[href^="fave?"], a[href^="flag?"], a[href^="vouch?"])'));
+    if (hide) line.append(hide);
+  }
+
   for (const story of storyRows()) {
     const site = story.querySelector(".titleline > .sitebit");
     const row = subtextRow(story);

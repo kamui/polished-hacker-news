@@ -33,7 +33,7 @@ html.phn {
     width: 20px;
     height: 20px;
     margin: 0 auto;
-    background: var(--phn-faint);
+    background: var(--phn-muted);
     mask: var(--phn-i-up) center / contain no-repeat;
     transform: none;
   }
@@ -150,10 +150,18 @@ html.phn {
     line-height: 1.4;
   }
 
+  /*
+   * Each item draws the dot that separates it from the one before inside the gap it follows.
+   * The line clips its own left edge, so wherever the line wraps, the dot that would start the
+   * new line falls outside and only dots between items show. The clip margin keeps focus rings.
+   */
   & .subline {
+    --phn-meta-gap: 15px;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
+    overflow-x: clip;
+    overflow-clip-margin: 4px;
   }
 
   & .subline > *,
@@ -188,27 +196,38 @@ html.phn {
     margin-right: 14px;
   }
 
-  /* A dot after the domain keeps it from running into the points and username. */
-  & .subline > .sitebit {
-    margin-right: 7px;
-  }
-
-  & .subline > .sitebit::after {
-    content: "·";
-    margin-left: 7px;
-    color: var(--phn-faint);
-    font-size: var(--phn-small);
-  }
-
   & .subline > :is(.score, a[href^="item?id="]) {
     font-variant-numeric: tabular-nums;
   }
 
-  /* Narrow, a little less space between items usually keeps the line from wrapping. */
+  /*
+   * Narrow, the facts split into the same two lines on every story: where it's from, who posted
+   * it and when, then its points, comments and actions.
+   */
   @media (max-width: 640px) {
-    & .subline > *,
-    & .subline [id^="unv_"] > a {
-      margin-right: 8px;
+    & .subline {
+      --phn-meta-gap: 13px;
+    }
+
+    & .subline > .sitebit {
+      order: -3;
+    }
+
+    & .subline > a[href^="user?id="] {
+      order: -2;
+    }
+
+    & .subline > .age {
+      order: -1;
+    }
+
+    & .subline::before {
+      content: "";
+      flex-basis: 100%;
+    }
+
+    & td.subtext > .sitebit {
+      display: block;
     }
 
     & tr.athing.submission > td.votelinks {
