@@ -73,6 +73,15 @@ story and immediately undoes it. It never posts, replies, submits, flags or hide
 non-GET request is aborted before it is sent. Without the cookie, or once the session expires,
 those checks are skipped with a warning.
 
+## Release
+
+1. In `CHANGELOG.md`, rename the HEAD section's entries to a `## <version> (<date>)` section, and start a new, empty HEAD section above it.
+2. Set the same version in `package.json` and `src/manifest.json`.
+3. Run `bun run package` to check that the files build. Look over `release/notes.md`.
+4. Commit to `main`, tag `v<version>`, and push both: `git push origin main v<version>`.
+
+Pushing the tag runs `.github/workflows/release.yml`. It checks that the tag matches the version and is on `main`, runs the type check and tests, runs `bun run package`, and publishes the GitHub release with those files. The store uploads stay manual, using the zip from the release.
+
 ## How it is built
 
 Hacker News changes its markup without notice, and extensions that rebuild the page break when
