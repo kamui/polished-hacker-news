@@ -252,10 +252,6 @@ html.phn {
     & td.default .navs > a.clicky:not(.togg, .phn-parent) {
       display: none;
     }
-
-    & td.default .navs > a.clicky.phn-parent:not(.togg) {
-      opacity: 1;
-    }
   }
 
   & td.default .navs > .onstory:empty {
@@ -625,8 +621,21 @@ html.phn {
     white-space: pre;
   }
 
-  @media (max-width: 640px) {
-    & .phn-pill-noun {
+  /* The shortcut, shown where there is a keyboard to press it on. */
+  & .phn-pill kbd {
+    min-width: 18px;
+    padding: 1px 5px;
+    border: 1px solid var(--phn-line);
+    border-radius: 5px;
+    color: var(--phn-muted);
+    font-family: var(--phn-ui);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 640px), (hover: none) {
+    & .phn-pill-noun,
+    & .phn-pill kbd {
       display: none;
     }
   }

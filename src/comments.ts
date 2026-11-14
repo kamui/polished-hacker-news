@@ -220,6 +220,10 @@ export function initNewCommentNav(): void {
   noun.textContent = newCount === 1 ? " comment" : " comments";
   next.append(label, noun);
   next.insertAdjacentHTML("beforeend", arrowDown);
+  const key = document.createElement("kbd");
+  key.textContent = "n";
+  key.setAttribute("aria-hidden", "true");
+  next.append(key);
   next.addEventListener("click", () => jump(1));
 
   const pill = document.createElement("div");
