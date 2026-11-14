@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Polished Hacker News",
   "short_name": "Polished HN",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A calm, readable Hacker News: dark themes, clear comment threads, and markers for what you've read and what's new.",
   "minimum_chrome_version": "133",
   "icons": {

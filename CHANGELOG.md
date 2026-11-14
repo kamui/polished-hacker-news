@@ -5,7 +5,12 @@ Versions match the `version` in `src/manifest.json` and the `v*` tags.
 
 ## HEAD (unreleased)
 
-[Changes since 0.0.5](https://github.com/kamui/polished-hacker-news/compare/v0.0.5...main)
+[Changes since 0.0.6](https://github.com/kamui/polished-hacker-news/compare/v0.0.6...main)
+
+## 0.0.6 (2026-11-14)
+
+[Release](https://github.com/kamui/polished-hacker-news/releases/tag/v0.0.6) ·
+[Changes since 0.0.5](https://github.com/kamui/polished-hacker-news/compare/v0.0.5...v0.0.6)
 
 ### Fixed
 
