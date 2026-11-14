@@ -257,7 +257,7 @@ html.phn {
   & .subline > .phn-fresh {
     order: 1;
     margin-left: -6px;
-    padding: 1px 7px;
+    padding: 0 7px;
     border-radius: 999px;
     background: var(--phn-new-soft);
     color: var(--phn-new) !important;
