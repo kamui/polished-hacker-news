@@ -32,10 +32,10 @@ if (manifest.version !== version) fail(`package.json is ${version} but src/manif
 const changelog = await Bun.file(join(root, "CHANGELOG.md")).text();
 const section = changelog.split(/^## /m).find((part) => part.startsWith(`${version} (`));
 if (!section) fail(`CHANGELOG.md has no "## ${version} (date)" section`);
-const changes = section
-  .split("\n")
-  .slice(1)
-  .filter((line) => !line.startsWith("[Release]("))
+const body = section.split("\n").slice(1);
+const compare = body.find((line) => line.startsWith("[Changes since"));
+const changes = body
+  .filter((line) => !line.startsWith("[Release](") && line !== compare)
   .join("\n")
   .trim();
 
@@ -57,7 +57,7 @@ for (const image of storeImages) await copyFile(join(root, "store", image), join
 await Bun.write(
   join(out, "notes.md"),
   `${changes}
-
+${compare ? `\n${compare}\n` : ""}
 ${storeImages.map((image) => `\`${image}\``).join(" and ")} are the images for the store listing; they are not needed to use the extension.
 
 **Install.** Until the store listings are approved, download \`${name}-${version}.zip\`, unzip it, open \`chrome://extensions\` (or \`edge://extensions\`), turn on Developer mode, choose **Load unpacked** and select the unzipped folder.
