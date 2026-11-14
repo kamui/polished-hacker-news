@@ -12,6 +12,19 @@ html.phn {
     width: 100%;
   }
 
+  /*
+   * On the threads page HN's markup leaves the comment rows directly under the page table,
+   * outside the content cell, so they need the reading column applied to them directly.
+   */
+  & #hnmain > tbody > tr.comtr > td,
+  & #hnmain > tbody > tr.comtr ~ tr:not(.comtr, :last-child) > td {
+    display: block;
+    box-sizing: content-box;
+    max-width: var(--phn-width);
+    margin: 0 auto;
+    padding: 0 var(--phn-gutter);
+  }
+
   & tr.comtr {
     scroll-margin-top: calc(var(--phn-header) + 8px);
   }
@@ -223,6 +236,43 @@ html.phn {
 
   & td.default .navs > .onstory:empty {
     display: none;
+  }
+
+  /* "| on: Story title" on comment lists: drop HN's leading pipe, keep the words. */
+  & td.default .navs > .onstory {
+    font-size: 0;
+  }
+
+  & td.default .navs > .onstory::before {
+    content: "on";
+    margin-right: 6px;
+    color: var(--phn-faint);
+    font-size: var(--phn-small);
+  }
+
+  & td.default .navs > .onstory > a {
+    font-size: var(--phn-small);
+  }
+
+  /* Comment lists (newest comments, best comments): flat rows with no thread around them. */
+  & table:not(.fatitem) > tbody > tr.athing:not(.submission, .comtr) > td.default {
+    width: 100%;
+    padding: 14px 0 16px 4px;
+    border-top: 1px solid var(--phn-line);
+  }
+
+  & table:not(.fatitem) > tbody > tr.athing:not(.submission, .comtr) > td.votelinks {
+    width: 30px;
+    min-width: 30px;
+    padding-top: 17px;
+    border-top: 1px solid var(--phn-line);
+    vertical-align: top;
+  }
+
+  & table:not(.fatitem) > tbody > tr.athing:not(.submission, .comtr) > td.votelinks .votearrow {
+    width: 16px;
+    height: 16px;
+    margin: 0;
   }
 
   /*

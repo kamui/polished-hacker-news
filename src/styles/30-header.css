@@ -14,7 +14,8 @@ html.phn {
   & #hnmain > tbody > tr:first-child > td > table {
     display: block;
     box-sizing: border-box;
-    max-width: var(--phn-width);
+    /* Wider than a narrow reading column: logged in, the nav gains links and the account sits beside it. */
+    max-width: max(var(--phn-width), 1080px);
     margin: 0 auto;
     padding: 0 !important;
   }
@@ -39,9 +40,12 @@ html.phn {
     line-height: 1 !important;
   }
 
+  /* The nav never wraps; if the window is too narrow for it, it scrolls sideways within its cell. */
   & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
     flex: 1;
     min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
   & #hnmain > tbody > tr:first-child img {
@@ -54,7 +58,7 @@ html.phn {
   /* HN separates nav links with bare " | " text; zero-size type hides it without touching the markup. */
   & .pagetop {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     font-family: var(--phn-ui);
     font-size: 0;
@@ -158,6 +162,16 @@ html.phn {
     cursor: pointer;
   }
 
+  /* In the account cell the buttons sit before the username or login link; the markup order is unchanged. */
+  & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) > .phn-icon-btn {
+    order: -1;
+    margin-left: 0;
+  }
+
+  & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) > .phn-settings-btn {
+    margin-right: 6px;
+  }
+
   /* On pages whose header has a title but no login cell, this pushes the buttons to the right end. */
   & .pagetop + .phn-icon-btn {
     margin-left: auto;
@@ -186,15 +200,6 @@ html.phn {
   }
 
   @media (max-width: 640px) {
-    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    & .pagetop {
-      flex-wrap: nowrap;
-    }
-
     & .pagetop a {
       padding-inline: 7px;
     }

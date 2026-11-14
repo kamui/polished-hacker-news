@@ -1,6 +1,6 @@
 html.phn {
   & tr.athing.submission > td {
-    padding-top: 13px;
+    padding-top: var(--phn-row-gap);
     vertical-align: top;
   }
 
@@ -15,7 +15,7 @@ html.phn {
     color: var(--phn-faint);
     font-size: var(--phn-small);
     font-variant-numeric: tabular-nums;
-    line-height: calc(var(--phn-title) * 1.32);
+    line-height: calc(var(--phn-title) * var(--phn-title-leading));
     text-align: right;
   }
 
@@ -46,11 +46,16 @@ html.phn {
   & tr.athing.submission .votearrow {
     width: var(--phn-arrow);
     height: var(--phn-arrow);
-    margin: calc((var(--phn-title) * 1.32 - var(--phn-arrow)) / 2) 14px 0 9px;
+    margin: calc((var(--phn-title) * var(--phn-title-leading) - var(--phn-arrow)) / 2) 14px 0 9px;
   }
 
   & a:hover > .votearrow {
     background: var(--phn-accent);
+  }
+
+  /* HN puts an asterisk where the arrow would be on your own posts. */
+  & td.votelinks font {
+    color: var(--phn-accent);
   }
 
   /* HN hides an arrow once you vote. Show it filled instead, and let a click undo the vote. */
@@ -75,7 +80,7 @@ html.phn {
     font-family: var(--phn-font);
     font-size: var(--phn-title);
     font-weight: 500;
-    line-height: 1.32;
+    line-height: var(--phn-title-leading);
     letter-spacing: -0.006em;
     text-wrap: balance;
   }
@@ -114,7 +119,7 @@ html.phn {
    * touching the markup, and the links get their size back individually.
    */
   & td.subtext {
-    padding: 5px 0 13px;
+    padding: 5px 0 var(--phn-row-gap);
     color: var(--phn-muted);
     font-family: var(--phn-ui);
     font-size: 0;
@@ -155,8 +160,10 @@ html.phn {
     color: var(--phn-faint);
   }
 
+  /* Last in the row and shown on hover, so it leaves no gap among the links that stay visible. */
   & .subline > a[href^="hide?"],
   & td.subtext > a[href^="hide?"] {
+    order: 3;
     opacity: 0;
   }
 

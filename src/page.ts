@@ -8,10 +8,10 @@ const HEADINGS: Record<string, string> = {
   jobs: "Jobs",
 };
 
-/** HN prints karma as bare text beside the username, which the nav styling hides; keep it as an attribute. */
+/** HN prints karma beside the username as "(<span id="karma">123</span>)", which the nav styling hides; keep it as an attribute. */
 export function keepKarma(): void {
   const me = document.querySelector<HTMLAnchorElement>("a#me");
-  const karma = me?.nextSibling?.textContent?.match(/\((\d+)\)/)?.[1];
+  const karma = document.getElementById("karma")?.textContent?.trim();
   if (me && karma) me.dataset.phnKarma = karma;
 }
 
@@ -58,5 +58,5 @@ export function addListHeading(): void {
     });
     heading.append(today);
   }
-  list.before(heading);
+  list.parentElement?.prepend(heading);
 }

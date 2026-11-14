@@ -153,6 +153,32 @@ html.phn {
     height: 9em;
   }
 
+  /* Editing a comment: HN asks for a tall box, and a long comment needs it. */
+  & #bigbox > td > form.itemform {
+    max-width: none;
+  }
+
+  & #bigbox > td > form.itemform textarea {
+    height: min(28em, 60vh);
+    font-size: var(--phn-size);
+    line-height: var(--phn-leading);
+  }
+
+  /* Delete confirmation: only the destructive answer keeps the accent. */
+  & form[action="/xdelete"] {
+    color: var(--phn-text);
+  }
+
+  & form[action="/xdelete"] input[type="submit"] {
+    margin: 14px 8px 0 0;
+  }
+
+  & form[action="/xdelete"] input[type="submit"][value="No"] {
+    border: 1px solid var(--phn-line);
+    background: var(--phn-raised);
+    color: var(--phn-text);
+  }
+
   /* Replying: the comment being answered reads as a quoted block above a roomy editor. */
   & .fatitem tr.athing:not(.submission) > td.default {
     padding: 14px 16px;
@@ -172,4 +198,142 @@ html.phn {
   & .fatitem form[action="comment"] input[type="submit"] {
     margin-top: 2px;
   }
+}
+
+/*
+ * Pages HN serves outside its usual frame, none of which carry the page-type attribute:
+ * the guidelines, FAQ and other documents (a 500px table under a Y Combinator banner), and
+ * one-line messages such as "No such item." with nothing but text in the body.
+ */
+html.phn:not([op]) {
+  & body > center > table {
+    width: min(680px, 100% - 40px);
+    margin: 32px auto 64px;
+  }
+
+  & body > center > table td[bgcolor] {
+    background: transparent;
+    color: var(--phn-text);
+    font-family: var(--phn-font);
+    font-size: var(--phn-size);
+    line-height: var(--phn-leading);
+  }
+
+  & body > center > br,
+  & body > center > table td[bgcolor] > br {
+    display: none;
+  }
+
+  /* The banner is a white image sized for a light page. */
+  & body > center > table img[src="yc500.gif"] {
+    display: none;
+  }
+
+  & body > center > table td[bgcolor] b {
+    color: var(--phn-text);
+    font-weight: 680;
+  }
+
+  & body > center > table td[bgcolor] > b {
+    display: block;
+    margin: 1.9em 0 0.5em;
+    font-size: 1.15em;
+    font-weight: 680;
+    line-height: 1.3;
+  }
+
+  & body > center > table td[bgcolor] > b:first-of-type {
+    margin-top: 0.6em;
+    font-size: 1.9em;
+    letter-spacing: -0.02em;
+  }
+
+  & body > center > table p {
+    margin: 0.8em 0 0;
+  }
+
+  & body > center > table a:link,
+  & body > center > table a:visited {
+    color: var(--phn-accent);
+    text-decoration: underline;
+    text-decoration-color: var(--phn-accent-soft);
+    text-underline-offset: 0.18em;
+  }
+
+  & body:not(:has(> center, > form)) {
+    box-sizing: border-box;
+    width: min(560px, 100%);
+    margin: 0 auto;
+    padding: 16vh 20px 48px;
+    color: var(--phn-muted);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  /* The password-reset page keeps its label and field as bare text in the form. */
+  & body > form:not(:has(table)) {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 550;
+    text-transform: capitalize;
+  }
+
+  & body > form > br {
+    display: none;
+  }
+}
+
+html.phn[op="leaders"] #bigbox > td > table {
+  width: auto;
+  margin: 24px auto 0;
+}
+
+html.phn[op="leaders"] #bigbox > td > table td {
+  padding: 3px 14px 3px 0;
+}
+
+html.phn #bigbox > td > div[style] {
+  margin: 0 0 14px !important;
+  color: var(--phn-muted);
+  font-size: var(--phn-small);
+}
+
+html.phn #bigbox > td > div[style] a {
+  text-decoration: underline;
+  text-decoration-color: var(--phn-faint);
+  text-underline-offset: 0.18em;
+}
+
+/*
+ * Polls: each option is a small row inside the story's table, with its vote arrow, its text,
+ * and its points on a second row. The selectors are longer than usual to outrank the rules
+ * for flat comment lists, which these rows would otherwise match.
+ */
+html.phn .fatitem table:not(.fatitem) > tbody > tr.athing:not(.submission, .comtr) > td.votelinks {
+  width: 34px;
+  min-width: 34px;
+  padding: 13px 0 0;
+  border-top: 0;
+}
+
+html.phn .fatitem table:not(.fatitem) > tbody > tr.athing > td.comment {
+  padding: 10px 0 0;
+  color: var(--phn-text);
+}
+
+html.phn .fatitem table:not(.fatitem) > tbody > tr.athing + tr > td {
+  padding: 2px 0 10px;
+  border-bottom: 1px solid var(--phn-line);
+}
+
+html.phn .fatitem table:not(.fatitem) > tbody > tr.athing + tr .comhead {
+  min-height: 0;
+}
+
+html.phn .fatitem td > table:not(.fatitem) {
+  width: 100%;
+  margin-top: 10px;
+  border-top: 1px solid var(--phn-line);
 }

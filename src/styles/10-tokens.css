@@ -7,6 +7,8 @@ html.phn {
 
   --phn-size: 16px;
   --phn-leading: 1.5;
+  --phn-title-leading: calc(1.32 * var(--phn-leading) / 1.5);
+  --phn-row-gap: calc(13px * (var(--phn-leading) - 0.5));
   --phn-width: 820px;
   --phn-small: calc(var(--phn-size) * 0.84);
   --phn-title: calc(var(--phn-size) * 1.125);

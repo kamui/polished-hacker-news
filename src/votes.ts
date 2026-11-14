@@ -1,11 +1,16 @@
 type Vote = "up" | "down";
 
-/** HN marks a vote only by adding an "unvote"/"undown" link, so that link is the source of truth. */
+/**
+ * HN shows which way you voted only through an "unvote"/"undown" link. Once the undo window
+ * has passed that link is gone and just the hidden arrow remains, which is unambiguous only
+ * where there is no down arrow (stories, and comments for readers without downvote rights).
+ */
 function voteFor(id: string): Vote | undefined {
   const undo = document.getElementById(`un_${id}`)?.textContent;
   if (undo === "unvote") return "up";
   if (undo === "undown") return "down";
-  return undefined;
+  const voted = document.getElementById(`up_${id}`)?.classList.contains("nosee");
+  return voted && !document.getElementById(`down_${id}`) ? "up" : undefined;
 }
 
 function syncVote(id: string): void {
@@ -17,7 +22,9 @@ function syncVote(id: string): void {
 }
 
 export function initVotes(): void {
-  for (const undo of document.querySelectorAll('a[id^="un_"]')) syncVote(undo.id.slice(3));
+  for (const link of document.querySelectorAll('a[id^="un_"], a.nosee[id^="up_"]')) {
+    syncVote(link.id.slice(link.id.indexOf("_") + 1));
+  }
 
   // Capture phase: HN's own click handler stops the event before it could bubble to us.
   document.addEventListener(
