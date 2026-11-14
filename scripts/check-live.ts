@@ -100,6 +100,8 @@ async function storyPage(page: Page, path: string): Promise<void> {
     return {
       rows: rows.length,
       withDepth: rows.filter((row) => /^\d+$/.test(row.querySelector("td.ind")?.getAttribute("indent") ?? "")).length,
+      // HN serves dead comments with replies already collapsed, hiding the replies and naming no author.
+      shown: rows.filter((row) => !row.classList.contains("noshow")).length,
       withAuthor: rows.filter((row) => {
         const link = row.querySelector<HTMLElement>('.comhead > a[href^="user?id="]');
         return link?.textContent && link.getBoundingClientRect().width > 0;
@@ -117,7 +119,7 @@ async function storyPage(page: Page, path: string): Promise<void> {
   check("story page has a title and author", info.title && info.storyAuthor);
   check("comments found", info.rows >= 5, `${info.rows} found`);
   check("every comment has a numeric depth", info.withDepth === info.rows, `${info.withDepth}/${info.rows}`);
-  check("comment authors visible", info.withAuthor >= info.rows * 0.9, `${info.withAuthor}/${info.rows}`);
+  check("comment authors visible", info.withAuthor >= info.shown * 0.9, `${info.withAuthor}/${info.shown} shown`);
   check("every comment has a collapse toggle with a count", info.withToggle === info.rows, `${info.withToggle}/${info.rows}`);
   check("comment text present", info.withText >= info.rows * 0.9, `${info.withText}/${info.rows}`);
   check("comment ages carry a timestamp", info.withAge >= info.rows * 0.9, `${info.withAge}/${info.rows}`);
