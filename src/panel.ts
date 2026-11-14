@@ -1,5 +1,5 @@
 import settingsIcon from "lucide-static/icons/settings-2.svg" with { type: "text" };
-import { attachPopover, headerEndCell } from "./popover";
+import { attachPopover, headerEndCell, placeInHeader } from "./popover";
 import {
   RANGES,
   type RangeKey,
@@ -24,7 +24,7 @@ const THEME_NAMES: Record<Theme, string> = {
 
 const THEME_SWATCHES: Record<Theme, string> = {
   light: "#ffffff",
-  classic: "#f6f6ef",
+  classic: "linear-gradient(#ff6600 0 34%, #f6f6ef 34%)",
   slate: "#1c232f",
   dark: "#17181b",
   black: "#000000",
@@ -109,14 +109,19 @@ export function mountPanel(
   const themeName = el("span");
   const swatches = el("div", { className: "phn-swatches" });
   for (const theme of THEMES) {
-    const button = el("button", { type: "button", title: THEME_NAMES[theme] });
-    button.setAttribute("aria-label", `${THEME_NAMES[theme]} theme`);
+    const button = el("button", { type: "button", textContent: THEME_NAMES[theme] });
     button.style.setProperty("--phn-swatch", THEME_SWATCHES[theme]);
     button.addEventListener("click", () => change(withPickedTheme(settings, theme)));
-    renderers.push((s) => button.setAttribute("aria-pressed", String(currentTheme(s) === theme)));
+    renderers.push((s) => {
+      button.setAttribute("aria-pressed", String(currentTheme(s) === theme));
+      button.toggleAttribute("data-phn-other", s.matchSystem && otherTheme(s) === theme && currentTheme(s) !== theme);
+    });
     swatches.append(button);
   }
-  renderers.push((s) => (themeName.textContent = THEME_NAMES[currentTheme(s)]));
+  renderers.push((s) => {
+    const light = THEME_NAMES[s.lightTheme];
+    themeName.textContent = s.matchSystem ? `Day ${light}, night ${THEME_NAMES[s.theme]}` : THEME_NAMES[currentTheme(s)];
+  });
 
   const switchFor = (key: ToggleKey, label: string) => {
     const button = el("button", { type: "button", className: "phn-switch", role: "switch" }, [
@@ -151,11 +156,10 @@ export function mountPanel(
   toggleButton.innerHTML = settingsIcon;
   toggleButton.append(el("span", { textContent: chrome.runtime.getManifest().short_name ?? "" }));
   toggleButton.title = "Reading settings";
+  toggleButton.setAttribute("aria-label", "Reading settings");
   attachPopover(toggleButton, panel);
 
-  const headerEnd = headerEndCell();
-  if (headerEnd) headerEnd.append(toggleButton);
-  else {
+  if (!placeInHeader(toggleButton)) {
     toggleButton.classList.add("phn-floating");
     document.body.append(toggleButton);
   }
@@ -166,6 +170,11 @@ export function mountPanel(
 
 function currentTheme(s: Settings): Theme {
   return activeTheme(s, matchMedia("(prefers-color-scheme: dark)").matches);
+}
+
+/** With "match system" on, the theme waiting for the scheme the system isn't using now. */
+function otherTheme(s: Settings): Theme {
+  return activeTheme(s, !matchMedia("(prefers-color-scheme: dark)").matches);
 }
 
 /** Shown in place of the settings button while the restyle is off; one click brings it back. */

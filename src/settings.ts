@@ -125,6 +125,7 @@ export function applySettings(s: Settings): void {
   d.phnSmooth = String(s.smoothing);
   d.phnDim = String(s.dimRead);
   d.phnNew = String(s.markNew);
+  d.phnTin = String(s.tinIcon);
   root.style.setProperty("--phn-size", `${s.fontSize}px`);
   root.style.setProperty("--phn-leading", String(s.lineHeight));
   root.style.setProperty("--phn-width", `${s.width}px`);

@@ -22,6 +22,9 @@ function syncVote(id: string): void {
 }
 
 export function initVotes(): void {
+  for (const link of document.querySelectorAll('a[id^="up_"], a[id^="down_"]')) {
+    link.setAttribute("aria-label", link.id.startsWith("up_") ? "Upvote" : "Downvote");
+  }
   for (const link of document.querySelectorAll('a[id^="un_"], a.nosee[id^="up_"]')) {
     syncVote(link.id.slice(link.id.indexOf("_") + 1));
   }

@@ -17,19 +17,42 @@ html.phn {
     line-height: 1.5;
   }
 
-  &:not([op]) body:has(> form)::before {
+  /* The mark and name heading pages that have no header; see addHomeLink. */
+  & .phn-home {
+    display: flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    color: var(--phn-text) !important;
+    font-family: var(--phn-ui);
+    font-size: 16px;
+    font-weight: 680;
+    letter-spacing: -0.01em;
+    text-decoration: none !important;
+  }
+
+  & .phn-home::before {
+    content: "";
+    width: 32px;
+    height: 32px;
+    background: url("chrome-extension://__MSG_@@extension_id__/icons/icon-96.png") center / contain no-repeat;
+  }
+
+  &[data-phn-tin="false"] .phn-home::before {
     content: "Y";
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 28px;
-    border-radius: 9px;
+    border-radius: 7px;
     background: var(--phn-accent);
     color: #ffffff;
-    font-size: 24px;
+    font-size: 19px;
     font-weight: 700;
     line-height: 1;
+  }
+
+  & .phn-home:hover {
+    color: var(--phn-accent) !important;
   }
 
   &:not([op]) body > br {
@@ -198,6 +221,22 @@ html.phn {
   & .fatitem form[action="comment"] input[type="submit"] {
     margin-top: 2px;
   }
+
+  /* Inset from the right as far as the vote column insets it from the left. */
+  &[op="item"] .fatitem form[action="comment"] {
+    margin-right: var(--phn-fat-indent);
+  }
+
+  /* On a thread the box waits as one line, so the first comments start on the first screen. */
+  /* Keyed to the whole form, so Tab from the box can still reach the submit button it reveals. */
+  &[op="item"] .fatitem form[action="comment"]:not(:focus-within) textarea:placeholder-shown {
+    height: calc(var(--phn-size) * var(--phn-leading) + 26px);
+    resize: none;
+
+    & ~ :is(a, br, input[type="submit"]) {
+      display: none;
+    }
+  }
 }
 
 /*
@@ -260,14 +299,86 @@ html.phn:not([op]) {
     text-underline-offset: 0.18em;
   }
 
+  /* A one-line message: the header bar on top, the message in the reading column under it. */
   & body:not(:has(> center, > form)) {
-    box-sizing: border-box;
-    width: min(560px, 100%);
-    margin: 0 auto;
-    padding: 16vh 20px 48px;
+    margin: 0;
+    padding: 0 max(var(--phn-gutter), calc((100% - var(--phn-width)) / 2)) 48px;
     color: var(--phn-muted);
     font-size: 17px;
     line-height: 1.5;
+  }
+
+  & .phn-bare-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: var(--phn-header);
+    margin-bottom: 40px;
+    /* The rule runs the full width of the window, as the main header's does. */
+    border-bottom: 1px solid var(--phn-line);
+    border-image: linear-gradient(var(--phn-line), var(--phn-line)) 0 0 1 0 / 0 0 1px 0 / 0 100vw;
+  }
+
+  /* Sized like the main header's wordmark. */
+  /* Spaced to land the wordmark and nav exactly where the main header draws them. */
+  & .phn-bare-header .phn-home {
+    align-self: center;
+    gap: 12px;
+    min-height: var(--phn-header);
+    margin: 0 18px 0 0;
+    font-size: 15px;
+  }
+
+  & .phn-bare-nav {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  & .phn-bare-nav a {
+    display: inline-block;
+    padding: 8px;
+    border-radius: 7px;
+    color: var(--phn-muted) !important;
+    font-family: var(--phn-ui);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none !important;
+  }
+
+  & .phn-bare-nav a:hover {
+    background: var(--phn-raised);
+    color: var(--phn-text) !important;
+  }
+
+  & .phn-bare-nav a:focus-visible {
+    outline-offset: -2px;
+  }
+
+  @media (max-width: 640px) {
+    & .phn-bare-nav {
+      order: 1;
+      flex-basis: 100%;
+      margin: 3px -2px 7px;
+    }
+
+    & .phn-bare-nav a {
+      padding-inline: 6px;
+      font-size: 14px;
+    }
+
+    & .phn-bare-header .phn-home {
+      gap: 10px;
+      font-size: 17px;
+    }
+
+    & .phn-bare-header .phn-icon-btn:first-of-type {
+      margin-left: auto;
+    }
   }
 
   /* The password-reset page keeps its label and field as bare text in the form. */
@@ -336,4 +447,72 @@ html.phn .fatitem td > table:not(.fatitem) {
   width: 100%;
   margin-top: 10px;
   border-top: 1px solid var(--phn-line);
+}
+
+/* Profiles: HN's label/value table, with the username as the page heading. */
+html.phn[op="user"] #bigbox > td > table {
+  width: auto;
+  margin-top: 20px;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr > td {
+  padding: 5px 0;
+  vertical-align: baseline;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr > td:first-child {
+  width: 6.5em;
+  padding-right: 18px;
+  color: var(--phn-muted);
+  font-size: var(--phn-small);
+  text-transform: capitalize;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr.athing > td {
+  padding-bottom: 18px;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr.athing > td:first-child {
+  display: none;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr.athing > td:last-child a {
+  color: var(--phn-text);
+  font-family: var(--phn-font);
+  font-size: calc(var(--phn-size) * 1.9);
+  font-weight: 680;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td {
+  padding: 2px 0;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td > a {
+  color: var(--phn-text);
+  text-decoration: underline;
+  text-decoration-color: var(--phn-line);
+  text-underline-offset: 3px;
+}
+
+html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty + td > a:hover {
+  color: var(--phn-accent);
+  text-decoration-color: currentColor;
+}
+
+/* A phone has no room for a label column; each label sits over its value. */
+@media (max-width: 640px) {
+  html.phn[op="user"] #bigbox > td > table > tbody > tr > td {
+    display: block;
+  }
+
+  html.phn[op="user"] #bigbox > td > table > tbody > tr > td:first-child {
+    width: auto;
+    padding: 10px 0 0;
+  }
+
+  html.phn[op="user"] #bigbox > td > table > tbody > tr > td:empty {
+    display: none;
+  }
 }

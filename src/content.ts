@@ -1,7 +1,26 @@
-import { initNewCommentNav, initThreadControls, markNewComments, markStoryAuthor } from "./comments";
+import {
+  initNewCommentNav,
+  initThreadControls,
+  markNewComments,
+  markQuotes,
+  markStoryAuthor,
+  prepareCommentControls,
+} from "./comments";
 import { isItemPage, parseCount, storyIdFromUrl } from "./hn";
 import { initNewTabLinks } from "./links";
-import { addListHeading, keepKarma, rememberDownvoteSlot, setTinIcon } from "./page";
+import {
+  addHomeLink,
+  addSkipLink,
+  addListHeading,
+  fitHeader,
+  hideNavOnScroll,
+  keepKarma,
+  labelCommentBox,
+  orderSublines,
+  tidyTitleBreaks,
+  rememberDownvoteSlot,
+  setTinIcon,
+} from "./page";
 import { mountPanel, mountRestoreLink } from "./panel";
 import { mountSearch } from "./search";
 import {
@@ -22,10 +41,12 @@ async function trackComments(): Promise<void> {
   const id = storyIdFromUrl();
   const previous = id && isStory ? (await getStories([id])).get(id) : undefined;
 
-  const { maxId, newCount } = markNewComments(previous?.m);
+  const { maxId } = markNewComments(previous?.m);
   markStoryAuthor();
+  markQuotes();
+  prepareCommentControls();
   initThreadControls();
-  initNewCommentNav(newCount);
+  initNewCommentNav();
 
   if (id && isStory) {
     const count = parseCount(document.querySelector(".fatitem .subline")?.textContent) ?? 0;
@@ -51,6 +72,8 @@ async function main(): Promise<void> {
   }
 
   setTinIcon(settings.tinIcon);
+  addHomeLink();
+  addSkipLink();
   keepKarma();
   rememberDownvoteSlot();
   mountSearch();
@@ -64,6 +87,8 @@ async function main(): Promise<void> {
     },
     () => void saveAndReload({ ...settings, enabled: false }),
   );
+  fitHeader();
+  hideNavOnScroll();
   onSettingsChanged((next) => {
     settings = next;
     applySettings(next);
@@ -72,9 +97,13 @@ async function main(): Promise<void> {
   });
 
   initVotes();
+  orderSublines();
+  tidyTitleBreaks();
   initNewTabLinks(() => settings.newTab);
-  if (isItemPage()) await trackComments();
-  else {
+  if (isItemPage()) {
+    labelCommentBox();
+    await trackComments();
+  } else {
     addListHeading();
     initThreadControls();
     await initStoryList();

@@ -42,6 +42,32 @@ html.phn {
   & :focus-visible {
     outline: 2px solid var(--phn-accent);
     outline-offset: 2px;
+  }
+
+  & .phn-skip {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 3000;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--phn-surface);
+    box-shadow: var(--phn-shadow);
+    color: var(--phn-text);
+    font-family: var(--phn-ui);
+    font-size: 14px;
+    opacity: 0;
+    translate: 0 -200%;
+    pointer-events: none;
+  }
+
+  & .phn-skip:focus-visible {
+    opacity: 1;
+    translate: none;
+  }
+
+  /* Links with no shape of their own get the same softened ring as the rest. */
+  & a:focus-visible {
     border-radius: 4px;
   }
 
@@ -173,7 +199,16 @@ html.phn {
 
   /* Footer: the orange rule, site links and search box. */
   & #hnmain > tbody > tr:last-child:not(#bigbox) > td {
+    display: block;
+    box-sizing: content-box;
+    max-width: var(--phn-width);
+    margin: 0 auto;
     padding: 40px var(--phn-gutter) 48px;
+  }
+
+  /* Room for the new-comments pill, which floats over the bottom of the page. */
+  &[data-phn-pill][data-phn-new="true"] #hnmain > tbody > tr:last-child:not(#bigbox) > td {
+    padding-bottom: 96px;
     color: var(--phn-faint);
     font-size: 13px;
   }
@@ -205,8 +240,8 @@ html.phn {
     display: flex;
     align-items: baseline;
     gap: 14px;
-    margin: 20px 0 10px;
-    padding-bottom: 14px;
+    margin: 6px 0 6px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--phn-line);
   }
 

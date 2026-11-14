@@ -25,10 +25,6 @@ html.phn {
     padding: 0 var(--phn-gutter);
   }
 
-  & tr.comtr {
-    scroll-margin-top: calc(var(--phn-header) + 8px);
-  }
-
   & tr.comtr td.ind[indent="0"] ~ td {
     border-top: 1px solid var(--phn-line);
   }
@@ -37,22 +33,48 @@ html.phn {
    * Thread rails. HN indents with a spacer image and records the depth in an "indent"
    * attribute. Reading that attribute in CSS sizes the cell and draws one vertical line per
    * ancestor, so every reply visibly hangs off its parent, with no script and no reflow
-   * after load. A line sits in the middle of each step, under that ancestor's vote arrow.
+   * after load. A line sits in the middle of each step, under that ancestor's collapse button.
+   * Levels from 4 down step by --phn-deep-step, which phones narrow so deep replies keep
+   * room for text; railOwner in comments.ts hit-tests the same steps.
    */
+  & {
+    --phn-deep-step: var(--phn-step);
+    --phn-deep-knob: 18px;
+    --phn-knob-size: 18px;
+  }
+
   & tr.comtr td.ind {
     position: relative;
     --phn-depth: attr(indent type(<number>), 0);
+    --phn-shallow: min(var(--phn-depth), 4);
+    --phn-deep: max(var(--phn-depth) - 4, 0);
     --phn-half: calc(var(--phn-step) / 2);
-    width: calc(var(--phn-depth) * var(--phn-step));
-    min-width: calc(var(--phn-depth) * var(--phn-step));
+    --phn-deep-half: calc(var(--phn-deep-step) / 2);
+    --phn-rail-bg:
+      repeating-linear-gradient(
+          to right,
+          transparent 0 calc(var(--phn-half) - 1px),
+          var(--phn-rail) calc(var(--phn-half) - 1px) calc(var(--phn-half) + 1px),
+          transparent calc(var(--phn-half) + 1px) var(--phn-step)
+        )
+        0 0 / calc(var(--phn-shallow) * var(--phn-step)) 100% no-repeat,
+      repeating-linear-gradient(
+          to right,
+          transparent 0 calc(var(--phn-deep-half) - 1px),
+          var(--phn-rail) calc(var(--phn-deep-half) - 1px) calc(var(--phn-deep-half) + 1px),
+          transparent calc(var(--phn-deep-half) + 1px) var(--phn-deep-step)
+        )
+        calc(4 * var(--phn-step)) 0 / calc(var(--phn-deep) * var(--phn-deep-step)) 100% no-repeat;
+    width: calc(var(--phn-shallow) * var(--phn-step) + var(--phn-deep) * var(--phn-deep-step));
+    min-width: calc(var(--phn-shallow) * var(--phn-step) + var(--phn-deep) * var(--phn-deep-step));
     padding: 0;
-    background-image: repeating-linear-gradient(
-      to right,
-      transparent 0 calc(var(--phn-half) - 1px),
-      var(--phn-rail) calc(var(--phn-half) - 1px) calc(var(--phn-half) + 1px),
-      transparent calc(var(--phn-half) + 1px) var(--phn-step)
-    );
+    background: var(--phn-rail-bg);
     cursor: pointer;
+  }
+
+  & tr.comtr td.ind:not([indent="0"], [indent="1"], [indent="2"], [indent="3"]) ~ td {
+    --phn-step: var(--phn-deep-step);
+    --phn-knob-size: var(--phn-deep-knob);
   }
 
   & tr.comtr td.ind > img {
@@ -61,12 +83,16 @@ html.phn {
 
   /* A curved connector carries the parent's rail into each reply, ending at its collapse button. */
   & tr.comtr td.ind:not([indent="0"])::after {
+    --phn-gap: calc(var(--phn-step) - var(--phn-deep-step));
+    --phn-own: calc(var(--phn-deep-step) + var(--phn-gap) * clamp(0, 4 - var(--phn-depth), 1));
+    --phn-parent: calc(var(--phn-deep-step) + var(--phn-gap) * clamp(0, 5 - var(--phn-depth), 1));
+    --phn-own-knob: calc(var(--phn-deep-knob) + (18px - var(--phn-deep-knob)) * clamp(0, 4 - var(--phn-depth), 1));
     content: "";
     position: absolute;
     top: 0;
-    left: calc(100% - var(--phn-half) - 1px);
+    left: calc(100% - var(--phn-parent) / 2 - 1px);
     box-sizing: border-box;
-    width: calc(var(--phn-step) - 10px);
+    width: calc(var(--phn-parent) / 2 + var(--phn-own) / 2 - var(--phn-own-knob) / 2 - 1px);
     height: 23px;
     border-bottom: 2px solid var(--phn-rail);
     border-left: 2px solid var(--phn-rail);
@@ -74,33 +100,31 @@ html.phn {
     pointer-events: none;
   }
 
+  /* A direct reply's connector starts on the lit line; only its turn into the reply stays unlit. */
   & tr.comtr td.ind.phn-hot-child::after {
-    border-color: var(--phn-accent);
+    border-left-color: var(--phn-accent);
   }
 
   & tr.comtr td.ind.phn-hot {
-    background-image:
-      linear-gradient(var(--phn-accent), var(--phn-accent)),
-      repeating-linear-gradient(
-        to right,
-        transparent 0 calc(var(--phn-half) - 1px),
-        var(--phn-rail) calc(var(--phn-half) - 1px) calc(var(--phn-half) + 1px),
-        transparent calc(var(--phn-half) + 1px) var(--phn-step)
-      );
-    background-repeat: no-repeat, repeat;
-    background-size: 2px 100%, auto;
-    background-position: calc(var(--phn-hot) * var(--phn-step) + var(--phn-half) - 1px) 0, 0 0;
+    --phn-hot-x: calc(
+      min(var(--phn-hot), 4) * var(--phn-step) + max(var(--phn-hot) - 4, 0) * var(--phn-deep-step) +
+        (var(--phn-deep-step) + (var(--phn-step) - var(--phn-deep-step)) * clamp(0, 4 - var(--phn-hot), 1)) / 2 - 1px
+    );
+    background:
+      linear-gradient(var(--phn-accent), var(--phn-accent)) var(--phn-hot-x) 0 / 2px 100% no-repeat,
+      var(--phn-rail-bg);
   }
 
   /*
    * The gutter beside a comment holds its collapse button and rail. HN puts the vote arrows
-   * in this cell too; they are shifted across to sit at the start of the action row under
-   * the comment text, beside Reply, without moving any markup.
+   * in this cell too; until the script moves them into the action row for keyboard order,
+   * they are shifted across to where they will land, at the start of the row beside Reply.
+   * Zero width keeps them from widening the cell past one rail step.
    */
   & tr.comtr td.votelinks {
     width: var(--phn-step);
     min-width: var(--phn-step);
-    padding: 0 0 12px;
+    padding: 0 0 10px;
     vertical-align: bottom;
     visibility: visible;
   }
@@ -111,24 +135,33 @@ html.phn {
     z-index: 2;
     display: flex;
     gap: 2px;
-    width: max-content;
+    width: 0;
   }
 
-  & tr.comtr td.votelinks a {
+  /* Moved in front of Reply, drawn where the gutter version was: 3px left of the text, Reply at the row's padding edge. */
+  & .reply > center {
+    display: flex;
+    flex: none;
+    gap: 2px;
+    width: calc(var(--phn-vote-room) - 6px);
+    margin: 0 9px 0 calc(-3px - var(--phn-vote-room));
+  }
+
+  & tr.comtr :is(td.votelinks, .reply) > center > a {
     display: block;
     margin: 0;
     padding: 3px;
     border-radius: 50%;
   }
 
-  & tr.comtr td.votelinks a:hover {
+  & tr.comtr :is(td.votelinks, .reply) > center > a:hover {
     background: var(--phn-raised);
   }
 
-  & tr.comtr td.votelinks .votearrow {
-    width: 20px;
-    height: 20px;
-    margin: 0;
+  & tr.comtr :is(td.votelinks, .reply) .votearrow {
+    width: 18px;
+    height: 18px;
+    margin: 1px;
   }
 
   /* max-width: 0 stops long unbroken text from stretching the table past the column. */
@@ -136,7 +169,7 @@ html.phn {
     position: relative;
     width: 100%;
     max-width: 0;
-    padding: 11px 0 12px 6px;
+    padding: 11px 0 10px 6px;
   }
 
   & td.default > div:first-child {
@@ -228,9 +261,45 @@ html.phn {
     opacity: 1;
   }
 
+  /* Without hover there is no other way to reach them. */
   @media (hover: none) {
     & td.default .navs > a.clicky:not(.togg) {
+      opacity: 1;
+    }
+  }
+
+  /* "parent", the way back up a deep thread, is always on show. */
+  & td.default .navs > a.clicky.phn-parent:not(.togg) {
+    opacity: 1;
+  }
+
+  /* A phone's header line has room for that one alone; the "⋯" button after it shows the rest. */
+  & td.default .navs > .phn-more {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    & td.default .navs > a.clicky:not(.togg, .phn-parent) {
       display: none;
+    }
+
+    & tr.comtr.phn-more-open:not(.coll) td.default .navs > a.clicky:not(.togg) {
+      display: inline;
+      opacity: 1;
+    }
+
+    & tr.comtr:not(.coll) td.default .navs > .phn-more {
+      display: inline-flex;
+      margin: -3px 8px -3px -4px;
+      padding: 3px 4px;
+      border: 0;
+      border-radius: 4px;
+      background: none;
+      color: var(--phn-faint);
+    }
+
+    & td.default .navs > .phn-more[aria-expanded="true"] {
+      color: var(--phn-text);
     }
   }
 
@@ -259,6 +328,16 @@ html.phn {
     width: 100%;
     padding: 14px 0 16px 4px;
     border-top: 1px solid var(--phn-line);
+  }
+
+  /* The heading's rule already separates the first comment. */
+  & .phn-heading + table > tbody > tr.athing:first-child:not(.submission, .comtr) > td:is(.default, .votelinks) {
+    border-top: 0;
+  }
+
+  /* HN leaves these pages' reply blocks empty; without them a comment ends at its text. */
+  & .reply:empty {
+    display: none;
   }
 
   & table:not(.fatitem) > tbody > tr.athing:not(.submission, .comtr) > td.votelinks {
@@ -292,44 +371,65 @@ html.phn {
   }
 
   & tr.comtr td.default a.togg::before {
+    --phn-bar: calc(var(--phn-knob-size) * 0.45);
     content: "";
     position: absolute;
-    top: 13px;
-    left: calc(50% - 9px);
+    top: calc(23px - var(--phn-knob-size) / 2);
+    left: calc(50% - var(--phn-knob-size) / 2);
     box-sizing: border-box;
-    width: 18px;
-    height: 18px;
+    width: var(--phn-knob-size);
+    height: var(--phn-knob-size);
     border: 1.5px solid var(--phn-knob);
     border-radius: 50%;
     background:
-      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 8px 1.5px no-repeat,
+      linear-gradient(var(--phn-knob), var(--phn-knob)) center / var(--phn-bar) 1.5px no-repeat,
       var(--phn-bg);
   }
 
   & tr.comtr td.default a.togg:not([n="1"])::after {
     content: "";
     position: absolute;
-    top: 31px;
+    top: calc(23px + var(--phn-knob-size) / 2);
     bottom: 0;
     left: calc(50% - 1px);
     width: 2px;
     background: var(--phn-rail);
   }
 
-  & tr.comtr td.default a.togg:hover {
-    --phn-knob: var(--phn-text);
+  @media (hover: hover) {
+    & tr.comtr td.default a.togg:hover {
+      --phn-knob: var(--phn-text);
+    }
+
+    & tr.comtr td.default a.togg:hover::after {
+      background: var(--phn-accent);
+    }
   }
 
-  & tr.comtr td.default a.togg:hover::after,
-  & tr.comtr.phn-hot-root a.togg::after {
+  /* The link is the whole gutter; the ring goes on the round button a reader recognises. */
+  & tr.comtr td.default a.togg:focus-visible {
+    outline: 0;
+  }
+
+  & tr.comtr td.default a.togg:focus-visible::before {
+    outline: 2px solid var(--phn-accent);
+    outline-offset: 2px;
+  }
+
+  /* The comment a rail collapses: its button and its own stretch of the line light up with the replies'. */
+  & tr.comtr.phn-hot-root td.default a.togg:not([n="1"])::after {
     background: var(--phn-accent);
   }
 
+  & tr.comtr.phn-hot-root td.default a.togg {
+    --phn-knob: var(--phn-accent);
+  }
+
   & tr.comtr.coll td.default a.togg::before {
-    top: 9px;
+    top: calc(18px - var(--phn-knob-size) / 2);
     background:
-      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 8px 1.5px no-repeat,
-      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 1.5px 8px no-repeat,
+      linear-gradient(var(--phn-knob), var(--phn-knob)) center / var(--phn-bar) 1.5px no-repeat,
+      linear-gradient(var(--phn-knob), var(--phn-knob)) center / 1.5px var(--phn-bar) no-repeat,
       var(--phn-bg);
   }
 
@@ -369,17 +469,33 @@ html.phn {
     margin: 0.7em 0 0;
   }
 
+  /* About 75 characters a line, however wide the page is set; in em so it follows the text size. */
+  & :is(.commtext, .toptext) {
+    max-width: var(--phn-measure);
+  }
+
   & .commtext pre {
     margin: 0.7em 0 0;
   }
 
+  & :is(.commtext, .toptext) p.phn-quote {
+    padding-left: 12px;
+    border-left: 3px solid var(--phn-rail);
+    color: var(--phn-muted);
+  }
+
+  & :is(.commtext, .toptext) p.phn-lead {
+    margin-top: 0;
+  }
+
   /* The action row: room is left at its start for the vote arrows described above. */
   & .reply {
+    --phn-vote-room: 32px;
     display: flex;
     align-items: center;
     min-height: 26px;
-    margin-top: 8px;
-    padding-left: 32px;
+    margin-top: 5px;
+    padding-left: var(--phn-vote-room);
     font-family: var(--phn-ui);
     font-size: var(--phn-small);
     line-height: 1.3;
@@ -387,15 +503,15 @@ html.phn {
 
   /* Readers with downvote rights get a second arrow on most comments. */
   &[data-phn-down] tr.comtr .reply {
-    padding-left: 60px;
+    --phn-vote-room: 60px;
   }
 
   & .reply p {
     margin: 0;
   }
 
-  & .reply a:link,
-  & .reply a:visited {
+  & .reply p a:link,
+  & .reply p a:visited {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -407,7 +523,7 @@ html.phn {
     text-transform: capitalize;
   }
 
-  & .reply a::before {
+  & .reply p a::before {
     content: "";
     width: 16px;
     height: 16px;
@@ -415,7 +531,7 @@ html.phn {
     mask: var(--phn-i-reply) center / contain no-repeat;
   }
 
-  & .reply a:hover {
+  & .reply p a:hover {
     background: var(--phn-raised);
     color: var(--phn-text);
   }
@@ -452,6 +568,10 @@ html.phn {
     font-size: var(--phn-small);
   }
 
+  &[data-phn-new="true"] tr.comtr.coll .navs[data-phn-label-new]::after {
+    content: attr(data-phn-label) " · " attr(data-phn-label-new);
+  }
+
   & tr.comtr.coll .comment.noshow {
     display: block;
     margin-top: 1px;
@@ -465,13 +585,26 @@ html.phn {
     white-space: nowrap;
   }
 
-  & tr.comtr.coll .commtext > *,
+  /* The preview line is the comment's opening words, quoted or not. */
+  & tr.comtr.coll .commtext > p.phn-lead {
+    display: inline;
+    padding: 0;
+    border: 0;
+    color: inherit;
+  }
+
+  & tr.comtr.coll .commtext > :not(.phn-lead),
   & tr.comtr.coll .reply {
     display: none;
   }
 
   & tr.comtr.phn-flash td.default {
     animation: phn-flash 1.4s ease-out;
+  }
+
+  /* The comment n last landed on keeps its bar after the flash fades, until the next jump. */
+  & tr.comtr.phn-current td.default {
+    box-shadow: inset 3px 0 0 var(--phn-new);
   }
 
   /* A comment shown on its own page, above its replies. */
@@ -502,15 +635,22 @@ html.phn {
     bottom: 22px;
     left: 50%;
     z-index: 950;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 16px 9px 14px;
+    display: flex;
     translate: -50% 0;
     border: 1px solid var(--phn-line);
     border-radius: 999px;
     background: var(--phn-surface);
     box-shadow: var(--phn-shadow);
+    white-space: nowrap;
+  }
+
+  & .phn-pill button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
     color: var(--phn-text);
     font-family: var(--phn-ui);
     font-size: 14px;
@@ -518,7 +658,19 @@ html.phn {
     cursor: pointer;
   }
 
-  & .phn-pill::before {
+  & .phn-pill button:hover {
+    background: var(--phn-raised);
+  }
+
+  & .phn-pill-prev {
+    padding: 9px 8px 9px 12px;
+  }
+
+  & .phn-pill-next {
+    padding: 9px 16px 9px 10px;
+  }
+
+  & .phn-pill-next::before {
     content: "";
     width: 8px;
     height: 8px;
@@ -526,14 +678,35 @@ html.phn {
     background: var(--phn-new);
   }
 
-  & .phn-pill:hover {
-    border-color: var(--phn-new);
-  }
-
-  & button.phn-pill svg {
+  & .phn-pill svg {
     width: 16px;
     height: 16px;
     color: var(--phn-muted);
+  }
+
+  /* The noun is its own flex item: pull it back across the gap, and keep its leading space. */
+  & .phn-pill-next > span + span {
+    margin-left: -8px;
+    white-space: pre;
+  }
+
+  /* The shortcut, shown where there is a keyboard to press it on. */
+  & .phn-pill kbd {
+    min-width: 18px;
+    padding: 1px 5px;
+    border: 1px solid var(--phn-line);
+    border-radius: 5px;
+    color: var(--phn-muted);
+    font-family: var(--phn-ui);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 640px), (hover: none) {
+    & .phn-pill-noun,
+    & .phn-pill kbd {
+      display: none;
+    }
   }
 
   &[data-phn-new="false"] .phn-pill {
@@ -542,13 +715,20 @@ html.phn {
 
   @media (max-width: 640px) {
     --phn-step: 18px;
+    --phn-deep-step: 8px;
+    --phn-deep-knob: 12px;
     --phn-gutter: 12px;
+
+    & td.default .comhead > :not(.navs),
+    & td.default .navs > *,
+    & td.default .comhead > a[href^="user?id="] {
+      margin-right: 8px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     & tr.comtr.phn-flash td.default {
       animation: none;
-      box-shadow: inset 2px 0 0 var(--phn-new);
     }
   }
 }
@@ -556,8 +736,10 @@ html.phn {
 @keyframes phn-flash {
   from {
     background: var(--phn-new-soft);
+    box-shadow: inset 3px 0 0 var(--phn-new);
   }
   to {
     background: transparent;
+    box-shadow: inset 3px 0 0 var(--phn-new);
   }
 }

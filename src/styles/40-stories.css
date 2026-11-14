@@ -4,9 +4,15 @@ html.phn {
     vertical-align: top;
   }
 
+  /* Baseline-aligned with the title cell, so the smaller rank sits on the title's first line instead of above it. */
   & tr.athing.submission > td.title:first-child {
     width: 1%;
+    vertical-align: baseline;
     white-space: nowrap;
+  }
+
+  & tr.athing.submission > td.title:last-child {
+    vertical-align: baseline;
   }
 
   & .rank {
@@ -15,7 +21,6 @@ html.phn {
     color: var(--phn-faint);
     font-size: var(--phn-small);
     font-variant-numeric: tabular-nums;
-    line-height: calc(var(--phn-title) * var(--phn-title-leading));
     text-align: right;
   }
 
@@ -24,7 +29,7 @@ html.phn {
   }
 
   & tr.athing.submission > td.votelinks {
-    --phn-arrow: 15px;
+    --phn-arrow: 16px;
     width: 38px;
     min-width: 38px;
   }
@@ -33,7 +38,7 @@ html.phn {
     width: 20px;
     height: 20px;
     margin: 0 auto;
-    background: var(--phn-faint);
+    background: var(--phn-muted);
     mask: var(--phn-i-up) center / contain no-repeat;
     transform: none;
   }
@@ -42,11 +47,21 @@ html.phn {
     transform: rotate(180deg);
   }
 
-  /* Sits nearer the rank than the title, so the title keeps clear space on its left. */
+  /*
+   * Sits nearer the rank than the title, so the title keeps clear space on its left. The link
+   * is sized to the arrow so its focus ring has a box to draw around; the arrow itself is a mask.
+   */
+  & tr.athing.submission > td.votelinks a {
+    display: block;
+    width: fit-content;
+    margin: calc((var(--phn-title) * var(--phn-title-leading) - var(--phn-arrow)) / 2) 14px 0 9px;
+    border-radius: 4px;
+  }
+
   & tr.athing.submission .votearrow {
     width: var(--phn-arrow);
     height: var(--phn-arrow);
-    margin: calc((var(--phn-title) * var(--phn-title-leading) - var(--phn-arrow)) / 2) 14px 0 9px;
+    margin: 0;
   }
 
   & a:hover > .votearrow {
@@ -76,7 +91,13 @@ html.phn {
     mask-image: var(--phn-i-up-fill);
   }
 
+  /* HN clips .title cells, which cuts off focus rings; long words wrap instead. */
+  & td.title {
+    overflow: visible;
+  }
+
   & .titleline {
+    overflow-wrap: anywhere;
     font-family: var(--phn-font);
     font-size: var(--phn-title);
     font-weight: 500;
@@ -95,6 +116,7 @@ html.phn {
   }
 
   & .sitebit a:hover .sitestr {
+    color: var(--phn-accent);
     text-decoration: underline;
   }
 
@@ -105,10 +127,17 @@ html.phn {
   & .sitebit {
     font-family: var(--phn-ui);
     font-size: 0;
+    white-space: nowrap;
   }
 
+  /* Sized like its text, so its focus ring isn't a zero-height line through the domain. */
+  & .sitebit a {
+    font-size: var(--phn-small);
+  }
+
+  /* Grey like HN's own, so the title leads the row; orange is kept for hover. */
   & .sitebit .sitestr {
-    color: var(--phn-accent);
+    color: var(--phn-muted);
     font-size: var(--phn-small);
     font-weight: 400;
     letter-spacing: 0;
@@ -119,25 +148,106 @@ html.phn {
    * touching the markup, and the links get their size back individually.
    */
   & td.subtext {
-    padding: 5px 0 var(--phn-row-gap);
+    padding: 3px 0 var(--phn-row-gap);
     color: var(--phn-muted);
     font-family: var(--phn-ui);
     font-size: 0;
     line-height: 1.4;
   }
 
+  /*
+   * Each item draws the dot that separates it from the one before inside the gap it follows.
+   * The line clips its own left edge, so wherever the line wraps, the dot that would start the
+   * new line falls outside and only dots between items show. The clip margin keeps focus rings.
+   */
   & .subline {
+    --phn-meta-gap: 15px;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
+    overflow-x: clip;
+    overflow-clip-margin: 4px;
   }
 
   & .subline > *,
-  & .subline [id^="unv_"] > a,
+  & .subline [id^="unv_"] > a {
+    margin-right: var(--phn-meta-gap);
+    font-size: var(--phn-small);
+  }
+
+  & .subline > :not([id^="unv_"], .post-author-nav, .phn-fresh, .phn-more)::before,
+  & .subline [id^="unv_"] > a::before {
+    content: "·";
+    display: inline-block;
+    width: var(--phn-meta-gap);
+    margin-left: calc(-1 * var(--phn-meta-gap));
+    color: var(--phn-faint);
+    font-weight: 400;
+    text-align: center;
+  }
+
   & td.subtext > a,
   & td.subtext > .age {
     margin-right: 14px;
     font-size: var(--phn-small);
+  }
+
+  /* Moved here from beside the title by orderSublines; the brackets HN puts round it stay hidden. */
+  & :is(.subline, td.subtext) > .sitebit {
+    font-size: 0;
+  }
+
+  & td.subtext > .sitebit {
+    margin-right: 7px;
+  }
+
+  & td.subtext > .sitebit::after {
+    content: "·";
+    margin-left: 7px;
+    color: var(--phn-faint);
+    font-size: var(--phn-small);
+  }
+
+  & .subline > :is(.score, a[href^="item?id="]) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * Narrow, the facts split into the same two lines on every story: where it's from, who posted
+   * it and the "⋯" button, then its points, comments and age. Measured on five list pages,
+   * this split fits a 390px phone where the others overflow.
+   */
+  @media (max-width: 640px) {
+    & .subline {
+      --phn-meta-gap: 13px;
+    }
+
+    & .subline > .sitebit {
+      order: -3;
+    }
+
+    & .subline > a[href^="user?id="] {
+      order: -2;
+    }
+
+
+    & .subline::before {
+      content: "";
+      flex-basis: 100%;
+    }
+
+    & td.subtext > .sitebit {
+      display: block;
+    }
+
+    & tr.athing.submission > td.votelinks {
+      width: 30px;
+      min-width: 30px;
+    }
+
+    & tr.athing.submission > td.votelinks a {
+      margin-inline: 5px 9px;
+    }
   }
 
   & .subline > [id^="unv_"],
@@ -174,16 +284,75 @@ html.phn {
     opacity: 1;
   }
 
+  /* Without hover there is no other way to reach it. */
   @media (hover: none) {
     & .subtext a[href^="hide?"] {
       opacity: 1;
     }
   }
 
+  /* Phones drop hide and past from lists, behind a "⋯" button, so the line under a title fits one row; a thread's own story keeps them. */
+  & .phn-more {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    & table:not(.fatitem) .subtext :is(a[href^="hide?"], a.hnpast) {
+      display: none;
+    }
+
+    & table .subtext.phn-more-open :is(a[href^="hide?"], a.hnpast),
+    & table .subline.phn-more-open > :is(a[href^="hide?"], a.hnpast) {
+      display: inline;
+      opacity: 1;
+    }
+
+    & .subline > .age {
+      order: 2;
+    }
+
+    & .subline > :is(a[href^="fave?"], a.hnpast, a[href^="flag?"], a[href^="vouch?"]) {
+      order: 4;
+    }
+
+    & .subline > a[href^="hide?"] {
+      order: 5;
+    }
+
+    /* Centred under the vote arrow, level with the first line of facts. */
+    & td.phn-more-cell {
+      padding-top: 3px;
+      text-align: right;
+      vertical-align: top;
+    }
+
+    & td.phn-more-cell > .phn-more {
+      display: inline-flex;
+      margin-right: 4px;
+      padding: 0 4px;
+      border: 0;
+      border-radius: 4px;
+      background: none;
+      color: var(--phn-faint);
+    }
+
+    & td.phn-more-cell > .phn-more[aria-expanded="true"] {
+      color: var(--phn-text);
+    }
+  }
+
+  & .phn-more::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: currentColor;
+    mask: var(--phn-i-more) center / contain no-repeat;
+  }
+
   & .subline > .phn-fresh {
     order: 1;
     margin-left: -6px;
-    padding: 1px 7px;
+    padding: 0 7px;
     border-radius: 999px;
     background: var(--phn-new-soft);
     color: var(--phn-new) !important;
@@ -221,11 +390,26 @@ html.phn {
 
   /* The story at the top of its comment page. */
   & table.fatitem {
+    --phn-fat-title: calc(var(--phn-size) * 1.7);
+    --phn-fat-indent: 44px;
     margin: 22px 0 6px;
   }
 
+  /* The story has no rank here; left at its 1% width, the empty cell would shift the title as the window resizes. */
+  & .fatitem tr.athing.submission > td.title:first-child {
+    width: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 640px) {
+    & table.fatitem {
+      --phn-fat-title: calc(var(--phn-size) * 1.4);
+      margin-top: 6px;
+    }
+  }
+
   & .fatitem .titleline {
-    font-size: calc(var(--phn-size) * 1.7);
+    font-size: var(--phn-fat-title);
     font-weight: 680;
     line-height: 1.18;
     letter-spacing: -0.02em;
@@ -233,10 +417,13 @@ html.phn {
 
   & .fatitem tr.athing.submission > td.votelinks {
     --phn-arrow: 18px;
+    box-sizing: border-box;
+    width: var(--phn-fat-indent);
+    min-width: var(--phn-fat-indent);
   }
 
-  & .fatitem tr.athing.submission .votearrow {
-    margin-top: calc((var(--phn-size) * 1.7 * 1.18 - var(--phn-arrow)) / 2);
+  & .fatitem tr.athing.submission > td.votelinks a {
+    margin-top: calc((var(--phn-fat-title) * 1.18 - var(--phn-arrow)) / 2);
   }
 
   & .fatitem tr.athing.submission > td {

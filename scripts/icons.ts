@@ -25,7 +25,7 @@ async function render(file: string, width: number, height: number, artwork = wid
   await page.evaluate(() => document.fonts.load("900 16px Inter"));
 }
 
-for (const size of [16, 32, 48]) {
+for (const size of [16, 32, 48, 96]) {
   await render(size === 16 ? "icon-tiny.svg" : "icon-small.svg", size, size);
   await page.screenshot({ path: join(assets, "icons", `icon-${size}.png`), omitBackground: true });
 }

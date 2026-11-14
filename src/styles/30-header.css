@@ -11,13 +11,28 @@ html.phn {
     z-index: 900;
   }
 
+  /* Classic wears HN's own orange bar; the header's colours are re-pointed for it. */
+  &[data-phn-theme="classic"] #hnmain > tbody > tr:first-child > td {
+    --phn-bg: #ff6600;
+    --phn-text: #000000;
+    --phn-muted: rgb(0 0 0 / 0.8);
+    --phn-raised: rgb(0 0 0 / 0.1);
+    --phn-accent: #000000;
+    --phn-line: #e05a00;
+  }
+
   & #hnmain > tbody > tr:first-child > td > table {
     display: block;
     box-sizing: border-box;
-    /* Wider than a narrow reading column: logged in, the nav gains links and the account sits beside it. */
-    max-width: max(var(--phn-width), 1080px);
+    /* Never narrower than the nav needs, whatever the page width is set to. */
+    max-width: max(var(--phn-width), 780px);
     margin: 0 auto;
     padding: 0 !important;
+  }
+
+  /* Set by fitHeader when the nav doesn't fit; the logo beside it still leads to the front page. */
+  &[data-phn-tight] .pagetop .hnname {
+    display: none;
   }
 
   & #hnmain > tbody > tr:first-child > td > table > tbody {
@@ -49,10 +64,16 @@ html.phn {
   }
 
   & #hnmain > tbody > tr:first-child img {
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
     border: 0 !important;
     border-radius: 5px;
+  }
+
+  /* The tin's dark rim would vanish into a dark page; a faint halo keeps its outline. */
+  &:not([data-phn-theme="light"], [data-phn-theme="classic"]) #hnmain > tbody > tr:first-child img,
+  &:not([data-phn-theme="light"], [data-phn-theme="classic"]) .phn-home::before {
+    filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.45));
   }
 
   /* HN separates nav links with bare " | " text; zero-size type hides it without touching the markup. */
@@ -76,8 +97,10 @@ html.phn {
     font-size: 13px;
   }
 
+  /* Inline-block so the padding takes up room: the nav's scrolling cell clips whatever sticks out. */
   & .pagetop a {
-    padding: 8px 10px;
+    display: inline-block;
+    padding: 8px 8px;
     border-radius: 7px;
     font-size: 15px;
     font-weight: 500;
@@ -98,6 +121,10 @@ html.phn {
   & .pagetop a:hover {
     background: var(--phn-raised);
     color: var(--phn-text);
+  }
+
+  & .pagetop a:focus-visible {
+    outline-offset: -2px;
   }
 
   /* Pages such as reply and submit show a plain title here instead of the nav. */
@@ -141,10 +168,33 @@ html.phn {
 
   & .pagetop a#me[data-phn-karma]::after {
     content: attr(data-phn-karma);
-    margin-left: 7px;
+    margin-left: 5px;
     color: var(--phn-faint);
-    font-weight: 450;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Drawn as an icon button like search and settings; the word stays in the link for screen readers. */
+  & .pagetop a#logout {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+  }
+
+  & .pagetop a#logout::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 19px;
+    height: 19px;
+    margin: auto;
+    background: currentColor;
+    mask: var(--phn-i-logout) center / contain no-repeat;
   }
 
   & .phn-icon-btn {
@@ -162,9 +212,7 @@ html.phn {
     cursor: pointer;
   }
 
-  /* In the account cell the buttons sit before the username or login link; the markup order is unchanged. */
   & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) > .phn-icon-btn {
-    order: -1;
     margin-left: 0;
   }
 
@@ -199,9 +247,95 @@ html.phn {
     clip-path: inset(50%);
   }
 
+  /*
+   * Too narrow for one row, the header takes two, as HN's own does: the logo, name and buttons
+   * on top, and the nav links on a scrolling row of their own. The name lives inside the nav's
+   * markup, so it is positioned up beside the logo rather than moved.
+   */
   @media (max-width: 640px) {
+    scroll-padding-top: calc(var(--phn-header) + 40px);
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr {
+      position: relative;
+      flex-wrap: wrap;
+      row-gap: 0;
+    }
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:first-child {
+      height: var(--phn-header) !important;
+    }
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
+      order: 1;
+      flex-basis: 100%;
+      margin-inline: -7px;
+      padding-bottom: 4px !important;
+    }
+
+    & .pagetop .hnname {
+      position: absolute;
+      top: 0;
+      left: 42px;
+      display: flex;
+      align-items: center;
+      height: var(--phn-header);
+    }
+
+    & .pagetop .hnname a {
+      padding-left: 0;
+      font-size: 17px;
+    }
+
+    /* The nav row fades at its right edge when it scrolls (fitHeader sets the flag). */
+    &[data-phn-nav-scrolls] #hnmain > tbody > tr:first-child > td > table > tbody > tr::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 32px;
+      height: 40px;
+      background: linear-gradient(to right, transparent, var(--phn-bg));
+      pointer-events: none;
+    }
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) {
+      margin-left: auto;
+    }
+
     & .pagetop a {
       padding-inline: 7px;
+    }
+
+    /* Small enough for all seven of HN's links to fit a 390px screen without scrolling. */
+    & td:nth-child(2) > .pagetop > a,
+    & td:nth-child(2) > .pagetop > .topsel > a {
+      padding-inline: 6px;
+      font-size: 14px;
+    }
+
+    /*
+     * Set by hideNavOnScroll while reading down the page. The nav row is clipped off rather
+     * than collapsed, so the page under the sticky header doesn't jump; its rule is redrawn
+     * under the first row. Scroll padding stays as it is: changing it mid-scroll would leave
+     * the new-comment stepper measuring against a line that moved under it.
+     */
+
+    &[data-phn-sticky="true"] #hnmain > tbody > tr:first-child > td {
+      clip-path: inset(0);
+      transition: clip-path 0.2s ease;
+    }
+
+    &[data-phn-sticky="true"][data-phn-nav-away] #hnmain > tbody > tr:first-child > td:not(:focus-within) {
+      clip-path: inset(0 0 calc(100% - var(--phn-header)) 0);
+      background:
+        linear-gradient(var(--phn-line), var(--phn-line)) 0 calc(var(--phn-header) - 1px) / 100% 1px no-repeat,
+        var(--phn-bg);
+    }
+  }
+
+  @media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+    &[data-phn-sticky="true"] #hnmain > tbody > tr:first-child > td {
+      transition: none;
     }
   }
 
@@ -214,12 +348,12 @@ html.phn {
   }
 }
 
-/* With the restyle switched off, the button is the way back, shown as a plain link in HN's own header. */
+/* With the restyle switched off, the button is the way back, shown as a plain link in HN's own header, black like HN's other links there. */
 html:not(.phn) .phn-settings-btn {
   padding: 0 0 0 8px;
   border: 0;
   background: none;
-  color: inherit;
+  color: #000000;
   font: inherit;
   cursor: pointer;
 }

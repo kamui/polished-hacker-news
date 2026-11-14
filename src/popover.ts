@@ -2,18 +2,44 @@
 export const headerEndCell = () =>
   document.querySelector("#hnmain > tbody > tr:first-child > td > table td:last-child");
 
+/** Adds a button to the header's right end: before the account links when there are some, so focus moves left to right. */
+export function placeInHeader(button: HTMLElement): boolean {
+  const cell = headerEndCell();
+  if (!(cell instanceof HTMLTableCellElement)) {
+    const bar = document.querySelector(".phn-bare-header");
+    bar?.append(button);
+    return bar !== null;
+  }
+  const account = cell.cellIndex > 1 ? cell.querySelector(":scope > .pagetop") : null;
+  if (account) account.before(button);
+  else cell.append(button);
+  return true;
+}
+
 /** Wires a header button to a panel shown beneath it: toggle, click-away, and Escape to close. */
 export function attachPopover(button: HTMLElement, panel: HTMLElement, onOpen?: () => void): void {
   button.setAttribute("aria-expanded", "false");
+
+  // Below the whole header: on a phone the nav row sits under the buttons and would show at the panel's sides.
+  const header = button.closest("table, header") ?? button;
+  const place = () => {
+    const anchor = button.getBoundingClientRect();
+    const viewport = document.documentElement.clientWidth;
+    panel.style.top = `${header.getBoundingClientRect().bottom + 8}px`;
+    const free = viewport - panel.offsetWidth;
+    // On a phone the panel nearly fills the width, so it is centred rather than hung from the button.
+    panel.style.right = `${free < 120 ? free / 2 : Math.min(Math.max(12, viewport - anchor.right), free - 12)}px`;
+  };
+  // The page-width slider moves the header, and the button with it, while the panel is open.
+  new ResizeObserver(() => {
+    if (!panel.hidden) place();
+  }).observe(header);
 
   const setOpen = (open: boolean) => {
     panel.hidden = !open;
     button.setAttribute("aria-expanded", String(open));
     if (!open) return;
-    const anchor = button.getBoundingClientRect();
-    const viewport = document.documentElement.clientWidth;
-    panel.style.top = `${anchor.bottom + 10}px`;
-    panel.style.right = `${Math.min(Math.max(12, viewport - anchor.right), viewport - panel.offsetWidth - 12)}px`;
+    place();
     onOpen?.();
   };
 

@@ -1,16 +1,25 @@
-import { HEADER_LOGO, pageOp } from "./hn";
+import { HEADER_LOGO, moreLinksButton, pageOp, storyRows, subtextRow } from "./hn";
 
 const HEADINGS: Record<string, string> = {
   news: "Top stories",
   newest: "Newest",
+  front: "Past",
   ask: "Ask HN",
   show: "Show HN",
   jobs: "Jobs",
+  newcomments: "Comments",
 };
 
-/** HN prints karma beside the username as "(<span id="karma">123</span>)", which the nav styling hides; keep it as an attribute. */
+/**
+ * Names the header's icon-only links, and keeps the karma HN prints beside the username as
+ * "(<span id="karma">123</span>)", which the nav styling hides, as an attribute.
+ */
 export function keepKarma(): void {
   const me = document.querySelector<HTMLAnchorElement>("a#me");
+  document.querySelector("a#logout")?.setAttribute("title", "Log out");
+  document.querySelector(HEADER_LOGO)?.setAttribute("alt", "Hacker News");
+  // The logo beside it links to the same page; one Tab stop for both.
+  document.querySelector(".pagetop .hnname a")?.setAttribute("tabindex", "-1");
   const karma = document.getElementById("karma")?.textContent?.trim();
   if (me && karma) me.dataset.phnKarma = karma;
 }
@@ -44,7 +53,7 @@ export function setTinIcon(own: boolean): void {
   }
   if (logo) {
     siteLogo = logo.src;
-    logo.src = chrome.runtime.getURL("icons/icon-48.png");
+    logo.src = chrome.runtime.getURL("icons/icon-96.png");
   }
 }
 
@@ -75,7 +84,7 @@ export function rememberDownvoteSlot(): void {
 export function addListHeading(): void {
   const title = HEADINGS[pageOp()];
   const list = document.querySelector("#bigbox > td > table");
-  if (!title || !list || !list.querySelector("tr.athing.submission")) return;
+  if (!title || !list || !list.querySelector("tr.athing")) return;
 
   const heading = document.createElement("div");
   heading.className = "phn-heading";
@@ -92,4 +101,161 @@ export function addListHeading(): void {
     heading.append(today);
   }
   list.parentElement?.prepend(heading);
+}
+
+/**
+ * Each story's domain moves from after its title to the start of the line under it, so a long
+ * title never pushes the domain onto a line of its own and every row has the same shape.
+ * HN lists the story's actions (hide, past, favorite) before its comment count; they go after
+ * it, with hide last, so the count sits beside the age and Tab follows the line as drawn.
+ * Phones leave hide and past out of lists, behind a button under the vote arrow.
+ */
+export function orderSublines(): void {
+  for (const line of document.querySelectorAll(".subline")) {
+    const hide = line.querySelector(':scope > a[href^="hide?"]');
+    line.append(...line.querySelectorAll(':scope > :is(a.hnpast, a[href^="fave?"], a[href^="flag?"], a[href^="vouch?"])'));
+    if (hide) line.append(hide);
+  }
+
+  for (const story of storyRows()) {
+    const site = story.querySelector(".titleline > .sitebit");
+    const row = subtextRow(story);
+    const meta = row?.querySelector(".subline") ?? row?.querySelector("td.subtext");
+    if (!meta) continue;
+    if (site) meta.prepend(site);
+    // The cell under the rank and vote arrow is empty; the button sits there, so it never wraps the line.
+    const cell = row?.firstElementChild;
+    if (!story.closest(".fatitem") && cell?.childElementCount === 0 && meta.querySelector(':scope > :is(a[href^="hide?"], a.hnpast)')) {
+      cell.classList.add("phn-more-cell");
+      cell.append(moreLinksButton(meta));
+    }
+  }
+}
+
+/**
+ * Some titles put a no-break space after a dash ("stop –\u00a0lifted"). The line can still break
+ * after the dash, and the next line then starts with that space, so it becomes an ordinary one.
+ */
+export function tidyTitleBreaks(): void {
+  for (const link of document.querySelectorAll(".titleline > a")) {
+    for (const node of link.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes("\u00a0")) {
+        node.textContent = node.textContent.replace(/([–—])\u00a0/g, "$1 ");
+      }
+    }
+  }
+}
+
+/** A first Tab stop that jumps past the header to the stories or the thread. */
+export function addSkipLink(): void {
+  if (!document.getElementById("bigbox")) return;
+  const link = document.createElement("a");
+  link.className = "phn-skip";
+  link.href = "#bigbox";
+  link.textContent = "Skip to content";
+  document.body.prepend(link);
+}
+
+/** Gives the thread's comment box a placeholder, which the stylesheet uses to keep it one line tall until it is used. */
+export function labelCommentBox(): void {
+  document.querySelector('.fatitem form[action="comment"] textarea')?.setAttribute("placeholder", "Add a comment…");
+}
+
+const BARE_NAV: [string, string][] = [
+  ["newest", "New"],
+  ["front", "Past"],
+  ["newcomments", "Comments"],
+  ["ask", "Ask"],
+  ["show", "Show"],
+  ["jobs", "Jobs"],
+  ["submit", "Submit"],
+];
+
+/**
+ * Login and message pages ("No such item.") come with no header at all. Login gets the mark
+ * and a link home above its form; a message page gets a header bar like every other page's,
+ * with HN's nav links, which the search and settings buttons then join.
+ */
+export function addHomeLink(): void {
+  if (document.documentElement.hasAttribute("op") || document.querySelector("body > center")) return;
+  const home = document.createElement("a");
+  home.className = "phn-home";
+  home.href = "news";
+  home.textContent = "Hacker News";
+  if (document.querySelector("body > form")) {
+    document.body.prepend(home);
+    return;
+  }
+  const nav = document.createElement("nav");
+  nav.className = "phn-bare-nav";
+  for (const [href, label] of BARE_NAV) {
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    nav.append(link);
+  }
+  const bar = document.createElement("header");
+  bar.className = "phn-bare-header";
+  bar.append(home, nav);
+  document.body.prepend(bar);
+}
+
+/** On a phone, the sticky header's nav row gives way while reading down the page and returns on any scroll up. */
+export function hideNavOnScroll(): void {
+  const phone = matchMedia("(max-width: 640px)");
+  const root = document.documentElement;
+  let last = scrollY;
+  addEventListener(
+    "scroll",
+    () => {
+      const delta = scrollY - last;
+      // Ignores small movements, so a finger resting on the screen doesn't flicker the row.
+      if (Math.abs(delta) < 8) return;
+      last = scrollY;
+      root.toggleAttribute("data-phn-nav-away", phone.matches && delta > 0 && scrollY > 100);
+    },
+    { passive: true },
+  );
+}
+
+/**
+ * Drops the "Hacker News" wordmark from the header when there is no room for it: on a wide
+ * screen when the nav would otherwise scroll, and on a phone, where the name sits on the top
+ * row beside the account links, when it would run into them (a long username, say). Also
+ * flags when the nav scrolls, so the stylesheet can fade its edge only then.
+ */
+export function fitHeader(): void {
+  const nav = document.querySelector<HTMLElement>("#hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2)");
+  const account = nav?.nextElementSibling;
+  const links = nav?.querySelector<HTMLElement>(".pagetop");
+  const word = nav?.querySelector<HTMLElement>(".hnname");
+  if (!nav || !links || !word) return;
+  const root = document.documentElement;
+  // Matches the header stylesheet's two-row layout.
+  const phone = matchMedia("(max-width: 640px)");
+  const row = nav.parentElement ?? nav;
+  // Measured while shown, so deciding never needs to show it again, which would resize the nav and loop.
+  let wordWidth = 0;
+  let wordEnd = 0;
+  const fit = () => {
+    const tight = root.hasAttribute("data-phn-tight");
+    if (!tight) {
+      const box = word.getBoundingClientRect();
+      wordWidth = box.width + parseFloat(getComputedStyle(word).marginRight);
+      wordEnd = box.right - row.getBoundingClientRect().left;
+    }
+    let next: boolean;
+    if (phone.matches) {
+      const room = account ? account.getBoundingClientRect().left - row.getBoundingClientRect().left : Infinity;
+      next = wordEnd + 8 > room;
+    } else {
+      next = nav.scrollWidth + (tight ? wordWidth : 0) > nav.clientWidth + 1;
+    }
+    if (next !== tight) root.toggleAttribute("data-phn-tight", next);
+    root.toggleAttribute("data-phn-nav-scrolls", nav.scrollWidth > nav.clientWidth + 1);
+  };
+  const observer = new ResizeObserver(fit);
+  observer.observe(nav);
+  observer.observe(links);
+  if (account) observer.observe(account);
 }

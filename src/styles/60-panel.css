@@ -36,6 +36,19 @@ html.phn {
     font-size: 15px;
   }
 
+  & .phn-search input::-webkit-search-cancel-button {
+    width: 16px;
+    height: 16px;
+    background: var(--phn-muted);
+    mask: var(--phn-i-clear) center / contain no-repeat;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  & .phn-search input::-webkit-search-cancel-button:hover {
+    background: var(--phn-text);
+  }
+
   & .phn-panel button {
     font: inherit;
     color: inherit;
@@ -67,8 +80,7 @@ html.phn {
     font-family: var(--phn-serif);
   }
 
-  & .phn-fonts button[aria-pressed="true"],
-  & .phn-swatches button[aria-pressed="true"] {
+  & .phn-fonts button[aria-pressed="true"] {
     border-color: var(--phn-accent);
   }
 
@@ -118,6 +130,16 @@ html.phn {
     appearance: none;
   }
 
+  & .phn-range input:focus-visible {
+    outline: 0;
+  }
+
+  & .phn-range input:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 3px var(--phn-surface),
+      0 0 0 5px var(--phn-accent);
+  }
+
   & .phn-group {
     margin-top: 16px;
     padding-top: 14px;
@@ -141,13 +163,44 @@ html.phn {
   }
 
   & .phn-swatches button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--phn-muted);
+    font-size: 11.5px;
+  }
+
+  & .phn-swatches button::before {
+    content: "";
+    box-sizing: border-box;
     width: 40px;
     height: 40px;
-    padding: 0;
-    border: 1.5px solid var(--phn-rail);
+    border: 1.5px solid var(--phn-muted);
     border-radius: 50%;
     background: var(--phn-swatch);
     box-shadow: inset 0 0 0 3px var(--phn-surface);
+  }
+
+  & .phn-swatches button[aria-pressed="true"] {
+    color: var(--phn-text);
+  }
+
+  & .phn-swatches button[aria-pressed="true"]::before {
+    border-color: var(--phn-accent);
+  }
+
+  /* With "match system" on, the theme for the other scheme is marked too, so picking it shows a change. */
+  & .phn-swatches button[data-phn-other] {
+    color: var(--phn-text);
+  }
+
+  & .phn-swatches button[data-phn-other]::before {
+    border: 1.5px dashed var(--phn-accent);
   }
 
   & .phn-switch {
@@ -169,6 +222,7 @@ html.phn {
     height: 22px;
     border-radius: 999px;
     background: var(--phn-raised);
+    box-shadow: inset 0 0 0 1px var(--phn-faint);
     transition: background 120ms ease;
   }
 
@@ -186,6 +240,7 @@ html.phn {
 
   & .phn-switch[aria-checked="true"] i {
     background: var(--phn-accent);
+    box-shadow: none;
   }
 
   & .phn-switch[aria-checked="true"] i::after {

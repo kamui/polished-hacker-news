@@ -1,16 +1,17 @@
 import arrowDown from "lucide-static/icons/arrow-down.svg" with { type: "text" };
+import arrowUp from "lucide-static/icons/arrow-up.svg" with { type: "text" };
 import {
   AUTHOR_LINK,
   ancestorAt,
   commentRows,
   depthOf,
   loggedInUser,
+  moreLinksButton,
   nextComment,
 } from "./hn";
 
 export interface CommentSummary {
   maxId: number;
-  newCount: number;
 }
 
 /**
@@ -20,7 +21,6 @@ export interface CommentSummary {
 export function markNewComments(seenUpTo: number | undefined): CommentSummary {
   const me = loggedInUser();
   let maxId = 0;
-  let newCount = 0;
   for (const row of commentRows()) {
     const id = Number(row.id);
     if (!(id > 0)) continue;
@@ -28,9 +28,8 @@ export function markNewComments(seenUpTo: number | undefined): CommentSummary {
     if (seenUpTo === undefined || id <= seenUpTo) continue;
     if (me && row.querySelector(AUTHOR_LINK)?.textContent === me) continue;
     row.dataset.phnNew = "";
-    newCount += 1;
   }
-  return { maxId, newCount };
+  return { maxId };
 }
 
 export function markStoryAuthor(): void {
@@ -41,17 +40,68 @@ export function markStoryAuthor(): void {
   }
 }
 
-/** HN's toggle counts the comment itself in `n`; say how many replies a collapsed comment hides. */
+/**
+ * Puts each comment's controls in the DOM in the order they appear on screen, so Tab goes
+ * collapse, author, links, then the vote arrows and Reply under the text. The stylesheet
+ * draws the toggle and arrows in the same place before and after the move. Also marks the
+ * "parent" link, which stays on show while the other nav links wait for hover, and adds the
+ * phone's button for those other links.
+ */
+export function prepareCommentControls(): void {
+  for (const row of commentRows()) {
+    const toggle = row.querySelector("a.togg");
+    if (toggle) row.querySelector(".comhead")?.prepend(toggle);
+    const votes = row.querySelector("td.votelinks > center");
+    if (votes) row.querySelector(".reply")?.prepend(votes);
+    const links = [...row.querySelectorAll(".navs > a.clicky:not(.togg)")];
+    for (const link of links) {
+      if (link.textContent?.trim() !== "parent") continue;
+      link.classList.add("phn-parent");
+      // First among the links, so the hidden ones (root, prev, next) don't hold a gap open before it.
+      link.parentElement?.prepend(link);
+    }
+    if (links.some((link) => !link.classList.contains("phn-parent"))) {
+      // Right after "parent", so the links it reveals open after it and the button stays put.
+      const button = moreLinksButton(row);
+      const parent = row.querySelector(".navs > a.phn-parent");
+      if (parent) parent.after(button);
+      else row.querySelector(".navs")?.prepend(button);
+    }
+    nameToggle(row);
+  }
+}
+
+/** HN's toggle reads "[–]"; name it for what it does, counting the replies it folds (HN's `n` includes the comment). */
+function nameToggle(row: Element): void {
+  const toggle = row.querySelector("a.togg");
+  if (!toggle) return;
+  const replies = Number(toggle.getAttribute("n")) - 1;
+  const what = replies > 0 ? `comment and ${replies === 1 ? "1 reply" : `${replies} replies`}` : "comment";
+  toggle.setAttribute("aria-label", `${row.classList.contains("coll") ? "Expand" : "Collapse"} ${what}`);
+}
+
+/** Says how many replies a collapsed comment hides, and how many of those are new. */
 function labelCollapsed(row: Element): void {
   const replies = Number(row.querySelector("a.togg")?.getAttribute("n")) - 1;
-  if (!(replies > 0)) return;
-  row.querySelector(".navs")?.setAttribute("data-phn-label", replies === 1 ? "1 reply hidden" : `${replies} replies hidden`);
+  const navs = row.querySelector(".navs");
+  if (!(replies > 0) || !navs) return;
+  navs.setAttribute("data-phn-label", replies === 1 ? "1 reply hidden" : `${replies} replies hidden`);
+  let fresh = 0;
+  const depth = depthOf(row);
+  for (let next = nextComment(row); next && depthOf(next) > depth; next = nextComment(next)) {
+    if (next.hasAttribute("data-phn-new")) fresh++;
+  }
+  navs.toggleAttribute("data-phn-label-new", fresh > 0);
+  if (fresh > 0) navs.setAttribute("data-phn-label-new", `${fresh} new`);
 }
 
 function toggle(row: HTMLTableRowElement): void {
   row.querySelector<HTMLAnchorElement>("a.togg")?.click();
   if (row.getBoundingClientRect().top < 0) row.scrollIntoView({ block: "start" });
 }
+
+/** The first indent level drawn with --phn-deep-step; the stylesheet's rails use the same 4. */
+const DEEP_FROM = 4;
 
 /** The comment a thread rail under the pointer belongs to: an ancestor's line, or the row's own gutter. */
 function railOwner(target: Element, clientX: number): HTMLTableRowElement | null {
@@ -64,8 +114,13 @@ function railOwner(target: Element, clientX: number): HTMLTableRowElement | null
   if (!indent || depth === 0) return null;
   const box = indent.getBoundingClientRect();
   if (box.width === 0) return null;
-  const level = Math.min(depth - 1, Math.max(0, Math.floor(((clientX - box.left) / box.width) * depth)));
-  return ancestorAt(row, level);
+  const style = getComputedStyle(indent);
+  const step = Number.parseFloat(style.getPropertyValue("--phn-step"));
+  const deepStep = Number.parseFloat(style.getPropertyValue("--phn-deep-step"));
+  const x = clientX - box.left;
+  const level =
+    x < DEEP_FROM * step ? Math.floor(x / step) : DEEP_FROM + Math.floor((x - DEEP_FROM * step) / deepStep);
+  return ancestorAt(row, Math.min(depth - 1, Math.max(0, level)));
 }
 
 let hotRails: HTMLElement[] = [];
@@ -106,6 +161,8 @@ export function initThreadControls(): void {
       const toggled = event.target.closest("a.togg")?.closest("tr.comtr");
       if (toggled) {
         labelCollapsed(toggled);
+        // Capture phase runs before HN's own handler flips the row's state.
+        setTimeout(() => nameToggle(toggled));
         return;
       }
       const owner = event.target.closest("td.ind") && railOwner(event.target, event.clientX);
@@ -120,49 +177,89 @@ export function initThreadControls(): void {
     true,
   );
 
-  document.addEventListener("mouseover", (event) => {
-    if (!(event.target instanceof Element)) return;
+  // Mouse only: a tap fires these too, and nothing afterwards would clear the highlight.
+  document.addEventListener("pointerover", (event) => {
+    if (event.pointerType !== "mouse" || !(event.target instanceof Element)) return;
     highlightThread(event.target.closest("td.ind, a.togg") ? railOwner(event.target, event.clientX) : null);
   });
-  document.addEventListener("mousemove", (event) => {
-    if (event.target instanceof Element && event.target.closest("td.ind")) {
+  document.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "mouse" && event.target instanceof Element && event.target.closest("td.ind")) {
       highlightThread(railOwner(event.target, event.clientX));
     }
   });
 }
 
 /** A floating control (and the n / Shift+N keys) that steps through comments new since the last visit. */
-export function initNewCommentNav(newCount: number): void {
-  if (newCount === 0) return;
+export function initNewCommentNav(): void {
   const fresh = () =>
     Array.from(document.querySelectorAll<HTMLTableRowElement>("tr.comtr[data-phn-new]")).filter(
       (row) => row.offsetParent !== null,
     );
+  // Counted the way the stepping counts them: new comments inside a collapsed thread can't be stepped to.
+  const newCount = fresh().length;
+  if (newCount === 0) return;
+  document.documentElement.toggleAttribute("data-phn-pill", true);
+
+  let last: HTMLTableRowElement | undefined;
+  let lastAt = 0;
 
   const jump = (direction: 1 | -1) => {
     const rows = fresh();
     if (rows.length === 0) return;
-    const edge = (document.querySelector("#hnmain td")?.getBoundingClientRect().bottom ?? 0) + 12;
-    const target =
-      direction === 1
-        ? (rows.find((row) => row.getBoundingClientRect().top > edge + 4) ?? rows[0])
-        : (rows.findLast((row) => row.getBoundingClientRect().top < edge - 4) ?? rows.at(-1));
+    // Where scrollIntoView leaves a row's top: the page's scroll padding, which clears the sticky header.
+    const line = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const index = last ? rows.indexOf(last) : -1;
+    // A smooth scroll is still moving the last target, so its position can't tell us where we are yet.
+    const scrolling = index !== -1 && performance.now() - lastAt < 800;
+    const at = scrolling
+      ? index + direction
+      : direction === 1
+        ? rows.findIndex((row) => row.getBoundingClientRect().top > line + 4)
+        : rows.findLastIndex((row) => row.getBoundingClientRect().top < line - 4);
+    const wrapped = at < 0 || at >= rows.length ? (direction === 1 ? 0 : rows.length - 1) : at;
+    const target = rows[wrapped];
     if (!target) return;
+    last?.classList.remove("phn-current");
+    target.classList.add("phn-current");
+    last = target;
+    lastAt = performance.now();
     target.scrollIntoView({ block: "start", behavior: "smooth" });
     target.classList.remove("phn-flash");
     void target.offsetWidth;
     target.classList.add("phn-flash");
+    label.textContent = `${wrapped + 1} of ${rows.length} new`;
+    noun.hidden = true;
   };
 
-  const pill = document.createElement("button");
-  pill.type = "button";
-  pill.className = "phn-pill";
-  pill.title = "Jump to the next new comment (n)";
+  const prev = document.createElement("button");
+  prev.type = "button";
+  prev.className = "phn-pill-prev";
+  prev.title = "Previous new comment (Shift+N)";
+  prev.setAttribute("aria-label", "Previous new comment");
+  prev.innerHTML = arrowUp;
+  prev.addEventListener("click", () => jump(-1));
+
+  const next = document.createElement("button");
+  next.type = "button";
+  next.className = "phn-pill-next";
+  next.title = "Next new comment (n)";
   const label = document.createElement("span");
-  label.textContent = newCount === 1 ? "1 new comment" : `${newCount} new comments`;
-  pill.append(label);
-  pill.insertAdjacentHTML("beforeend", arrowDown);
-  pill.addEventListener("click", () => jump(1));
+  label.textContent = `${newCount} new`;
+  // Dropped on phones, where the pill has to stay one line.
+  const noun = document.createElement("span");
+  noun.className = "phn-pill-noun";
+  noun.textContent = newCount === 1 ? " comment" : " comments";
+  next.append(label, noun);
+  next.insertAdjacentHTML("beforeend", arrowDown);
+  const key = document.createElement("kbd");
+  key.textContent = "n";
+  key.setAttribute("aria-hidden", "true");
+  next.append(key);
+  next.addEventListener("click", () => jump(1));
+
+  const pill = document.createElement("div");
+  pill.className = "phn-pill";
+  pill.append(prev, next);
   document.body.append(pill);
 
   document.addEventListener("keydown", (event) => {
@@ -173,4 +270,34 @@ export function initNewCommentNav(newCount: number): void {
     event.preventDefault();
     jump(event.shiftKey ? -1 : 1);
   });
+}
+
+/**
+ * HN has no quote markup: readers quote with a leading ">". Each such paragraph gets a class.
+ * The first paragraph of a comment is bare text before the first <p>, so it is wrapped in one.
+ */
+export function markQuotes(): void {
+  for (const text of document.querySelectorAll<HTMLElement>(".commtext, .toptext")) {
+    const lead: ChildNode[] = [];
+    for (const node of text.childNodes) {
+      if (node instanceof HTMLParagraphElement || (node instanceof HTMLElement && node.classList.contains("reply"))) break;
+      lead.push(node);
+    }
+    if (lead[0]?.textContent?.trimStart().startsWith(">")) {
+      const p = document.createElement("p");
+      p.className = "phn-quote phn-lead";
+      lead[0].before(p);
+      p.append(...lead);
+    }
+    for (const p of text.querySelectorAll(":scope > p")) {
+      if (p.textContent?.trimStart().startsWith(">")) p.classList.add("phn-quote");
+    }
+    // The bar marks the quote, so the ">" it was typed with goes.
+    for (const quote of text.querySelectorAll(":scope > p.phn-quote")) {
+      const walker = document.createTreeWalker(quote, NodeFilter.SHOW_TEXT);
+      let first = walker.nextNode();
+      while (first && !first.textContent?.trim()) first = walker.nextNode();
+      if (first?.textContent) first.textContent = first.textContent.replace(/^\s*>\s?/, "");
+    }
+  }
 }

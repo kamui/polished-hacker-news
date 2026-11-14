@@ -63,3 +63,17 @@ export function commentsLink(story: Element): HTMLAnchorElement | undefined {
 }
 
 export const loggedInUser = () => document.querySelector("a#me")?.textContent ?? undefined;
+
+/** A "⋯" button that shows or hides, on phones, the links the phone layout leaves out of `host`. */
+export function moreLinksButton(host: Element): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "phn-more";
+  button.title = "More links";
+  button.setAttribute("aria-label", "More links");
+  button.setAttribute("aria-expanded", "false");
+  button.addEventListener("click", () => {
+    button.setAttribute("aria-expanded", String(host.classList.toggle("phn-more-open")));
+  });
+  return button;
+}
