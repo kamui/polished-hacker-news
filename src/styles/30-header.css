@@ -53,8 +53,8 @@ html.phn {
   }
 
   & #hnmain > tbody > tr:first-child img {
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
     border: 0 !important;
     border-radius: 5px;
   }
@@ -230,14 +230,22 @@ html.phn {
     clip-path: inset(50%);
   }
 
-  /* Too narrow for one row: the logo and buttons stay on top and the nav gets its own scrolling row. */
+  /*
+   * Too narrow for one row, the header takes two, as HN's own does: the logo, name and buttons
+   * on top, and the nav links on a scrolling row of their own. The name lives inside the nav's
+   * markup, so it is positioned up beside the logo rather than moved.
+   */
   @media (max-width: 640px) {
     scroll-padding-top: calc(var(--phn-header) + 40px);
 
     & #hnmain > tbody > tr:first-child > td > table > tbody > tr {
+      position: relative;
       flex-wrap: wrap;
       row-gap: 0;
-      padding-top: 6px;
+    }
+
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:first-child {
+      height: var(--phn-header) !important;
     }
 
     & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2) {
@@ -245,7 +253,32 @@ html.phn {
       flex-basis: 100%;
       margin-inline: -7px;
       padding-bottom: 4px !important;
-      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    }
+
+    & .pagetop .hnname {
+      position: absolute;
+      top: 0;
+      left: 42px;
+      display: flex;
+      align-items: center;
+      height: var(--phn-header);
+    }
+
+    & .pagetop .hnname a {
+      padding-left: 0;
+      font-size: 17px;
+    }
+
+    /* The nav row fades at its right edge to show it scrolls. */
+    & #hnmain > tbody > tr:first-child > td > table > tbody > tr::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 32px;
+      height: 40px;
+      background: linear-gradient(to right, transparent, var(--phn-bg));
+      pointer-events: none;
     }
 
     & #hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(3) {

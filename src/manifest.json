@@ -27,7 +27,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["fonts/*", "ui/*", "icons/icon-16.png", "icons/icon-32.png", "icons/icon-48.png"],
+      "resources": ["fonts/*", "ui/*", "icons/icon-16.png", "icons/icon-32.png", "icons/icon-48.png", "icons/icon-96.png"],
       "matches": ["https://news.ycombinator.com/*"]
     }
   ]

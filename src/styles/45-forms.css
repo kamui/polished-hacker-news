@@ -36,7 +36,7 @@ html.phn {
     content: "";
     width: 32px;
     height: 32px;
-    background: url("chrome-extension://__MSG_@@extension_id__/icons/icon-48.png") center / contain no-repeat;
+    background: url("chrome-extension://__MSG_@@extension_id__/icons/icon-96.png") center / contain no-repeat;
   }
 
   &[data-phn-tin="false"] .phn-home::before {

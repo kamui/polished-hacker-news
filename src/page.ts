@@ -46,7 +46,7 @@ export function setTinIcon(own: boolean): void {
   }
   if (logo) {
     siteLogo = logo.src;
-    logo.src = chrome.runtime.getURL("icons/icon-48.png");
+    logo.src = chrome.runtime.getURL("icons/icon-96.png");
   }
 }
 
@@ -111,26 +111,42 @@ export function addHomeLink(): void {
   document.body.prepend(home);
 }
 
-/** Drops the "Hacker News" wordmark from the header whenever the nav would otherwise scroll, as with a long username. */
+/**
+ * Drops the "Hacker News" wordmark from the header when there is no room for it: on a wide
+ * screen when the nav would otherwise scroll, and on a phone, where the name sits on the top
+ * row beside the account links, when it would run into them (a long username, say).
+ */
 export function fitHeader(): void {
   const nav = document.querySelector<HTMLElement>("#hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2)");
-  if (!nav) return;
-  const links = nav.querySelector<HTMLElement>(".pagetop");
-  const word = nav.querySelector<HTMLElement>(".hnname");
-  if (!links || !word) return;
+  const account = nav?.nextElementSibling;
+  const links = nav?.querySelector<HTMLElement>(".pagetop");
+  const word = nav?.querySelector<HTMLElement>(".hnname");
+  if (!nav || !links || !word) return;
   const root = document.documentElement;
-  // On a phone the nav has a scrolling row of its own (see the header stylesheet), so overflow there is expected.
+  // Matches the header stylesheet's two-row layout.
   const phone = matchMedia("(max-width: 640px)");
+  const row = nav.parentElement ?? nav;
   // Measured while shown, so deciding never needs to show it again, which would resize the nav and loop.
   let wordWidth = 0;
+  let wordEnd = 0;
   const fit = () => {
     const tight = root.hasAttribute("data-phn-tight");
-    if (!tight) wordWidth = word.getBoundingClientRect().width + parseFloat(getComputedStyle(word).marginRight);
-    const needed = nav.scrollWidth + (tight ? wordWidth : 0);
-    const next = !phone.matches && needed > nav.clientWidth + 1;
+    if (!tight) {
+      const box = word.getBoundingClientRect();
+      wordWidth = box.width + parseFloat(getComputedStyle(word).marginRight);
+      wordEnd = box.right - row.getBoundingClientRect().left;
+    }
+    let next: boolean;
+    if (phone.matches) {
+      const room = account ? account.getBoundingClientRect().left - row.getBoundingClientRect().left : Infinity;
+      next = wordEnd + 8 > room;
+    } else {
+      next = nav.scrollWidth + (tight ? wordWidth : 0) > nav.clientWidth + 1;
+    }
     if (next !== tight) root.toggleAttribute("data-phn-tight", next);
   };
   const observer = new ResizeObserver(fit);
   observer.observe(nav);
   observer.observe(links);
+  if (account) observer.observe(account);
 }
