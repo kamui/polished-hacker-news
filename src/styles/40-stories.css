@@ -307,20 +307,24 @@ html.phn {
       order: 5;
     }
 
-    & .subtext .phn-more {
+    /* Centred under the vote arrow, level with the first line of facts. */
+    & td.phn-more-cell {
+      padding-top: 3px;
+      text-align: right;
+      vertical-align: top;
+    }
+
+    & td.phn-more-cell > .phn-more {
       display: inline-flex;
-      order: -1;
-      align-self: center;
-      margin: -3px 0;
-      padding: 3px 4px;
+      margin-right: 4px;
+      padding: 0 4px;
       border: 0;
       border-radius: 4px;
       background: none;
       color: var(--phn-faint);
-      vertical-align: middle;
     }
 
-    & .subtext .phn-more[aria-expanded="true"] {
+    & td.phn-more-cell > .phn-more[aria-expanded="true"] {
       color: var(--phn-text);
     }
   }

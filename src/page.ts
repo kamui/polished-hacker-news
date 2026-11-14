@@ -107,7 +107,7 @@ export function addListHeading(): void {
  * title never pushes the domain onto a line of its own and every row has the same shape.
  * HN lists the story's actions (hide, past, favorite) before its comment count; they go after
  * it, with hide last, so the count sits beside the age and Tab follows the line as drawn.
- * Phones leave hide and past out of lists, behind a button at the end of the line.
+ * Phones leave hide and past out of lists, behind a button under the vote arrow.
  */
 export function orderSublines(): void {
   for (const line of document.querySelectorAll(".subline")) {
@@ -122,8 +122,11 @@ export function orderSublines(): void {
     const meta = row?.querySelector(".subline") ?? row?.querySelector("td.subtext");
     if (!meta) continue;
     if (site) meta.prepend(site);
-    if (!story.closest(".fatitem") && meta.querySelector(':scope > :is(a[href^="hide?"], a.hnpast)')) {
-      meta.append(moreLinksButton(meta));
+    // The cell under the rank and vote arrow is empty; the button sits there, so it never wraps the line.
+    const cell = row?.firstElementChild;
+    if (!story.closest(".fatitem") && cell?.childElementCount === 0 && meta.querySelector(':scope > :is(a[href^="hide?"], a.hnpast)')) {
+      cell.classList.add("phn-more-cell");
+      cell.append(moreLinksButton(meta));
     }
   }
 }
