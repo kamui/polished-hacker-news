@@ -324,8 +324,14 @@ html.phn {
     background: var(--phn-rail);
   }
 
-  & tr.comtr td.default a.togg:hover {
-    --phn-knob: var(--phn-text);
+  @media (hover: hover) {
+    & tr.comtr td.default a.togg:hover {
+      --phn-knob: var(--phn-text);
+    }
+
+    & tr.comtr td.default a.togg:hover::after {
+      background: var(--phn-accent);
+    }
   }
 
   /* The link is the whole gutter; the ring goes on the round button a reader recognises. */
@@ -339,7 +345,6 @@ html.phn {
   }
 
   /* The comment a rail collapses: its button and its own stretch of the line light up with the replies'. */
-  & tr.comtr td.default a.togg:hover::after,
   & tr.comtr.phn-hot-root td.default a.togg:not([n="1"])::after {
     background: var(--phn-accent);
   }

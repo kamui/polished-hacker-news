@@ -131,12 +131,13 @@ export function initThreadControls(): void {
     true,
   );
 
-  document.addEventListener("mouseover", (event) => {
-    if (!(event.target instanceof Element)) return;
+  // Mouse only: a tap fires these too, and nothing afterwards would clear the highlight.
+  document.addEventListener("pointerover", (event) => {
+    if (event.pointerType !== "mouse" || !(event.target instanceof Element)) return;
     highlightThread(event.target.closest("td.ind, a.togg") ? railOwner(event.target, event.clientX) : null);
   });
-  document.addEventListener("mousemove", (event) => {
-    if (event.target instanceof Element && event.target.closest("td.ind")) {
+  document.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "mouse" && event.target instanceof Element && event.target.closest("td.ind")) {
       highlightThread(railOwner(event.target, event.clientX));
     }
   });
