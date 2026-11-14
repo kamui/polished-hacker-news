@@ -44,8 +44,23 @@ Open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, an
 | `bun run dev` | Rebuilds `dist/` on change, for use with a loaded unpacked extension. |
 | `bun test` | Unit tests. |
 | `bun run typecheck` | Type-checks the project. |
+| `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. A GitHub Action runs this daily. |
 | `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store. |
 | `bun run icons` | Re-renders the icon PNGs from `src/assets/icon.svg` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
+
+## Daily check against the live site
+
+Hacker News changes its markup without notice, so `.github/workflows/check.yml` runs
+`scripts/check-live.ts` once a day, as well as on every push. It loads the built extension in
+Chromium against the real site and fails if something the extension depends on has moved:
+story and comment authors, vote arrows, comment depth, the collapse toggle, the login form.
+
+To include the logged-in pages, add two values under the repository's **Settings → Secrets
+and variables → Actions**: a variable `HN_USERNAME` and a secret `HN_PASSWORD`, for an account
+kept for this purpose. The check signs in, looks at the submit, reply and profile pages, and
+upvotes one story and immediately undoes it. It never posts, replies, submits, flags or hides:
+every non-GET request other than the sign-in is aborted before it is sent. Without the two
+values those checks are skipped.
 
 ## How it is built
 

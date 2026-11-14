@@ -11,6 +11,7 @@
     "preview": "bun run scripts/preview.ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
+    "check:live": "bun run scripts/check-live.ts",
     "icons": "bun run scripts/icons.ts",
     "zip": "bun run build && bun run scripts/zip.ts"
   },
