@@ -1,4 +1,4 @@
-/** Packs dist/ into the zip the Chrome Web Store accepts, without needing a system zip tool. */
+/** Packs dist/ into the zip the Chrome Web Store and Edge Add-ons accept, without needing a system zip tool. */
 import { readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { zipSync } from "fflate";

@@ -26,14 +26,14 @@ Polished Hacker News is an independent project. It is not affiliated with Y Comb
 
 ## Install from source
 
-Requires [Bun](https://bun.sh) and Chrome 133 or later.
+Requires [Bun](https://bun.sh) and Chrome or Edge 133 or later.
 
 ```sh
 bun install
 bun run build
 ```
 
-Open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, and select the
+Open `chrome://extensions` (`edge://extensions` in Edge), turn on Developer mode, choose **Load unpacked**, and select the
 `dist` folder.
 
 ## Develop
@@ -45,7 +45,7 @@ Open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, an
 | `bun test` | Unit tests. |
 | `bun run typecheck` | Type-checks the project. |
 | `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. GitHub Actions run this on relevant commits and daily. |
-| `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store. |
+| `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store and Microsoft Edge Add-ons; the listing copy and screenshots are in `store/`. |
 | `bun run icons` | Re-renders the icon PNGs from `src/assets/icon.svg` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
 
 ## Daily check against the live site
