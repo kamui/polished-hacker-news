@@ -299,12 +299,12 @@ html.phn {
   }
 }
 
-/* With the restyle switched off, the button is the way back, shown as a plain link in HN's own header. */
+/* With the restyle switched off, the button is the way back, shown as a plain link in HN's own header, black like HN's other links there. */
 html:not(.phn) .phn-settings-btn {
   padding: 0 0 0 8px;
   border: 0;
   background: none;
-  color: inherit;
+  color: #000000;
   font: inherit;
   cursor: pointer;
 }
