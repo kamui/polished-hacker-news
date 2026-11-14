@@ -62,7 +62,7 @@ await Bun.write(
 ${compare ? `\n${compare}\n` : ""}
 ${storeImages.map((image) => `\`${image}\``).join(" and ")} are the images for the store listing; they are not needed to use the extension.
 
-**Install.** Until the store listings are approved, download \`${name}-${version}.zip\`, unzip it, open \`chrome://extensions\` (or \`edge://extensions\`), turn on Developer mode, choose **Load unpacked** and select the unzipped folder.
+**Install.** Get it from the [Chrome Web Store](https://chromewebstore.google.com/detail/polished-hacker-news/cnpddmnegjilglmonidfbjflhfhahepg). To load this version by hand instead, download \`${name}-${version}.zip\`, unzip it, open \`chrome://extensions\` (or \`edge://extensions\`), turn on Developer mode, choose **Load unpacked** and select the unzipped folder.
 `,
 );
 
