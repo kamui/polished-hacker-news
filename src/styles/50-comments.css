@@ -330,6 +330,16 @@ html.phn {
     border-top: 1px solid var(--phn-line);
   }
 
+  /* The heading's rule already separates the first comment. */
+  & .phn-heading + table > tbody > tr.athing:first-child:not(.submission, .comtr) > td:is(.default, .votelinks) {
+    border-top: 0;
+  }
+
+  /* HN leaves these pages' reply blocks empty; without them a comment ends at its text. */
+  & .reply:empty {
+    display: none;
+  }
+
   & table:not(.fatitem) > tbody > tr.athing:not(.submission, .comtr) > td.votelinks {
     width: 30px;
     min-width: 30px;

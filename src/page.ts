@@ -7,6 +7,7 @@ const HEADINGS: Record<string, string> = {
   ask: "Ask HN",
   show: "Show HN",
   jobs: "Jobs",
+  newcomments: "Comments",
 };
 
 /**
@@ -83,7 +84,7 @@ export function rememberDownvoteSlot(): void {
 export function addListHeading(): void {
   const title = HEADINGS[pageOp()];
   const list = document.querySelector("#bigbox > td > table");
-  if (!title || !list || !list.querySelector("tr.athing.submission")) return;
+  if (!title || !list || !list.querySelector("tr.athing")) return;
 
   const heading = document.createElement("div");
   heading.className = "phn-heading";
