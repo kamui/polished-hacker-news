@@ -101,14 +101,43 @@ export function labelCommentBox(): void {
   document.querySelector('.fatitem form[action="comment"] textarea')?.setAttribute("placeholder", "Add a comment…");
 }
 
-/** Login and message pages come with no header at all; this gives them the mark and a way back to the front page. */
+const BARE_NAV: [string, string][] = [
+  ["newest", "New"],
+  ["front", "Past"],
+  ["newcomments", "Comments"],
+  ["ask", "Ask"],
+  ["show", "Show"],
+  ["jobs", "Jobs"],
+  ["submit", "Submit"],
+];
+
+/**
+ * Login and message pages ("No such item.") come with no header at all. Login gets the mark
+ * and a link home above its form; a message page gets a header bar like every other page's,
+ * with HN's nav links, which the search and settings buttons then join.
+ */
 export function addHomeLink(): void {
   if (document.documentElement.hasAttribute("op") || document.querySelector("body > center")) return;
   const home = document.createElement("a");
   home.className = "phn-home";
   home.href = "news";
   home.textContent = "Hacker News";
-  document.body.prepend(home);
+  if (document.querySelector("body > form")) {
+    document.body.prepend(home);
+    return;
+  }
+  const nav = document.createElement("nav");
+  nav.className = "phn-bare-nav";
+  for (const [href, label] of BARE_NAV) {
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    nav.append(link);
+  }
+  const bar = document.createElement("header");
+  bar.className = "phn-bare-header";
+  bar.append(home, nav);
+  document.body.prepend(bar);
 }
 
 /**

@@ -5,7 +5,11 @@ export const headerEndCell = () =>
 /** Adds a button to the header's right end: before the account links when there are some, so focus moves left to right. */
 export function placeInHeader(button: HTMLElement): boolean {
   const cell = headerEndCell();
-  if (!(cell instanceof HTMLTableCellElement)) return false;
+  if (!(cell instanceof HTMLTableCellElement)) {
+    const bar = document.querySelector(".phn-bare-header");
+    bar?.append(button);
+    return bar !== null;
+  }
   const account = cell.cellIndex > 1 ? cell.querySelector(":scope > .pagetop") : null;
   if (account) account.before(button);
   else cell.append(button);

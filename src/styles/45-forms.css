@@ -293,16 +293,73 @@ html.phn:not([op]) {
     text-underline-offset: 0.18em;
   }
 
+  /* A one-line message: the header bar on top, the message in the reading column under it. */
   & body:not(:has(> center, > form)) {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    width: min(560px, 100%);
-    margin: 0 auto;
-    padding: 16vh 20px 48px;
+    margin: 0;
+    padding: 0 max(var(--phn-gutter), calc((100% - var(--phn-width)) / 2)) 48px;
     color: var(--phn-muted);
     font-size: 17px;
     line-height: 1.5;
+  }
+
+  & .phn-bare-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 10px;
+    min-height: var(--phn-header);
+    margin-bottom: 40px;
+    /* The rule runs the full width of the window, as the main header's does. */
+    border-bottom: 1px solid var(--phn-line);
+    border-image: linear-gradient(var(--phn-line), var(--phn-line)) 0 0 1 0 / 0 0 1px 0 / 0 100vw;
+  }
+
+  & .phn-bare-header .phn-home {
+    align-self: center;
+    min-height: var(--phn-header);
+    margin: 0 10px 0 0;
+  }
+
+  & .phn-bare-nav {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  & .phn-bare-nav a {
+    display: inline-block;
+    padding: 8px;
+    border-radius: 7px;
+    color: var(--phn-muted) !important;
+    font-family: var(--phn-ui);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none !important;
+  }
+
+  & .phn-bare-nav a:hover {
+    background: var(--phn-raised);
+    color: var(--phn-text) !important;
+  }
+
+  & .phn-bare-nav a:focus-visible {
+    outline-offset: -2px;
+  }
+
+  @media (max-width: 640px) {
+    & .phn-bare-nav {
+      order: 1;
+      flex-basis: 100%;
+      margin: 0 -8px 4px;
+    }
+
+    & .phn-bare-header .phn-icon-btn:first-of-type {
+      margin-left: auto;
+    }
   }
 
   /* The password-reset page keeps its label and field as bare text in the form. */
