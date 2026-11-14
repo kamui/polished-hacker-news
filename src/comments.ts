@@ -1,4 +1,5 @@
 import arrowDown from "lucide-static/icons/arrow-down.svg" with { type: "text" };
+import arrowUp from "lucide-static/icons/arrow-up.svg" with { type: "text" };
 import {
   AUTHOR_LINK,
   ancestorAt,
@@ -180,17 +181,34 @@ export function initNewCommentNav(): void {
     void target.offsetWidth;
     target.classList.add("phn-flash");
     label.textContent = `${wrapped + 1} of ${rows.length} new`;
+    noun.hidden = true;
   };
 
-  const pill = document.createElement("button");
-  pill.type = "button";
-  pill.className = "phn-pill";
-  pill.title = "Jump to the next new comment (n), or the previous one (Shift+N)";
+  const prev = document.createElement("button");
+  prev.type = "button";
+  prev.className = "phn-pill-prev";
+  prev.title = "Previous new comment (Shift+N)";
+  prev.setAttribute("aria-label", "Previous new comment");
+  prev.innerHTML = arrowUp;
+  prev.addEventListener("click", () => jump(-1));
+
+  const next = document.createElement("button");
+  next.type = "button";
+  next.className = "phn-pill-next";
+  next.title = "Next new comment (n)";
   const label = document.createElement("span");
-  label.textContent = newCount === 1 ? "1 new comment" : `${newCount} new comments`;
-  pill.append(label);
-  pill.insertAdjacentHTML("beforeend", arrowDown);
-  pill.addEventListener("click", () => jump(1));
+  label.textContent = `${newCount} new`;
+  // Dropped on phones, where the pill has to stay one line.
+  const noun = document.createElement("span");
+  noun.className = "phn-pill-noun";
+  noun.textContent = newCount === 1 ? " comment" : " comments";
+  next.append(label, noun);
+  next.insertAdjacentHTML("beforeend", arrowDown);
+  next.addEventListener("click", () => jump(1));
+
+  const pill = document.createElement("div");
+  pill.className = "phn-pill";
+  pill.append(prev, next);
   document.body.append(pill);
 
   document.addEventListener("keydown", (event) => {

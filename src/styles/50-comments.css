@@ -558,6 +558,16 @@ html.phn {
     border-radius: 999px;
     background: var(--phn-surface);
     box-shadow: var(--phn-shadow);
+    white-space: nowrap;
+  }
+
+  & .phn-pill button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
     color: var(--phn-text);
     font-family: var(--phn-ui);
     font-size: 14px;
@@ -565,7 +575,19 @@ html.phn {
     cursor: pointer;
   }
 
-  & .phn-pill::before {
+  & .phn-pill button:hover {
+    background: var(--phn-raised);
+  }
+
+  & .phn-pill-prev {
+    padding: 9px 8px 9px 12px;
+  }
+
+  & .phn-pill-next {
+    padding: 9px 16px 9px 10px;
+  }
+
+  & .phn-pill-next::before {
     content: "";
     width: 8px;
     height: 8px;
@@ -573,14 +595,22 @@ html.phn {
     background: var(--phn-new);
   }
 
-  & .phn-pill:hover {
-    border-color: var(--phn-new);
-  }
-
-  & button.phn-pill svg {
+  & .phn-pill svg {
     width: 16px;
     height: 16px;
     color: var(--phn-muted);
+  }
+
+  /* The noun is its own flex item: pull it back across the gap, and keep its leading space. */
+  & .phn-pill-next > span + span {
+    margin-left: -8px;
+    white-space: pre;
+  }
+
+  @media (max-width: 640px) {
+    & .phn-pill-noun {
+      display: none;
+    }
   }
 
   &[data-phn-new="false"] .phn-pill {
