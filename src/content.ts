@@ -12,6 +12,7 @@ import {
   addHomeLink,
   addListHeading,
   fitHeader,
+  hideNavOnScroll,
   keepKarma,
   labelCommentBox,
   orderSublines,
@@ -84,6 +85,7 @@ async function main(): Promise<void> {
     () => void saveAndReload({ ...settings, enabled: false }),
   );
   fitHeader();
+  hideNavOnScroll();
   onSettingsChanged((next) => {
     settings = next;
     applySettings(next);

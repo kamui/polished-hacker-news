@@ -152,6 +152,24 @@ export function addHomeLink(): void {
   document.body.prepend(bar);
 }
 
+/** On a phone, the sticky header's nav row gives way while reading down the page and returns on any scroll up. */
+export function hideNavOnScroll(): void {
+  const phone = matchMedia("(max-width: 640px)");
+  const root = document.documentElement;
+  let last = scrollY;
+  addEventListener(
+    "scroll",
+    () => {
+      const delta = scrollY - last;
+      // Ignores small movements, so a finger resting on the screen doesn't flicker the row.
+      if (Math.abs(delta) < 8) return;
+      last = scrollY;
+      root.toggleAttribute("data-phn-nav-away", phone.matches && delta > 0 && scrollY > 100);
+    },
+    { passive: true },
+  );
+}
+
 /**
  * Drops the "Hacker News" wordmark from the header when there is no room for it: on a wide
  * screen when the nav would otherwise scroll, and on a phone, where the name sits on the top

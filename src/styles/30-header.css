@@ -288,6 +288,33 @@ html.phn {
     & .pagetop a {
       padding-inline: 7px;
     }
+
+    /*
+     * Set by hideNavOnScroll while reading down the page. The nav row is clipped off rather
+     * than collapsed, so the page under the sticky header doesn't jump; its rule is redrawn
+     * under the first row.
+     */
+    &[data-phn-nav-away] {
+      scroll-padding-top: calc(var(--phn-header) + 12px);
+    }
+
+    &[data-phn-sticky="true"] #hnmain > tbody > tr:first-child > td {
+      clip-path: inset(0);
+      transition: clip-path 0.2s ease;
+    }
+
+    &[data-phn-sticky="true"][data-phn-nav-away] #hnmain > tbody > tr:first-child > td:not(:focus-within) {
+      clip-path: inset(0 0 calc(100% - var(--phn-header)) 0);
+      background:
+        linear-gradient(var(--phn-line), var(--phn-line)) 0 calc(var(--phn-header) - 1px) / 100% 1px no-repeat,
+        var(--phn-bg);
+    }
+  }
+
+  @media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+    &[data-phn-sticky="true"] #hnmain > tbody > tr:first-child > td {
+      transition: none;
+    }
   }
 
   & .phn-icon-btn.phn-floating {

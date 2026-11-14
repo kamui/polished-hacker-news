@@ -26,7 +26,9 @@ export function attachPopover(button: HTMLElement, panel: HTMLElement, onOpen?: 
     if (!open) return;
     const anchor = button.getBoundingClientRect();
     const viewport = document.documentElement.clientWidth;
-    panel.style.top = `${anchor.bottom + 10}px`;
+    // Below the whole header: on a phone the nav row sits under the buttons and would show at the panel's sides.
+    const header = button.closest("table, header") ?? button;
+    panel.style.top = `${header.getBoundingClientRect().bottom + 8}px`;
     const free = viewport - panel.offsetWidth;
     // On a phone the panel nearly fills the width, so it is centred rather than hung from the button.
     panel.style.right = `${free < 120 ? free / 2 : Math.min(Math.max(12, viewport - anchor.right), free - 12)}px`;
