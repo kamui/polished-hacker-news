@@ -213,8 +213,8 @@ html.phn {
     display: flex;
     align-items: baseline;
     gap: 14px;
-    margin: 20px 0 10px;
-    padding-bottom: 14px;
+    margin: 6px 0 6px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--phn-line);
   }
 
