@@ -242,6 +242,17 @@ html.phn {
     }
   }
 
+  /* A phone's header line has room for one: "parent", the way back up a deep thread. */
+  @media (max-width: 640px) {
+    & td.default .navs > a.clicky:not(.togg, .phn-parent) {
+      display: none;
+    }
+
+    & td.default .navs > a.clicky.phn-parent:not(.togg) {
+      opacity: 1;
+    }
+  }
+
   & td.default .navs > .onstory:empty {
     display: none;
   }
@@ -549,10 +560,7 @@ html.phn {
     bottom: 22px;
     left: 50%;
     z-index: 950;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 16px 9px 14px;
+    display: flex;
     translate: -50% 0;
     border: 1px solid var(--phn-line);
     border-radius: 999px;

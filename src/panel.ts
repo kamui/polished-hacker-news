@@ -158,6 +158,7 @@ export function mountPanel(
   toggleButton.innerHTML = settingsIcon;
   toggleButton.append(el("span", { textContent: chrome.runtime.getManifest().short_name ?? "" }));
   toggleButton.title = "Reading settings";
+  toggleButton.setAttribute("aria-label", "Reading settings");
   attachPopover(toggleButton, panel);
 
   if (!placeInHeader(toggleButton)) {

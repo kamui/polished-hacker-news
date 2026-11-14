@@ -4,7 +4,7 @@ import {
   markNewComments,
   markQuotes,
   markStoryAuthor,
-  orderCommentControls,
+  prepareCommentControls,
 } from "./comments";
 import { isItemPage, parseCount, storyIdFromUrl } from "./hn";
 import { initNewTabLinks } from "./links";
@@ -42,7 +42,7 @@ async function trackComments(): Promise<void> {
   const { maxId } = markNewComments(previous?.m);
   markStoryAuthor();
   markQuotes();
-  orderCommentControls();
+  prepareCommentControls();
   initThreadControls();
   initNewCommentNav();
 

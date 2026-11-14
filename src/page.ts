@@ -9,10 +9,14 @@ const HEADINGS: Record<string, string> = {
   jobs: "Jobs",
 };
 
-/** HN prints karma beside the username as "(<span id="karma">123</span>)", which the nav styling hides; keep it as an attribute. */
+/**
+ * Names the header's icon-only links, and keeps the karma HN prints beside the username as
+ * "(<span id="karma">123</span>)", which the nav styling hides, as an attribute.
+ */
 export function keepKarma(): void {
   const me = document.querySelector<HTMLAnchorElement>("a#me");
   document.querySelector("a#logout")?.setAttribute("title", "Log out");
+  document.querySelector(HEADER_LOGO)?.setAttribute("alt", "Hacker News");
   const karma = document.getElementById("karma")?.textContent?.trim();
   if (me && karma) me.dataset.phnKarma = karma;
 }

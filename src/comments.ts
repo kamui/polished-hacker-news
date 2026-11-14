@@ -42,18 +42,32 @@ export function markStoryAuthor(): void {
 /**
  * Puts each comment's controls in the DOM in the order they appear on screen, so Tab goes
  * collapse, author, links, then the vote arrows and Reply under the text. The stylesheet
- * draws the toggle and arrows in the same place before and after the move.
+ * draws the toggle and arrows in the same place before and after the move. Also marks the
+ * "parent" link, the one nav link phones keep on show.
  */
-export function orderCommentControls(): void {
+export function prepareCommentControls(): void {
   for (const row of commentRows()) {
     const toggle = row.querySelector("a.togg");
     if (toggle) row.querySelector(".comhead")?.prepend(toggle);
     const votes = row.querySelector("td.votelinks > center");
     if (votes) row.querySelector(".reply")?.prepend(votes);
+    for (const link of row.querySelectorAll(".navs > a.clicky:not(.togg)")) {
+      if (link.textContent?.trim() === "parent") link.classList.add("phn-parent");
+    }
+    nameToggle(row);
   }
 }
 
-/** HN's toggle counts the comment itself in `n`; say how many replies a collapsed comment hides. */
+/** HN's toggle reads "[–]"; name it for what it does, counting the replies it folds (HN's `n` includes the comment). */
+function nameToggle(row: Element): void {
+  const toggle = row.querySelector("a.togg");
+  if (!toggle) return;
+  const replies = Number(toggle.getAttribute("n")) - 1;
+  const what = replies > 0 ? `comment and ${replies === 1 ? "1 reply" : `${replies} replies`}` : "comment";
+  toggle.setAttribute("aria-label", `${row.classList.contains("coll") ? "Expand" : "Collapse"} ${what}`);
+}
+
+/** Says how many replies a collapsed comment hides. */
 function labelCollapsed(row: Element): void {
   const replies = Number(row.querySelector("a.togg")?.getAttribute("n")) - 1;
   if (!(replies > 0)) return;
@@ -118,6 +132,8 @@ export function initThreadControls(): void {
       const toggled = event.target.closest("a.togg")?.closest("tr.comtr");
       if (toggled) {
         labelCollapsed(toggled);
+        // Capture phase runs before HN's own handler flips the row's state.
+        setTimeout(() => nameToggle(toggled));
         return;
       }
       const owner = event.target.closest("td.ind") && railOwner(event.target, event.clientX);
