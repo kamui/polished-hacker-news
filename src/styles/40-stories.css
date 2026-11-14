@@ -215,8 +215,8 @@ html.phn {
     opacity: 1;
   }
 
-  /* Narrow, the row wraps, and a hidden link would hold a blank line open. */
-  @media (hover: none), (max-width: 640px) {
+  /* Without hover there is no other way to reach it. */
+  @media (hover: none) {
     & .subtext a[href^="hide?"] {
       opacity: 1;
     }
@@ -284,6 +284,7 @@ html.phn {
   @media (max-width: 640px) {
     & table.fatitem {
       --phn-fat-title: calc(var(--phn-size) * 1.4);
+      margin-top: 6px;
     }
   }
 

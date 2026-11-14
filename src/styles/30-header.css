@@ -14,7 +14,8 @@ html.phn {
   & #hnmain > tbody > tr:first-child > td > table {
     display: block;
     box-sizing: border-box;
-    max-width: var(--phn-width);
+    /* Never narrower than the nav needs, whatever the page width is set to. */
+    max-width: max(var(--phn-width), 780px);
     margin: 0 auto;
     padding: 0 !important;
   }
