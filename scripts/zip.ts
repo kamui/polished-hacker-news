@@ -5,14 +5,21 @@ import { zipSync } from "fflate";
 
 const root = join(import.meta.dir, "..");
 const dist = join(root, "dist");
-const { name } = await Bun.file(join(root, "package.json")).json();
 
-const files: Record<string, Uint8Array> = {};
-for (const entry of await readdir(dist, { recursive: true, withFileTypes: true })) {
-  if (!entry.isFile()) continue;
-  const path = join(entry.parentPath, entry.name);
-  files[relative(dist, path)] = new Uint8Array(await Bun.file(path).arrayBuffer());
+/** Writes dist/ to `out` and returns how many files went in. */
+export async function zipDist(out: string): Promise<number> {
+  const files: Record<string, Uint8Array> = {};
+  for (const entry of await readdir(dist, { recursive: true, withFileTypes: true })) {
+    if (!entry.isFile()) continue;
+    const path = join(entry.parentPath, entry.name);
+    files[relative(dist, path)] = new Uint8Array(await Bun.file(path).arrayBuffer());
+  }
+  await Bun.write(out, zipSync(files, { level: 9 }));
+  return Object.keys(files).length;
 }
-const out = join(root, `${name}.zip`);
-await Bun.write(out, zipSync(files, { level: 9 }));
-console.log(`Wrote ${out} (${Object.keys(files).length} files)`);
+
+if (import.meta.main) {
+  const { name } = await Bun.file(join(root, "package.json")).json();
+  const out = join(root, `${name}.zip`);
+  console.log(`Wrote ${out} (${await zipDist(out)} files)`);
+}

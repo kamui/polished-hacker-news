@@ -47,6 +47,7 @@ Open `chrome://extensions` (`edge://extensions` in Edge), turn on Developer mode
 | `bun run typecheck` | Type-checks the project. |
 | `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. GitHub Actions run this on relevant commits and daily. |
 | `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store and Microsoft Edge Add-ons; the listing copy and screenshots are in `store/`. |
+| `bun run package` | Builds the release files into `release/`: `polished-hacker-news-<version>.zip`, the two store images, and `notes.md` from that version's `CHANGELOG.md` section. Fails if `package.json` and `src/manifest.json` disagree on the version, the changelog has no section for it, or there are uncommitted changes. |
 | `bun run icons` | Re-renders the icon PNGs, and the store icon, logo and promo tile in `store/`, from the SVGs in `src/assets` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
 
 ## Daily check against the live site
@@ -71,6 +72,15 @@ With the cookie set, the check looks at the submit, reply and profile pages, and
 story and immediately undoes it. It never posts, replies, submits, flags or hides: every
 non-GET request is aborted before it is sent. Without the cookie, or once the session expires,
 those checks are skipped with a warning.
+
+## Release
+
+1. In `CHANGELOG.md`, rename the HEAD section's entries to a `## <version> (<date>)` section. Point its comparison link at `v<version>` instead of `main`, and add a `[Release](…/releases/tag/v<version>)` line before it, as earlier sections do. Start a new HEAD section above it with only `[Changes since <version>](…/compare/v<version>...main)`.
+2. Set the same version in `package.json` and `src/manifest.json`.
+3. Run `bun run package` to check that the files build. Look over `release/notes.md`.
+4. Commit to `main`, tag `v<version>`, and push both: `git push origin main v<version>`.
+
+Pushing the tag runs `.github/workflows/release.yml`. It checks that the tag matches the version and is on `main`, runs the type check and tests, runs `bun run package`, and publishes the GitHub release with those files. The store uploads stay manual, using the zip from the release.
 
 ## How it is built
 
