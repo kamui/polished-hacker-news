@@ -311,7 +311,6 @@ html.phn:not([op]) {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0 10px;
     min-height: var(--phn-header);
     margin-bottom: 40px;
     /* The rule runs the full width of the window, as the main header's does. */
@@ -322,7 +321,7 @@ html.phn:not([op]) {
   & .phn-bare-header .phn-home {
     align-self: center;
     min-height: var(--phn-header);
-    margin: 0 10px 0 0;
+    margin: 0 14px 0 0;
   }
 
   & .phn-bare-nav {
@@ -359,7 +358,7 @@ html.phn:not([op]) {
     & .phn-bare-nav {
       order: 1;
       flex-basis: 100%;
-      margin: 0 -8px 4px;
+      margin: 3px -2px 7px;
     }
 
     & .phn-bare-header .phn-icon-btn:first-of-type {
