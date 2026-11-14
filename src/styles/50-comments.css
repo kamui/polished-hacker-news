@@ -374,7 +374,7 @@ html.phn {
     --phn-bar: calc(var(--phn-knob-size) * 0.45);
     content: "";
     position: absolute;
-    top: calc(22px - var(--phn-knob-size) / 2);
+    top: calc(23px - var(--phn-knob-size) / 2);
     left: calc(50% - var(--phn-knob-size) / 2);
     box-sizing: border-box;
     width: var(--phn-knob-size);
@@ -389,7 +389,7 @@ html.phn {
   & tr.comtr td.default a.togg:not([n="1"])::after {
     content: "";
     position: absolute;
-    top: calc(22px + var(--phn-knob-size) / 2);
+    top: calc(23px + var(--phn-knob-size) / 2);
     bottom: 0;
     left: calc(50% - 1px);
     width: 2px;
