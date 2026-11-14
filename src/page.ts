@@ -173,7 +173,8 @@ export function hideNavOnScroll(): void {
 /**
  * Drops the "Hacker News" wordmark from the header when there is no room for it: on a wide
  * screen when the nav would otherwise scroll, and on a phone, where the name sits on the top
- * row beside the account links, when it would run into them (a long username, say).
+ * row beside the account links, when it would run into them (a long username, say). Also
+ * flags when the nav scrolls, so the stylesheet can fade its edge only then.
  */
 export function fitHeader(): void {
   const nav = document.querySelector<HTMLElement>("#hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2)");
@@ -203,6 +204,7 @@ export function fitHeader(): void {
       next = nav.scrollWidth + (tight ? wordWidth : 0) > nav.clientWidth + 1;
     }
     if (next !== tight) root.toggleAttribute("data-phn-tight", next);
+    root.toggleAttribute("data-phn-nav-scrolls", nav.scrollWidth > nav.clientWidth + 1);
   };
   const observer = new ResizeObserver(fit);
   observer.observe(nav);

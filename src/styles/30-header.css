@@ -269,8 +269,8 @@ html.phn {
       font-size: 17px;
     }
 
-    /* The nav row fades at its right edge to show it scrolls. */
-    & #hnmain > tbody > tr:first-child > td > table > tbody > tr::after {
+    /* The nav row fades at its right edge when it scrolls (fitHeader sets the flag). */
+    &[data-phn-nav-scrolls] #hnmain > tbody > tr:first-child > td > table > tbody > tr::after {
       content: "";
       position: absolute;
       right: 0;
@@ -289,14 +289,18 @@ html.phn {
       padding-inline: 7px;
     }
 
+    /* Small enough for all seven of HN's links to fit a 390px screen without scrolling. */
+    & td:nth-child(2) > .pagetop > a {
+      padding-inline: 6px;
+      font-size: 14px;
+    }
+
     /*
      * Set by hideNavOnScroll while reading down the page. The nav row is clipped off rather
      * than collapsed, so the page under the sticky header doesn't jump; its rule is redrawn
-     * under the first row.
+     * under the first row. Scroll padding stays as it is: changing it mid-scroll would leave
+     * the new-comment stepper measuring against a line that moved under it.
      */
-    &[data-phn-nav-away] {
-      scroll-padding-top: calc(var(--phn-header) + 12px);
-    }
 
     &[data-phn-sticky="true"] #hnmain > tbody > tr:first-child > td {
       clip-path: inset(0);

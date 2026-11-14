@@ -362,6 +362,11 @@ html.phn:not([op]) {
       margin: 3px -2px 7px;
     }
 
+    & .phn-bare-nav a {
+      padding-inline: 6px;
+      font-size: 14px;
+    }
+
     & .phn-bare-header .phn-icon-btn:first-of-type {
       margin-left: auto;
     }
