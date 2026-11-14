@@ -335,8 +335,8 @@ html.phn {
     border-top: 0;
   }
 
-  /* HN leaves these pages' reply blocks empty; without them a comment ends at its text. */
-  & .reply:empty {
+  /* Reply blocks with nothing to click, empty on some pages and hidden on dead comments, so a comment ends at its text. */
+  & .reply:is(:empty, [hidden]) {
     display: none;
   }
 

@@ -51,8 +51,11 @@ export function prepareCommentControls(): void {
   for (const row of commentRows()) {
     const toggle = row.querySelector("a.togg");
     if (toggle) row.querySelector(".comhead")?.prepend(toggle);
+    const reply = row.querySelector<HTMLElement>(".reply");
     const votes = row.querySelector("td.votelinks > center");
-    if (votes) row.querySelector(".reply")?.prepend(votes);
+    if (votes) reply?.prepend(votes);
+    // Dead comments keep an empty reply row: a spacer where the arrow would be and no Reply link.
+    if (reply && !reply.querySelector("a")) reply.hidden = true;
     const links = [...row.querySelectorAll(".navs > a.clicky:not(.togg)")];
     for (const link of links) {
       if (link.textContent?.trim() !== "parent") continue;
