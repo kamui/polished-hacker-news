@@ -5,13 +5,26 @@ Versions match the `version` in `src/manifest.json` and the `v*` tags.
 
 ## HEAD (unreleased)
 
-[Changes since 0.0.2](https://github.com/kamui/polished-hacker-news/compare/v0.0.2...main)
+[Changes since 0.0.3](https://github.com/kamui/polished-hacker-news/compare/v0.0.3...main)
+
+Nothing yet.
+
+## 0.0.3 (2026-11-13)
+
+[Release](https://github.com/kamui/polished-hacker-news/releases/tag/v0.0.3) ·
+[Changes since 0.0.2](https://github.com/kamui/polished-hacker-news/compare/v0.0.2...v0.0.3)
 
 ### Added
 
 - The polish tin replaces the logo in the header, as it already did the tab icon.
 - A "Use the polish tin icon" switch in the settings panel. Turning it off puts back Hacker
   News's own tab icon and header logo at once, without a reload.
+
+### Fixed
+
+- Vote arrows and the reply icon were invisible. Hacker News now sends a Content-Security-Policy
+  that blocks `data:` images, which is how those icons were drawn; they now load from files in
+  the extension.
 
 ## 0.0.2 (2026-11-13)
 
