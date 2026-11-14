@@ -52,7 +52,10 @@ export function prepareCommentControls(): void {
     const votes = row.querySelector("td.votelinks > center");
     if (votes) row.querySelector(".reply")?.prepend(votes);
     for (const link of row.querySelectorAll(".navs > a.clicky:not(.togg)")) {
-      if (link.textContent?.trim() === "parent") link.classList.add("phn-parent");
+      if (link.textContent?.trim() !== "parent") continue;
+      link.classList.add("phn-parent");
+      // First among the links, so the hidden ones (root, prev, next) don't hold a gap open before it.
+      link.parentElement?.prepend(link);
     }
     nameToggle(row);
   }
@@ -190,6 +193,8 @@ export function initNewCommentNav(): void {
     const wrapped = at < 0 || at >= rows.length ? (direction === 1 ? 0 : rows.length - 1) : at;
     const target = rows[wrapped];
     if (!target) return;
+    last?.classList.remove("phn-current");
+    target.classList.add("phn-current");
     last = target;
     lastAt = performance.now();
     target.scrollIntoView({ block: "start", behavior: "smooth" });
@@ -260,6 +265,13 @@ export function markQuotes(): void {
     }
     for (const p of text.querySelectorAll(":scope > p")) {
       if (p.textContent?.trimStart().startsWith(">")) p.classList.add("phn-quote");
+    }
+    // The bar marks the quote, so the ">" it was typed with goes.
+    for (const quote of text.querySelectorAll(":scope > p.phn-quote")) {
+      const walker = document.createTreeWalker(quote, NodeFilter.SHOW_TEXT);
+      let first = walker.nextNode();
+      while (first && !first.textContent?.trim()) first = walker.nextNode();
+      if (first?.textContent) first.textContent = first.textContent.replace(/^\s*>\s?/, "");
     }
   }
 }

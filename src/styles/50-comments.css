@@ -538,6 +538,11 @@ html.phn {
     animation: phn-flash 1.4s ease-out;
   }
 
+  /* The comment n last landed on keeps its bar after the flash fades, until the next jump. */
+  & tr.comtr.phn-current td.default {
+    box-shadow: inset 3px 0 0 var(--phn-new);
+  }
+
   /* A comment shown on its own page, above its replies. */
   & .fatitem td.default {
     width: 100%;
@@ -652,7 +657,6 @@ html.phn {
   @media (prefers-reduced-motion: reduce) {
     & tr.comtr.phn-flash td.default {
       animation: none;
-      box-shadow: inset 2px 0 0 var(--phn-new);
     }
   }
 }
@@ -664,6 +668,6 @@ html.phn {
   }
   to {
     background: transparent;
-    box-shadow: inset 3px 0 0 transparent;
+    box-shadow: inset 3px 0 0 var(--phn-new);
   }
 }
