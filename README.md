@@ -55,12 +55,17 @@ Hacker News changes its markup without notice, so `.github/workflows/check.yml` 
 Chromium against the real site and fails if something the extension depends on has moved:
 story and comment authors, vote arrows, comment depth, the collapse toggle, the login form.
 
-To include the logged-in pages, add two values under the repository's **Settings → Secrets
-and variables → Actions**: a variable `HN_USERNAME` and a secret `HN_PASSWORD`, for an account
-kept for this purpose. The check signs in, looks at the submit, reply and profile pages, and
-upvotes one story and immediately undoes it. It never posts, replies, submits, flags or hides:
-every non-GET request other than the sign-in is aborted before it is sent. Without the two
-values those checks are skipped.
+To include the logged-in pages, use an account kept for this purpose. Sign in to it in a
+browser, copy the value of the `user` cookie for news.ycombinator.com, and add it under the
+repository's **Settings → Secrets and variables → Actions** as a secret named `HN_COOKIE`,
+with the username as a variable named `HN_USERNAME`. A password will not work here: Hacker
+News answers automated password logins with a CAPTCHA. Logging out in that browser ends the
+session, so clear the cookie locally instead.
+
+With the cookie set, the check looks at the submit, reply and profile pages, and upvotes one
+story and immediately undoes it. It never posts, replies, submits, flags or hides: every
+non-GET request is aborted before it is sent. Without the cookie, or once the session expires,
+those checks are skipped with a warning.
 
 ## How it is built
 

@@ -3,13 +3,13 @@
  * live site and checks the markup the extension relies on, plus the behaviour built on it.
  * Run after `bun run build`; the scheduled workflow runs it daily.
  *
- * With HN_USERNAME and HN_PASSWORD set (or HN_COOKIE, the value of a signed-in `user` cookie)
- * it also signs in and checks the logged-in pages. The account is only used to look at pages
- * and to upvote one story and immediately undo it. It never posts, replies, submits, flags
- * or hides: every non-GET request except the sign-in itself is aborted before it is sent.
+ * With HN_COOKIE set to the value of a signed-in `user` cookie it also checks the logged-in
+ * pages, and with HN_USERNAME that the header shows that account. The account is only used
+ * to look at pages and to upvote one story and immediately undo it. It never posts, replies,
+ * submits, flags or hides: every non-GET request is aborted before it is sent.
  *
- * Exit codes: 0 all good, or the site could not be reached or would not let the account sign
- * in (reported as a warning, since neither says anything about the markup); 1 a check failed.
+ * Exit codes: 0 all good, or the site could not be reached or the session was not accepted
+ * (reported as a warning, since neither says anything about the markup); 1 a check failed.
  */
 import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -124,32 +124,16 @@ async function otherPages(page: Page): Promise<void> {
 
 type SignIn = "signed in" | "no account configured" | "refused";
 
+/**
+ * Signs in with a session cookie. A password cannot be used: Hacker News answers automated
+ * password logins with a CAPTCHA.
+ */
 async function signIn(page: Page): Promise<SignIn> {
-  const { HN_USERNAME: username, HN_PASSWORD: password, HN_COOKIE: cookie } = process.env;
-  if (cookie) {
-    await page.context().addCookies([
-      { name: "user", value: cookie.trim().replace(/^user=/, ""), domain: "news.ycombinator.com", path: "/", secure: true, httpOnly: true },
-    ]);
-  } else if (username && password) {
-    await open(page, "login");
-    // Set through the page rather than typed, so the password can never appear in an action log.
-    await page.evaluate(
-      ([acct, pw]) => {
-        const form = document.querySelector<HTMLFormElement>("body > form")!;
-        form.querySelector<HTMLInputElement>('input[name="acct"]')!.value = acct!;
-        form.querySelector<HTMLInputElement>('input[name="pw"]')!.value = pw!;
-      },
-      [username, password],
-    );
-    await Promise.all([page.waitForLoadState("load"), page.locator('body > form input[type="submit"]').first().click()]);
-    await page.waitForTimeout(800);
-    if (/bad login/i.test(await page.locator("body").innerText())) {
-      check("sign in", false, "Hacker News rejected the username or password");
-      return "refused";
-    }
-  } else {
-    return "no account configured";
-  }
+  const cookie = process.env.HN_COOKIE?.trim().replace(/^user=/, "");
+  if (!cookie) return "no account configured";
+  await page.context().addCookies([
+    { name: "user", value: cookie, domain: "news.ycombinator.com", path: "/", secure: true, httpOnly: true },
+  ]);
   await open(page, "news");
   return (await page.locator("a#me").count()) === 1 ? "signed in" : "refused";
 }
@@ -225,12 +209,8 @@ const context = await chromium.launchPersistentContext(await mkdtemp(join(tmpdir
   args: ["--headless=new", `--disable-extensions-except=${dist}`, `--load-extension=${dist}`],
 });
 // The account must never post, reply or submit. HN votes with GET requests, so allowing only
-// GETs plus the sign-in form makes that impossible rather than merely unintended.
-await context.route(`${SITE}**`, (route) => {
-  const request = route.request();
-  const allowed = request.method() === "GET" || new URL(request.url()).pathname === "/login";
-  return allowed ? route.continue() : route.abort();
-});
+// GETs makes that impossible rather than merely unintended.
+await context.route(`${SITE}**`, (route) => (route.request().method() === "GET" ? route.continue() : route.abort()));
 const page = context.pages()[0] ?? (await context.newPage());
 const pageErrors: string[] = [];
 page.on("pageerror", (error) => pageErrors.push(String(error)));
@@ -257,6 +237,6 @@ console.log(`${passes.length} checks passed (account: ${account})`);
 for (const failure of failures) console.log(`FAILED: ${failure}`);
 if (unreachable) console.log(`::warning::Hacker News could not be reached, so the check is incomplete: ${unreachable}`);
 if (account === "refused" && failures.length === 0) {
-  console.log("::warning::Hacker News did not sign the account in (it may have asked for extra validation), so the logged-in checks were skipped.");
+  console.log("::warning::Hacker News did not accept the session cookie (it has probably expired), so the logged-in checks were skipped. Sign in again and update the HN_COOKIE secret.");
 }
 process.exit(failures.length > 0 ? 1 : 0);

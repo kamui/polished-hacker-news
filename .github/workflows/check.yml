@@ -27,9 +27,9 @@ jobs:
       - name: Install Chromium
         run: bun x playwright-core install --with-deps chromium
       # The account only views pages and upvotes then un-votes one story; the check blocks any
-      # other write. Without these two values the logged-in checks are skipped.
+      # other write. Without the cookie the logged-in checks are skipped.
       - name: Check against the live site
         run: bun run scripts/check-live.ts
         env:
           HN_USERNAME: ${{ vars.HN_USERNAME }}
-          HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
+          HN_COOKIE: ${{ secrets.HN_COOKIE }}
