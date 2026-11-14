@@ -22,8 +22,8 @@ Polished Hacker News is an independent project. It is not affiliated with Y Comb
   since your last visit. On a story, comments posted since you last loaded it are tagged
   "new", and a button (or `n` / `Shift+N`) steps through them.
 - **Small things.** Open story and comment links in a new tab, keep the header in view, an
-  "OP" tag on the submitter's comments, a polish-tin tab icon, and one click back to the
-  original design.
+  "OP" tag on the submitter's comments, a polish-tin tab icon you can switch
+  off, and one click back to the original design.
 
 ## Install from source
 

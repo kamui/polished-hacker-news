@@ -18,6 +18,7 @@ export interface Settings {
   smoothing: boolean;
   dimRead: boolean;
   markNew: boolean;
+  tinIcon: boolean;
 }
 
 export const DEFAULTS: Readonly<Settings> = {
@@ -34,6 +35,7 @@ export const DEFAULTS: Readonly<Settings> = {
   smoothing: false,
   dimRead: true,
   markNew: true,
+  tinIcon: true,
 };
 
 export const RANGES = {
@@ -77,6 +79,7 @@ export function parseSettings(raw: unknown): Settings {
     smoothing: flag(r.smoothing, DEFAULTS.smoothing),
     dimRead: flag(r.dimRead, DEFAULTS.dimRead),
     markNew: flag(r.markNew, DEFAULTS.markNew),
+    tinIcon: flag(r.tinIcon, DEFAULTS.tinIcon),
   };
 }
 

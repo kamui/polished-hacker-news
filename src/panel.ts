@@ -45,6 +45,7 @@ const TOGGLES: ReadonlyArray<readonly [ToggleKey, string]> = [
   ...(canSmoothFonts ? ([["smoothing", "Smooth fonts"]] as const) : []),
   ["dimRead", "Dim stories I've opened"],
   ["markNew", "Mark new comments"],
+  ["tinIcon", "Use the polish tin tab icon"],
 ];
 
 function el<K extends keyof HTMLElementTagNameMap>(
