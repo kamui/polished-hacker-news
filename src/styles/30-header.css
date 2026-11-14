@@ -59,6 +59,12 @@ html.phn {
     border-radius: 5px;
   }
 
+  /* The tin's dark rim would vanish into a dark page; a faint halo keeps its outline. */
+  &:not([data-phn-theme="light"], [data-phn-theme="classic"]) #hnmain > tbody > tr:first-child img,
+  &:not([data-phn-theme="light"], [data-phn-theme="classic"]) .phn-home::before {
+    filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.45));
+  }
+
   /* HN separates nav links with bare " | " text; zero-size type hides it without touching the markup. */
   & .pagetop {
     display: flex;

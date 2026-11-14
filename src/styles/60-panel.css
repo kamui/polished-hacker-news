@@ -192,6 +192,7 @@ html.phn {
     height: 22px;
     border-radius: 999px;
     background: var(--phn-raised);
+    box-shadow: inset 0 0 0 1px var(--phn-faint);
     transition: background 120ms ease;
   }
 
@@ -209,6 +210,7 @@ html.phn {
 
   & .phn-switch[aria-checked="true"] i {
     background: var(--phn-accent);
+    box-shadow: none;
   }
 
   & .phn-switch[aria-checked="true"] i::after {

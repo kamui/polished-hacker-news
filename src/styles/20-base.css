@@ -44,6 +44,11 @@ html.phn {
     outline-offset: 2px;
   }
 
+  /* Links with no shape of their own get the same softened ring as the rest. */
+  & a:focus-visible {
+    border-radius: 4px;
+  }
+
   /* Set on the root only and inherited: a universal ::selection rule is resolved for every element. */
   &::selection {
     background: var(--phn-accent-soft);
