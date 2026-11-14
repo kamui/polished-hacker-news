@@ -27,13 +27,19 @@ function check(name: string, ok: boolean, detail = ""): void {
   (ok ? passes : failures).push(detail ? `${name} (${detail})` : name);
 }
 
+/** HN rate-limits rapid page loads with a 503, so a load is paced and retried after a growing pause. */
 async function open(page: Page, path: string): Promise<void> {
-  const response = await page.goto(SITE + path, { waitUntil: "load", timeout: 45_000 }).catch(() => null);
-  const text = (await page.locator("body").innerText().catch(() => "")).slice(0, 200);
-  if (!response || response.status() >= 400 || /^Sorry\b|not able to serve your requests/i.test(text)) {
-    throw new Unreachable(`${path}: HTTP ${response?.status() ?? "no response"} ${text.slice(0, 80)}`);
+  let problem = "";
+  for (const pause of [0, 8_000, 25_000]) {
+    await page.waitForTimeout(pause + 1_500);
+    const response = await page.goto(SITE + path, { waitUntil: "load", timeout: 45_000 }).catch(() => null);
+    const text = (await page.locator("body").innerText().catch(() => "")).slice(0, 200);
+    const limited = !response || response.status() >= 500 || /^Sorry\b|not able to serve your requests/i.test(text);
+    if (!limited && response.status() < 400) return;
+    problem = `${path}: HTTP ${response?.status() ?? "no response"} ${text.slice(0, 80)}`.trim();
+    if (!limited) break;
   }
-  await page.waitForTimeout(600);
+  throw new Unreachable(problem);
 }
 
 /** Counts elements matching a selector that actually take up space on the page. */
