@@ -408,6 +408,11 @@ html.phn {
     margin: 0.7em 0 0;
   }
 
+  /* About 75 characters a line, however wide the page is set; in em so it follows the text size. */
+  & :is(.commtext, .toptext) {
+    max-width: var(--phn-measure);
+  }
+
   & .commtext pre {
     margin: 0.7em 0 0;
   }
