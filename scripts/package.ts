@@ -2,7 +2,8 @@
  * Writes everything a release needs to release/: the store zip named for the version, the
  * store images, and notes.md taken from that version's CHANGELOG section. Run after the
  * version bump is committed; it builds first, and refuses to package mismatched versions,
- * a version the changelog doesn't describe, or uncommitted changes.
+ * a version the changelog doesn't describe, a comparison link that doesn't end at the
+ * version's tag, or uncommitted changes.
  */
 import { copyFile, mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
@@ -34,6 +35,7 @@ const section = changelog.split(/^## /m).find((part) => part.startsWith(`${versi
 if (!section) fail(`CHANGELOG.md has no "## ${version} (date)" section`);
 const body = section.split("\n").slice(1);
 const compare = body.find((line) => line.startsWith("[Changes since"));
+if (compare && !compare.endsWith(`...v${version})`)) fail(`CHANGELOG.md's ${version} comparison link must end at v${version}: ${compare}`);
 const changes = body
   .filter((line) => !line.startsWith("[Release](") && line !== compare)
   .join("\n")

@@ -75,7 +75,7 @@ those checks are skipped with a warning.
 
 ## Release
 
-1. In `CHANGELOG.md`, rename the HEAD section's entries to a `## <version> (<date>)` section, and start a new, empty HEAD section above it.
+1. In `CHANGELOG.md`, rename the HEAD section's entries to a `## <version> (<date>)` section. Point its comparison link at `v<version>` instead of `main`, and add a `[Release](…/releases/tag/v<version>)` line before it, as earlier sections do. Start a new HEAD section above it with only `[Changes since <version>](…/compare/v<version>...main)`.
 2. Set the same version in `package.json` and `src/manifest.json`.
 3. Run `bun run package` to check that the files build. Look over `release/notes.md`.
 4. Commit to `main`, tag `v<version>`, and push both: `git push origin main v<version>`.
