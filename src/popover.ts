@@ -20,18 +20,26 @@ export function placeInHeader(button: HTMLElement): boolean {
 export function attachPopover(button: HTMLElement, panel: HTMLElement, onOpen?: () => void): void {
   button.setAttribute("aria-expanded", "false");
 
-  const setOpen = (open: boolean) => {
-    panel.hidden = !open;
-    button.setAttribute("aria-expanded", String(open));
-    if (!open) return;
+  // Below the whole header: on a phone the nav row sits under the buttons and would show at the panel's sides.
+  const header = button.closest("table, header") ?? button;
+  const place = () => {
     const anchor = button.getBoundingClientRect();
     const viewport = document.documentElement.clientWidth;
-    // Below the whole header: on a phone the nav row sits under the buttons and would show at the panel's sides.
-    const header = button.closest("table, header") ?? button;
     panel.style.top = `${header.getBoundingClientRect().bottom + 8}px`;
     const free = viewport - panel.offsetWidth;
     // On a phone the panel nearly fills the width, so it is centred rather than hung from the button.
     panel.style.right = `${free < 120 ? free / 2 : Math.min(Math.max(12, viewport - anchor.right), free - 12)}px`;
+  };
+  // The page-width slider moves the header, and the button with it, while the panel is open.
+  new ResizeObserver(() => {
+    if (!panel.hidden) place();
+  }).observe(header);
+
+  const setOpen = (open: boolean) => {
+    panel.hidden = !open;
+    button.setAttribute("aria-expanded", String(open));
+    if (!open) return;
+    place();
     onOpen?.();
   };
 
