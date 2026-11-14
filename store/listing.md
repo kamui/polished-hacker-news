@@ -1,8 +1,13 @@
 # Store listing
 
 Copy for the Chrome Web Store and Microsoft Edge Add-ons dashboards. Both stores take the same
-`polished-hacker-news.zip` (`bun run zip`), the screenshots in this folder (1280×800), and
-`logo-300.png` where a store logo is asked for.
+`polished-hacker-news.zip` (`bun run zip`) and the 1280×800 screenshots in this folder.
+
+| File | Where it goes |
+| --- | --- |
+| `store-icon-128.png` | Chrome's "Store icon". The same image is the 128px icon inside the zip. |
+| `promo-small-440x280.png` | Chrome's "Small promo tile". 24-bit PNG, no alpha. |
+| `logo-300.png` | Edge's "Extension Store logo". |
 
 ## Name
 

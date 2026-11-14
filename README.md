@@ -22,7 +22,8 @@ Polished Hacker News is an independent project. It is not affiliated with Y Comb
   since your last visit. On a story, comments posted since you last loaded it are tagged
   "new", and a button (or `n` / `Shift+N`) steps through them.
 - **Small things.** Open story and comment links in a new tab, keep the header in view, an
-  "OP" tag on the submitter's comments, and one click back to the original design.
+  "OP" tag on the submitter's comments, a polish-tin tab icon, and one click back to the
+  original design.
 
 ## Install from source
 
@@ -46,7 +47,7 @@ Open `chrome://extensions` (`edge://extensions` in Edge), turn on Developer mode
 | `bun run typecheck` | Type-checks the project. |
 | `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. GitHub Actions run this on relevant commits and daily. |
 | `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store and Microsoft Edge Add-ons; the listing copy and screenshots are in `store/`. |
-| `bun run icons` | Re-renders the icon PNGs from `src/assets/icon.svg` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
+| `bun run icons` | Re-renders the icon PNGs, and the store icon, logo and promo tile in `store/`, from the SVGs in `src/assets` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
 
 ## Daily check against the live site
 
