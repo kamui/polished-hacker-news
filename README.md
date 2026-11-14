@@ -47,6 +47,7 @@ Open `chrome://extensions` (`edge://extensions` in Edge), turn on Developer mode
 | `bun run typecheck` | Type-checks the project. |
 | `bun run check:live` | After a build, loads the extension against the live site and checks the markup it depends on. GitHub Actions run this on relevant commits and daily. |
 | `bun run zip` | Builds `polished-hacker-news.zip` for the Chrome Web Store and Microsoft Edge Add-ons; the listing copy and screenshots are in `store/`. |
+| `bun run package` | Builds the release files into `release/`: `polished-hacker-news-<version>.zip`, the two store images, and `notes.md` from that version's `CHANGELOG.md` section. Fails if `package.json` and `src/manifest.json` disagree on the version, the changelog has no section for it, or there are uncommitted changes. |
 | `bun run icons` | Re-renders the icon PNGs, and the store icon, logo and promo tile in `store/`, from the SVGs in `src/assets` (needs a Chromium for `playwright-core`; set `CHROMIUM_PATH`). |
 
 ## Daily check against the live site
