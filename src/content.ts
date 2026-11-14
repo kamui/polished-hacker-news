@@ -10,6 +10,7 @@ import { isItemPage, parseCount, storyIdFromUrl } from "./hn";
 import { initNewTabLinks } from "./links";
 import {
   addHomeLink,
+  addSkipLink,
   addListHeading,
   fitHeader,
   hideNavOnScroll,
@@ -71,6 +72,7 @@ async function main(): Promise<void> {
 
   setTinIcon(settings.tinIcon);
   addHomeLink();
+  addSkipLink();
   keepKarma();
   rememberDownvoteSlot();
   mountSearch();

@@ -101,7 +101,11 @@ export function addListHeading(): void {
 }
 
 /**
- * HN lists a story's actions (hide, past, favorite) before its comment count. They go after
+ * On wide screens each story's domain moves from after its title to the start of the line
+ * under it, so a long title never pushes the domain onto a line of its own and every row has
+ * the same shape. Phone titles wrap anyway and the domain follows them, which leaves the line
+ * under the title room to fit on one row, so there it stays put.
+ * HN lists the story's actions (hide, past, favorite) before its comment count; they go after
  * it, with hide last, so the count sits beside the age and Tab follows the line as drawn.
  */
 export function orderSublines(): void {
@@ -128,6 +132,16 @@ export function orderSublines(): void {
     line.append(...line.querySelectorAll(':scope > :is(a.hnpast, a[href^="fave?"], a[href^="flag?"], a[href^="vouch?"])'));
     if (hide) line.append(hide);
   }
+}
+
+/** A first Tab stop that jumps past the header to the stories or the thread. */
+export function addSkipLink(): void {
+  if (!document.getElementById("bigbox")) return;
+  const link = document.createElement("a");
+  link.className = "phn-skip";
+  link.href = "#bigbox";
+  link.textContent = "Skip to content";
+  document.body.prepend(link);
 }
 
 /** Gives the thread's comment box a placeholder, which the stylesheet uses to keep it one line tall until it is used. */
