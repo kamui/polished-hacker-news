@@ -10,7 +10,6 @@ import {
 
 export interface CommentSummary {
   maxId: number;
-  newCount: number;
 }
 
 /**
@@ -20,7 +19,6 @@ export interface CommentSummary {
 export function markNewComments(seenUpTo: number | undefined): CommentSummary {
   const me = loggedInUser();
   let maxId = 0;
-  let newCount = 0;
   for (const row of commentRows()) {
     const id = Number(row.id);
     if (!(id > 0)) continue;
@@ -28,9 +26,8 @@ export function markNewComments(seenUpTo: number | undefined): CommentSummary {
     if (seenUpTo === undefined || id <= seenUpTo) continue;
     if (me && row.querySelector(AUTHOR_LINK)?.textContent === me) continue;
     row.dataset.phnNew = "";
-    newCount += 1;
   }
-  return { maxId, newCount };
+  return { maxId };
 }
 
 export function markStoryAuthor(): void {
@@ -132,12 +129,15 @@ export function initThreadControls(): void {
 }
 
 /** A floating control (and the n / Shift+N keys) that steps through comments new since the last visit. */
-export function initNewCommentNav(newCount: number): void {
-  if (newCount === 0) return;
+export function initNewCommentNav(): void {
   const fresh = () =>
     Array.from(document.querySelectorAll<HTMLTableRowElement>("tr.comtr[data-phn-new]")).filter(
       (row) => row.offsetParent !== null,
     );
+  // Counted the way the stepping counts them: new comments inside a collapsed thread can't be stepped to.
+  const newCount = fresh().length;
+  if (newCount === 0) return;
+  document.documentElement.toggleAttribute("data-phn-pill", true);
 
   let last: HTMLTableRowElement | undefined;
   let lastAt = 0;
@@ -186,4 +186,27 @@ export function initNewCommentNav(newCount: number): void {
     event.preventDefault();
     jump(event.shiftKey ? -1 : 1);
   });
+}
+
+/**
+ * HN has no quote markup: readers quote with a leading ">". Each such paragraph gets a class.
+ * The first paragraph of a comment is bare text before the first <p>, so it is wrapped in one.
+ */
+export function markQuotes(): void {
+  for (const text of document.querySelectorAll<HTMLElement>(".commtext, .toptext")) {
+    const lead: ChildNode[] = [];
+    for (const node of text.childNodes) {
+      if (node instanceof HTMLParagraphElement || (node instanceof HTMLElement && node.classList.contains("reply"))) break;
+      lead.push(node);
+    }
+    if (lead[0]?.textContent?.trimStart().startsWith(">")) {
+      const p = document.createElement("p");
+      p.className = "phn-quote phn-lead";
+      lead[0].before(p);
+      p.append(...lead);
+    }
+    for (const p of text.querySelectorAll(":scope > p")) {
+      if (p.textContent?.trimStart().startsWith(">")) p.classList.add("phn-quote");
+    }
+  }
 }

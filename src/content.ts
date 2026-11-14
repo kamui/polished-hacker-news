@@ -1,7 +1,7 @@
-import { initNewCommentNav, initThreadControls, markNewComments, markStoryAuthor } from "./comments";
+import { initNewCommentNav, initThreadControls, markNewComments, markQuotes, markStoryAuthor } from "./comments";
 import { isItemPage, parseCount, storyIdFromUrl } from "./hn";
 import { initNewTabLinks } from "./links";
-import { addListHeading, keepKarma, labelCommentBox, rememberDownvoteSlot, setTinIcon } from "./page";
+import { addHomeLink, addListHeading, fitHeader, keepKarma, labelCommentBox, rememberDownvoteSlot, setTinIcon } from "./page";
 import { mountPanel, mountRestoreLink } from "./panel";
 import { mountSearch } from "./search";
 import {
@@ -22,10 +22,11 @@ async function trackComments(): Promise<void> {
   const id = storyIdFromUrl();
   const previous = id && isStory ? (await getStories([id])).get(id) : undefined;
 
-  const { maxId, newCount } = markNewComments(previous?.m);
+  const { maxId } = markNewComments(previous?.m);
   markStoryAuthor();
+  markQuotes();
   initThreadControls();
-  initNewCommentNav(newCount);
+  initNewCommentNav();
 
   if (id && isStory) {
     const count = parseCount(document.querySelector(".fatitem .subline")?.textContent) ?? 0;
@@ -51,6 +52,7 @@ async function main(): Promise<void> {
   }
 
   setTinIcon(settings.tinIcon);
+  addHomeLink();
   keepKarma();
   rememberDownvoteSlot();
   mountSearch();
@@ -64,6 +66,7 @@ async function main(): Promise<void> {
     },
     () => void saveAndReload({ ...settings, enabled: false }),
   );
+  fitHeader();
   onSettingsChanged((next) => {
     settings = next;
     applySettings(next);

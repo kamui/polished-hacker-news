@@ -111,6 +111,7 @@ html.phn {
   & .sitebit {
     font-family: var(--phn-ui);
     font-size: 0;
+    white-space: nowrap;
   }
 
   & .sitebit .sitestr {
@@ -180,7 +181,8 @@ html.phn {
     opacity: 1;
   }
 
-  @media (hover: none) {
+  /* Narrow, the row wraps, and a hidden link would hold a blank line open. */
+  @media (hover: none), (max-width: 640px) {
     & .subtext a[href^="hide?"] {
       opacity: 1;
     }

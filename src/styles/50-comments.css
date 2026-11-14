@@ -224,9 +224,10 @@ html.phn {
     opacity: 1;
   }
 
+  /* Without hover there is no other way to reach them. */
   @media (hover: none) {
     & td.default .navs > a.clicky:not(.togg) {
-      display: none;
+      opacity: 1;
     }
   }
 
@@ -369,6 +370,16 @@ html.phn {
     margin: 0.7em 0 0;
   }
 
+  & :is(.commtext, .toptext) p.phn-quote {
+    padding-left: 12px;
+    border-left: 3px solid var(--phn-rail);
+    color: var(--phn-muted);
+  }
+
+  & :is(.commtext, .toptext) p.phn-lead {
+    margin-top: 0;
+  }
+
   /* The action row: room is left at its start for the vote arrows described above. */
   & .reply {
     display: flex;
@@ -461,7 +472,15 @@ html.phn {
     white-space: nowrap;
   }
 
-  & tr.comtr.coll .commtext > *,
+  /* The preview line is the comment's opening words, quoted or not. */
+  & tr.comtr.coll .commtext > p.phn-lead {
+    display: inline;
+    padding: 0;
+    border: 0;
+    color: inherit;
+  }
+
+  & tr.comtr.coll .commtext > :not(.phn-lead),
   & tr.comtr.coll .reply {
     display: none;
   }

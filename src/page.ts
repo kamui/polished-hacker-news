@@ -3,6 +3,7 @@ import { HEADER_LOGO, pageOp } from "./hn";
 const HEADINGS: Record<string, string> = {
   news: "Top stories",
   newest: "Newest",
+  front: "Past",
   ask: "Ask HN",
   show: "Show HN",
   jobs: "Jobs",
@@ -11,6 +12,7 @@ const HEADINGS: Record<string, string> = {
 /** HN prints karma beside the username as "(<span id="karma">123</span>)", which the nav styling hides; keep it as an attribute. */
 export function keepKarma(): void {
   const me = document.querySelector<HTMLAnchorElement>("a#me");
+  document.querySelector("a#logout")?.setAttribute("title", "Log out");
   const karma = document.getElementById("karma")?.textContent?.trim();
   if (me && karma) me.dataset.phnKarma = karma;
 }
@@ -97,4 +99,38 @@ export function addListHeading(): void {
 /** Gives the thread's comment box a placeholder, which the stylesheet uses to keep it one line tall until it is used. */
 export function labelCommentBox(): void {
   document.querySelector('.fatitem form[action="comment"] textarea')?.setAttribute("placeholder", "Add a comment…");
+}
+
+/** Login and message pages come with no header at all; this gives them the mark and a way back to the front page. */
+export function addHomeLink(): void {
+  if (document.documentElement.hasAttribute("op") || document.querySelector("body > center")) return;
+  const home = document.createElement("a");
+  home.className = "phn-home";
+  home.href = "news";
+  home.textContent = "Hacker News";
+  document.body.prepend(home);
+}
+
+/** Drops the "Hacker News" wordmark from the header whenever the nav would otherwise scroll, as with a long username. */
+export function fitHeader(): void {
+  const nav = document.querySelector<HTMLElement>("#hnmain > tbody > tr:first-child > td > table > tbody > tr > td:nth-child(2)");
+  if (!nav) return;
+  const links = nav.querySelector<HTMLElement>(".pagetop");
+  const word = nav.querySelector<HTMLElement>(".hnname");
+  if (!links || !word) return;
+  const root = document.documentElement;
+  // On a phone the nav has a scrolling row of its own (see the header stylesheet), so overflow there is expected.
+  const phone = matchMedia("(max-width: 640px)");
+  // Measured while shown, so deciding never needs to show it again, which would resize the nav and loop.
+  let wordWidth = 0;
+  const fit = () => {
+    const tight = root.hasAttribute("data-phn-tight");
+    if (!tight) wordWidth = word.getBoundingClientRect().width + parseFloat(getComputedStyle(word).marginRight);
+    const needed = nav.scrollWidth + (tight ? wordWidth : 0);
+    const next = !phone.matches && needed > nav.clientWidth + 1;
+    if (next !== tight) root.toggleAttribute("data-phn-tight", next);
+  };
+  const observer = new ResizeObserver(fit);
+  observer.observe(nav);
+  observer.observe(links);
 }
