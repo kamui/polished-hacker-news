@@ -68,12 +68,15 @@ async function frontPage(page: Page): Promise<string | undefined> {
     const loaded = await Promise.all(links.map((link) => fetch(link.href).then((r) => r.ok, () => false)));
     return { own: links.filter((link) => link.href.startsWith("chrome-extension://")).length, total: links.length, loaded: loaded.every(Boolean) };
   });
+  const headerLogo = () => page.evaluate((sel) => document.querySelector<HTMLImageElement>(sel)?.src ?? "", "#hnmain > tbody > tr:first-child a > img");
   check("tab icon replaced", favicons.own === 2 && favicons.total === 2 && favicons.loaded, JSON.stringify(favicons));
+  check("header logo replaced", (await headerLogo()).startsWith("chrome-extension://"), await headerLogo());
   await page.locator(".phn-settings-btn").click();
-  await page.getByRole("switch", { name: "Use the polish tin tab icon" }).click();
+  await page.getByRole("switch", { name: "Use the polish tin icon" }).click();
   const siteIcon = await page.evaluate(() => [...document.querySelectorAll('link[rel~="icon"]')].map((link) => link.getAttribute("href")));
-  check("tab icon option restores the site's own", siteIcon.length === 1 && !siteIcon[0]?.includes("chrome-extension:"), JSON.stringify(siteIcon));
-  await page.getByRole("switch", { name: "Use the polish tin tab icon" }).click();
+  check("tin icon option restores the site's tab icon", siteIcon.length === 1 && !siteIcon[0]?.includes("chrome-extension:"), JSON.stringify(siteIcon));
+  check("tin icon option restores the site's header logo", (await headerLogo()).startsWith("https://news.ycombinator.com/"), await headerLogo());
+  await page.getByRole("switch", { name: "Use the polish tin icon" }).click();
   await page.keyboard.press("Escape");
   check("no sideways overflow on lists", await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
 

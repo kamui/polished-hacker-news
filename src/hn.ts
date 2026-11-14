@@ -2,6 +2,8 @@
 
 export const AUTHOR_LINK = ':is(.comhead, .subline) > a[href^="user?id="]';
 
+export const HEADER_LOGO = "#hnmain > tbody > tr:first-child a > img";
+
 export const pageOp = () => document.documentElement.getAttribute("op") ?? "";
 
 export const isItemPage = () => location.pathname === "/item";

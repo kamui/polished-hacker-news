@@ -9,8 +9,9 @@ Versions match the `version` in `src/manifest.json` and the `v*` tags.
 
 ### Added
 
-- A "Use the polish tin tab icon" switch in the settings panel. Turning it off puts back
-  Hacker News's own tab icon at once, without a reload.
+- The polish tin replaces the logo in the header, as it already did the tab icon.
+- A "Use the polish tin icon" switch in the settings panel. Turning it off puts back Hacker
+  News's own tab icon and header logo at once, without a reload.
 
 ## 0.0.2 (2026-11-13)
 

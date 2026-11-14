@@ -1,4 +1,4 @@
-import { pageOp } from "./hn";
+import { HEADER_LOGO, pageOp } from "./hn";
 
 const HEADINGS: Record<string, string> = {
   news: "Top stories",
@@ -16,14 +16,20 @@ export function keepKarma(): void {
 }
 
 let siteIcons: Element[] | undefined;
+let siteLogo: string | undefined;
 
-/** Shows the extension's tab icon, at the two sizes browsers draw tabs with, or puts back the links HN's own page came with. */
-export function setTabIcon(own: boolean): void {
+/**
+ * Shows the polish tin as the tab icon, at the two sizes browsers draw tabs with, and as the
+ * header logo; or puts back the icon links and logo HN's own page came with.
+ */
+export function setTinIcon(own: boolean): void {
   if (own === (siteIcons !== undefined)) return;
+  const logo = document.querySelector<HTMLImageElement>(HEADER_LOGO);
   const shown = [...document.querySelectorAll('link[rel~="icon"]')];
   for (const link of shown) link.remove();
   if (!own) {
     document.head.append(...(siteIcons ?? []));
+    if (logo && siteLogo) logo.src = siteLogo;
     siteIcons = undefined;
     return;
   }
@@ -35,6 +41,10 @@ export function setTabIcon(own: boolean): void {
     link.setAttribute("sizes", `${size}x${size}`);
     link.href = chrome.runtime.getURL(`icons/icon-${size}.png`);
     document.head.append(link);
+  }
+  if (logo) {
+    siteLogo = logo.src;
+    logo.src = chrome.runtime.getURL("icons/icon-48.png");
   }
 }
 
