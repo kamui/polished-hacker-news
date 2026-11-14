@@ -202,7 +202,8 @@ html.phn {
 
   /*
    * Narrow, the facts split into the same two lines on every story: where it's from, who posted
-   * it and when, then its points, comments and actions.
+   * it and the "⋯" button, then its points, comments and age. Measured on five list pages,
+   * this split fits a 390px phone where the others overflow.
    */
   @media (max-width: 640px) {
     & .subline {
@@ -217,9 +218,6 @@ html.phn {
       order: -2;
     }
 
-    & .subline > .age {
-      order: -1;
-    }
 
     & .subline::before {
       content: "";
@@ -297,9 +295,21 @@ html.phn {
       opacity: 1;
     }
 
+    & .subline > .age {
+      order: 2;
+    }
+
+    & .subline > :is(a[href^="fave?"], a.hnpast, a[href^="flag?"], a[href^="vouch?"]) {
+      order: 4;
+    }
+
+    & .subline > a[href^="hide?"] {
+      order: 5;
+    }
+
     & .subtext .phn-more {
       display: inline-flex;
-      order: 4;
+      order: -1;
       align-self: center;
       margin: -3px 0;
       padding: 3px 4px;

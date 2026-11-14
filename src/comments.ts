@@ -60,8 +60,13 @@ export function prepareCommentControls(): void {
       // First among the links, so the hidden ones (root, prev, next) don't hold a gap open before it.
       link.parentElement?.prepend(link);
     }
-    const last = row.querySelector(".navs > a.clicky:not(.togg):last-of-type");
-    if (links.some((link) => !link.classList.contains("phn-parent"))) last?.after(moreLinksButton(row));
+    if (links.some((link) => !link.classList.contains("phn-parent"))) {
+      // Right after "parent", so the links it reveals open after it and the button stays put.
+      const button = moreLinksButton(row);
+      const parent = row.querySelector(".navs > a.phn-parent");
+      if (parent) parent.after(button);
+      else row.querySelector(".navs")?.prepend(button);
+    }
     nameToggle(row);
   }
 }
