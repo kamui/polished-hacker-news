@@ -7,7 +7,9 @@ Versions match the `version` in `src/manifest.json` and the `v*` tags.
 
 [Changes since 0.0.5](https://github.com/kamui/polished-hacker-news/compare/v0.0.5...main)
 
-Nothing yet.
+### Fixed
+
+- An expanded [dead] comment no longer leaves a blank row under its text.
 
 ## 0.0.5 (2026-11-14)
 
