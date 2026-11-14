@@ -25,13 +25,13 @@ html.phn {
   --phn-raised: #211f1c;
   --phn-text: #f6f4f0;
   --phn-muted: #aba499;
-  --phn-faint: #7a746b;
+  --phn-faint: #857f76;
   --phn-line: #2a2724;
   --phn-rail: #3a3632;
   --phn-accent: #ff751a;
   --phn-accent-soft: rgb(255 117 26 / 0.16);
   --phn-new: #93a8ff;
-  --phn-new-soft: rgb(147 168 255 / 0.14);
+  --phn-new-soft: rgb(147 168 255 / 0.22);
   --phn-shadow: 0 18px 50px rgb(0 0 0 / 0.6);
 
   &[data-phn-font="serif"] {
@@ -44,13 +44,13 @@ html.phn {
     --phn-raised: #2b2d33;
     --phn-text: #e9e9e6;
     --phn-muted: #a3a5ab;
-    --phn-faint: #74777e;
+    --phn-faint: #8a8d94;
     --phn-line: #2c2e34;
     --phn-rail: #3a3d45;
     --phn-accent: #ff7a33;
     --phn-accent-soft: rgb(255 122 51 / 0.16);
     --phn-new: #a1b3ff;
-    --phn-new-soft: rgb(161 179 255 / 0.14);
+    --phn-new-soft: rgb(161 179 255 / 0.2);
     --phn-shadow: 0 18px 50px rgb(0 0 0 / 0.45);
   }
 
@@ -60,7 +60,7 @@ html.phn {
     --phn-raised: #303b4c;
     --phn-text: #e4e9f0;
     --phn-muted: #9eabbc;
-    --phn-faint: #6f7d91;
+    --phn-faint: #8a96a9;
     --phn-line: #2e3848;
     --phn-rail: #3c4759;
     --phn-accent: #ff8a4c;
@@ -79,12 +79,12 @@ html.phn {
     --phn-surface: #f6f6f4;
     --phn-raised: #ececea;
     --phn-text: #17171a;
-    --phn-muted: #5f6066;
-    --phn-faint: #8d8e95;
+    --phn-muted: #525359;
+    --phn-faint: #6c6d74;
     --phn-line: #e8e8e5;
     --phn-rail: #dbdbd7;
-    --phn-accent: #dd5200;
-    --phn-accent-soft: rgb(221 82 0 / 0.11);
+    --phn-accent: #c24800;
+    --phn-accent-soft: rgb(194 72 0 / 0.11);
     --phn-new: #3a52d4;
     --phn-new-soft: rgb(58 82 212 / 0.1);
     --phn-shadow: 0 18px 50px rgb(0 0 0 / 0.14);
@@ -99,11 +99,11 @@ html.phn {
     --phn-surface: #eeeee4;
     --phn-raised: #e3e3d8;
     --phn-text: #1b1b18;
-    --phn-muted: #62625a;
-    --phn-faint: #8a8a80;
+    --phn-muted: #55554e;
+    --phn-faint: #696960;
     --phn-line: #e1e1d5;
     --phn-rail: #d3d3c5;
-    --phn-accent: #d94f00;
+    --phn-accent: #b84400;
     --phn-accent-soft: rgb(255 102 0 / 0.13);
     --phn-new: #3a52d4;
     --phn-new-soft: rgb(58 82 212 / 0.1);
