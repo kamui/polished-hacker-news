@@ -112,10 +112,16 @@ export function mountPanel(
     const button = el("button", { type: "button", textContent: THEME_NAMES[theme] });
     button.style.setProperty("--phn-swatch", THEME_SWATCHES[theme]);
     button.addEventListener("click", () => change(withPickedTheme(settings, theme)));
-    renderers.push((s) => button.setAttribute("aria-pressed", String(currentTheme(s) === theme)));
+    renderers.push((s) => {
+      button.setAttribute("aria-pressed", String(currentTheme(s) === theme));
+      button.toggleAttribute("data-phn-other", s.matchSystem && otherTheme(s) === theme && currentTheme(s) !== theme);
+    });
     swatches.append(button);
   }
-  renderers.push((s) => (themeName.textContent = THEME_NAMES[currentTheme(s)]));
+  renderers.push((s) => {
+    const light = THEME_NAMES[s.lightTheme];
+    themeName.textContent = s.matchSystem ? `Day ${light}, night ${THEME_NAMES[s.theme]}` : THEME_NAMES[currentTheme(s)];
+  });
 
   const switchFor = (key: ToggleKey, label: string) => {
     const button = el("button", { type: "button", className: "phn-switch", role: "switch" }, [
@@ -164,6 +170,11 @@ export function mountPanel(
 
 function currentTheme(s: Settings): Theme {
   return activeTheme(s, matchMedia("(prefers-color-scheme: dark)").matches);
+}
+
+/** With "match system" on, the theme waiting for the scheme the system isn't using now. */
+function otherTheme(s: Settings): Theme {
+  return activeTheme(s, !matchMedia("(prefers-color-scheme: dark)").matches);
 }
 
 /** Shown in place of the settings button while the restyle is off; one click brings it back. */

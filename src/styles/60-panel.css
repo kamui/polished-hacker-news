@@ -194,6 +194,15 @@ html.phn {
     border-color: var(--phn-accent);
   }
 
+  /* With "match system" on, the theme for the other scheme is marked too, so picking it shows a change. */
+  & .phn-swatches button[data-phn-other] {
+    color: var(--phn-text);
+  }
+
+  & .phn-swatches button[data-phn-other]::before {
+    border: 1.5px dashed var(--phn-accent);
+  }
+
   & .phn-switch {
     display: flex;
     align-items: center;
