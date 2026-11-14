@@ -76,7 +76,13 @@ html.phn {
     mask-image: var(--phn-i-up-fill);
   }
 
+  /* HN clips .title cells, which cuts off focus rings; long words wrap instead. */
+  & td.title {
+    overflow: visible;
+  }
+
   & .titleline {
+    overflow-wrap: anywhere;
     font-family: var(--phn-font);
     font-size: var(--phn-title);
     font-weight: 500;

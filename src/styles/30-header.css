@@ -76,7 +76,9 @@ html.phn {
     font-size: 13px;
   }
 
+  /* Inline-block so the padding takes up room: the nav's scrolling cell clips whatever sticks out. */
   & .pagetop a {
+    display: inline-block;
     padding: 8px 10px;
     border-radius: 7px;
     font-size: 15px;
@@ -98,6 +100,10 @@ html.phn {
   & .pagetop a:hover {
     background: var(--phn-raised);
     color: var(--phn-text);
+  }
+
+  & .pagetop a:focus-visible {
+    outline-offset: -2px;
   }
 
   /* Pages such as reply and submit show a plain title here instead of the nav. */
