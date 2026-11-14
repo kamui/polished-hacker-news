@@ -43,7 +43,7 @@ export function markStoryAuthor(): void {
  * Puts each comment's controls in the DOM in the order they appear on screen, so Tab goes
  * collapse, author, links, then the vote arrows and Reply under the text. The stylesheet
  * draws the toggle and arrows in the same place before and after the move. Also marks the
- * "parent" link, the one nav link phones keep on show.
+ * "parent" link, which stays on show while the other nav links wait for hover.
  */
 export function prepareCommentControls(): void {
   for (const row of commentRows()) {

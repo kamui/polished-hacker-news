@@ -242,7 +242,12 @@ html.phn {
     }
   }
 
-  /* A phone's header line has room for one: "parent", the way back up a deep thread. */
+  /* "parent", the way back up a deep thread, is always on show. */
+  & td.default .navs > a.clicky.phn-parent:not(.togg) {
+    opacity: 1;
+  }
+
+  /* A phone's header line has room for that one alone. */
   @media (max-width: 640px) {
     & td.default .navs > a.clicky:not(.togg, .phn-parent) {
       display: none;
