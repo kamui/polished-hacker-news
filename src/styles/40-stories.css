@@ -4,9 +4,15 @@ html.phn {
     vertical-align: top;
   }
 
+  /* Baseline-aligned with the title cell, so the smaller rank sits on the title's first line instead of above it. */
   & tr.athing.submission > td.title:first-child {
     width: 1%;
+    vertical-align: baseline;
     white-space: nowrap;
+  }
+
+  & tr.athing.submission > td.title:last-child {
+    vertical-align: baseline;
   }
 
   & .rank {
