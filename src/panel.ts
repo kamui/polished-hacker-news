@@ -24,7 +24,7 @@ const THEME_NAMES: Record<Theme, string> = {
 
 const THEME_SWATCHES: Record<Theme, string> = {
   light: "#ffffff",
-  classic: "#f6f6ef",
+  classic: "linear-gradient(#ff6600 0 34%, #f6f6ef 34%)",
   slate: "#1c232f",
   dark: "#17181b",
   black: "#000000",

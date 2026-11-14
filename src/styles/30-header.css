@@ -11,6 +11,16 @@ html.phn {
     z-index: 900;
   }
 
+  /* Classic wears HN's own orange bar; the header's colours are re-pointed for it. */
+  &[data-phn-theme="classic"] #hnmain > tbody > tr:first-child > td {
+    --phn-bg: #ff6600;
+    --phn-text: #000000;
+    --phn-muted: rgb(0 0 0 / 0.8);
+    --phn-raised: rgb(0 0 0 / 0.1);
+    --phn-accent: #000000;
+    --phn-line: #e05a00;
+  }
+
   & #hnmain > tbody > tr:first-child > td > table {
     display: block;
     box-sizing: border-box;
