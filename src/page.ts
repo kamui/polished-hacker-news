@@ -93,3 +93,8 @@ export function addListHeading(): void {
   }
   list.parentElement?.prepend(heading);
 }
+
+/** Gives the thread's comment box a placeholder, which the stylesheet uses to keep it one line tall until it is used. */
+export function labelCommentBox(): void {
+  document.querySelector('.fatitem form[action="comment"] textarea')?.setAttribute("placeholder", "Add a comment…");
+}

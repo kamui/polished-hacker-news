@@ -198,6 +198,16 @@ html.phn {
   & .fatitem form[action="comment"] input[type="submit"] {
     margin-top: 2px;
   }
+
+  /* On a thread the box waits as one line, so the first comments start on the first screen. */
+  &[op="item"] .fatitem form[action="comment"] textarea:placeholder-shown:not(:focus) {
+    height: calc(var(--phn-size) * var(--phn-leading) + 26px);
+    resize: none;
+
+    & ~ :is(a, br, input[type="submit"]) {
+      display: none;
+    }
+  }
 }
 
 /*

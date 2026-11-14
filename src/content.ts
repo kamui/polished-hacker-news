@@ -1,7 +1,7 @@
 import { initNewCommentNav, initThreadControls, markNewComments, markStoryAuthor } from "./comments";
 import { isItemPage, parseCount, storyIdFromUrl } from "./hn";
 import { initNewTabLinks } from "./links";
-import { addListHeading, keepKarma, rememberDownvoteSlot, setTinIcon } from "./page";
+import { addListHeading, keepKarma, labelCommentBox, rememberDownvoteSlot, setTinIcon } from "./page";
 import { mountPanel, mountRestoreLink } from "./panel";
 import { mountSearch } from "./search";
 import {
@@ -73,8 +73,10 @@ async function main(): Promise<void> {
 
   initVotes();
   initNewTabLinks(() => settings.newTab);
-  if (isItemPage()) await trackComments();
-  else {
+  if (isItemPage()) {
+    labelCommentBox();
+    await trackComments();
+  } else {
     addListHeading();
     initThreadControls();
     await initStoryList();
